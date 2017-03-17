@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="FCSPlayout.WPF.Core.FilePicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FCSPlayout.WPF.Core"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Name="txtLabel" VerticalAlignment="Center"
+                   Text="{Binding Label,RelativeSource={RelativeSource AncestorType=UserControl,Mode=FindAncestor},Mode=OneWay}" 
+                   Visibility="{Binding LabelVisibility,RelativeSource={RelativeSource AncestorType=UserControl,Mode=FindAncestor},Mode=OneWay}"/>
+        
+        <TextBox Grid.Column="1" Name="txtFile" VerticalAlignment="Center" IsReadOnly="True"
+                 Text="{Binding SelectedFile,RelativeSource={RelativeSource AncestorType=UserControl,Mode=FindAncestor},Mode=OneWay}"/>
+        <Button Content="浏览..." Grid.Column="2" Name="btnBrowse" VerticalAlignment="Center"
+                Click="btnBrowse_Click"/>
+    </Grid>
+</UserControl>

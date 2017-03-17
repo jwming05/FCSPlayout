@@ -19,19 +19,20 @@ namespace FCSPlayout.Domain
         internal static bool CanMerge(AutoPlayItem item1, AutoPlayItem item2)
         {
             if (item1.PlaybillItem != item2.PlaybillItem ||
-                item1.PlayRange == null || item2.PlayRange == null)
+                item1.PlayRange == item1.PlaybillItem.GetPlayRange() || 
+                item2.PlayRange == item2.PlaybillItem.GetPlayRange())
             {
                 return false;
             }
 
-            return FCSPlayout.Domain.PlayRange.CanMerge(item1.PlayRange.Value, item2.PlayRange.Value);
+            return FCSPlayout.Domain.PlayRange.CanMerge(item1.PlayRange, item2.PlayRange);
         }
 
         internal static AutoPlayItem Merge(AutoPlayItem item1, AutoPlayItem item2)
         {
             if (!CanMerge(item1, item2)) throw new InvalidOperationException();
 
-            var range = FCSPlayout.Domain.PlayRange.Merge(item1.PlayRange.Value, item2.PlayRange.Value);
+            var range = FCSPlayout.Domain.PlayRange.Merge(item1.PlayRange, item2.PlayRange);
 
             if (range == item1.PlaybillItem.GetPlayRange())
             {
@@ -44,15 +45,16 @@ namespace FCSPlayout.Domain
         }
 
         private TimeSpan? _playDuration;
+        private PlayRange? _playRange;
         public AutoPlayItem(IPlaybillItem billItem)
         {
+            this.Id = Guid.NewGuid();
             this.PlaybillItem = billItem;
         }
 
         // 用于创建顺播片断。
-        private AutoPlayItem(IPlaybillItem billItem, PlayRange playRange)
+        private AutoPlayItem(IPlaybillItem billItem, PlayRange playRange):this(billItem)
         {
-            this.PlaybillItem = billItem;
             this.PlayRange = playRange;
         }
 
@@ -61,12 +63,28 @@ namespace FCSPlayout.Domain
             get;private set;
         }
 
+        public Guid Id
+        {
+            get; set;
+        }
         /// <summary>
         /// 获取相对于<paramref name="PlaybillItem"/>的播放范围。
         /// </summary>
-        internal PlayRange? PlayRange
+        public PlayRange PlayRange
         {
-            get;private set;
+            get
+            {
+                if (_playRange == null)
+                {
+                    return this.PlaybillItem.GetPlayRange();
+                }
+                else
+                {
+                    return _playRange.Value;
+                }
+                
+            }
+            set { _playRange = value; }
         }
 
         public TimeSpan PlayDuration
@@ -75,8 +93,7 @@ namespace FCSPlayout.Domain
             {
                 if (_playDuration == null)
                 {
-                    return this.PlayRange == null ? 
-                        this.PlaybillItem.PlaySource.GetDuration() : this.PlayRange.Value.Duration;
+                    return this.PlayRange.Duration;
                 }
                 else
                 {
@@ -84,7 +101,7 @@ namespace FCSPlayout.Domain
                 }
             }
 
-            internal set
+            set
             {
                 _playDuration = value;
             }
@@ -92,16 +109,20 @@ namespace FCSPlayout.Domain
 
         public DateTime StartTime
         {
-            get;internal set;
+            get; set;
         }
         public bool IsAutoPadding { get{ return ((AutoPlaybillItem)this.PlaybillItem).IsAutoPadding; } }
 
+        public long EditId
+        {
+            get;set;
+        }
+
         internal void Split(TimeSpan duration,out AutoPlayItem first,out AutoPlayItem second)
         {
-            PlayRange range= this.PlayRange == null ? this.PlaybillItem.GetPlayRange() : this.PlayRange.Value;
             PlayRange firstRange, secondRange;
 
-            FCSPlayout.Domain.PlayRange.Split(range, duration, out firstRange, out secondRange);
+            FCSPlayout.Domain.PlayRange.Split(this.PlayRange, duration, out firstRange, out secondRange);
 
             first = new AutoPlayItem(this.PlaybillItem, firstRange);
             second = new AutoPlayItem(this.PlaybillItem, secondRange);

@@ -30,6 +30,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
@@ -50,16 +68,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MediaFileCategory.cs" />
-    <Compile Include="MediaFileChannel.cs" />
-    <Compile Include="MediaSourceEntity.cs" />
+    <Compile Include="ApplicationInfo.cs" />
+    <Compile Include="Entities\BMDSwitcherInfo.cs" />
+    <Compile Include="Entities\BMDSwitcherInputInfo.cs" />
+    <Compile Include="Entities\ChannelInfo.cs" />
+    <Compile Include="ICreationTimestamp.cs" />
+    <Compile Include="IGuidIdentifier.cs" />
+    <Compile Include="IModificationTimestamp.cs" />
+    <Compile Include="Entities\MediaFileCategory.cs" />
+    <Compile Include="Entities\MediaFileChannel.cs" />
+    <Compile Include="Entities\MediaFileEntity.cs" />
+    <Compile Include="Entities\MediaSourceEntity.cs" />
+    <Compile Include="Entities\MachineInfo.cs" />
+    <Compile Include="Entities\PlaybillEntity.cs" />
+    <Compile Include="Entities\PlaybillItemEntity.cs" />
+    <Compile Include="Entities\PlayItemEntity.cs" />
+    <Compile Include="PlayoutDatabaseInitializer.cs" />
     <Compile Include="PlayoutDbContext.cs" />
+    <Compile Include="PlayoutRepository.cs" />
+    <Compile Include="PlayRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserEntity.cs" />
+    <Compile Include="Entities\UserAction.cs" />
+    <Compile Include="Entities\UserEntity.cs" />
+    <Compile Include="Entities\SettingGroup.cs" />
+    <Compile Include="Entities\SettingInfo.cs" />
+    <Compile Include="Entities\SettingScope.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FCSPlayout.Domain\FCSPlayout.Domain.csproj">
+      <Project>{13e94826-defa-4246-ae86-0ab9c9606932}</Project>
+      <Name>FCSPlayout.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

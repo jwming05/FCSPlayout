@@ -8,9 +8,16 @@ namespace FCSPlayout.Domain
 {
     public class Playlist:IPlaylist
     {
-        private IList<IPlayItem> _playItems;
+        //private List<IPlayItem> _playItems=new List<IPlayItem>();
+        private PlaylistEditor _editor;
+        private IPlayItemCollection _playItems;
 
         public event EventHandler<TimeValidationEventArgs> ValidateStartTime;
+
+        public Playlist(IPlayItemCollection playItems)
+        {
+            _playItems = playItems;
+        }
 
         private void OnValidateStartTime(TimeValidationEventArgs e)
         {
@@ -28,78 +35,30 @@ namespace FCSPlayout.Domain
             }
         }
 
-        
+        public IPlayItem this[int index]
+        {
+            get
+            {
+                return _playItems[index];
+            }
+        }
 
         public IPlaylistEditor Edit()
         {
-            throw new NotImplementedException();
+            if (_editor != null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            _editor = new PlaylistEditor(this);
+            _editor.Disposed += Editor_Disposed;
+            return _editor;
         }
 
-        public PlaylistSegment FindFirstSegment(Func<PlaylistSegment,bool> predicate)
+        private void Editor_Disposed(object sender, EventArgs e)
         {
-            PlaylistSegment segment=GetFirstSegment();
-            if(segment.IsValid && predicate(segment))
-            {
-                return segment;
-            }
-
-            for (int i = 1; i < _playItems.Count; i++)
-            {
-                var item = _playItems[i];
-                if (item.PlaybillItem.Category == PlaybillItemCategory.Timing)
-                {
-                    segment = PlaylistSegment.CreateValid(i, item);
-
-                    if (predicate(segment))
-                    {
-                        return segment;
-                    }
-                }
-            }
-
-            return PlaylistSegment.Invalid;
-        }
-
-        public PlaylistSegment FindLastSegment(Func<PlaylistSegment, bool> predicate)
-        {
-            PlaylistSegment segment;
-            for (int i = _playItems.Count - 1; i > 0; i--)
-            {
-                var item = _playItems[i];
-                if (item.PlaybillItem.Category == PlaybillItemCategory.Timing)
-                {
-                    segment = PlaylistSegment.CreateValid(i, item);
-
-                    if (predicate(segment))
-                    {
-                        return segment;
-                    }
-                }
-            }
-
-            segment = GetFirstSegment();
-            if (segment.IsValid && predicate(segment))
-            {
-                return segment;
-            }
-
-            return PlaylistSegment.Invalid;
-        }
-
-        public PlaylistSegment GetNextSegment(PlaylistSegment segment)
-        {
-            if (!segment.IsValid) throw new InvalidOperationException();
-
-            for (int i = segment.HeadIndex+1; i < _playItems.Count; i++)
-            {
-                var item = _playItems[i];
-                if (item.PlaybillItem.Category == PlaybillItemCategory.Timing)
-                {
-                    return PlaylistSegment.CreateValid(i, item);
-                }
-            }
-
-            return PlaylistSegment.Invalid;
+            long editId = _editor.Id;
+            _editor = null;
         }
 
         public IList<IPlayItem> GetPlayItems(int beginIndex, int endIndex)
@@ -142,7 +101,7 @@ namespace FCSPlayout.Domain
             for(int i = 0; i < _playItems.Count; i++)
             {
                 var item = _playItems[i];
-                if (item.PlaybillItem.Category == PlaybillItemCategory.Timing || item.PlaybillItem.Category==PlaybillItemCategory.TimingBreak)
+                if (item.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing || item.PlaybillItem.ScheduleMode==PlayScheduleMode.TimingBreak)
                 {
                     var startTime2 = item.StartTime;
                     var stopTime2 = item.GetStopTime();
@@ -155,32 +114,53 @@ namespace FCSPlayout.Domain
             }
         }
 
-        private PlaylistSegment GetFirstSegment()
-        {
-            PlaylistSegment segment = PlaylistSegment.Invalid;
-            if (_playItems.Count > 0)
-            {
-                var first = _playItems[0];
-
-                if (first.PlaybillItem.Category != PlaybillItemCategory.Timing)
-                {
-                    segment = PlaylistSegment.CreateValid(-1, null);
-                    segment.StartTime = first.StartTime;
-                }
-                else
-                {
-                    segment = PlaylistSegment.CreateValid(0, first);
-                }
-            }
-
-            return segment;
-        }
-
         public bool Contains(IPlayItem playItem)
         {
             return _playItems.Contains(playItem);
         }
-    }
 
-    
+        public int FindLastIndex(Func<IPlayItem, bool> predicate)
+        {
+            return FindLastIndex(this.Count - 1, predicate);
+        }
+
+        public int FindFirstIndex(Func<IPlayItem, bool> predicate)
+        {
+            return FindFirstIndex(0, predicate);
+        }
+
+        public int FindLastIndex(int lastStartIndex, Func<IPlayItem, bool> predicate)
+        {
+            for(int i = lastStartIndex; i >= 0; i--)
+            {
+                if (predicate(this[i]))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public int FindFirstIndex(int startIndex, Func<IPlayItem, bool> predicate)
+        {
+            for(int i = startIndex; i < this.Count; i++)
+            {
+                if (predicate(this[i]))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public void Clear()
+        {
+            _playItems.Clear();
+        }
+
+        public void Append(IList<IPlayItem> playItems)
+        {
+            _playItems.Append(playItems);
+        }
+    }
 }

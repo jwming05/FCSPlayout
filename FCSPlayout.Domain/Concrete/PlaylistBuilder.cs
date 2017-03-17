@@ -18,7 +18,7 @@ namespace FCSPlayout.Domain
 
             DateTime startTime = data.StartTime;
 
-            List<IPlayItem> result = new List<IPlayItem>();
+            //List<IPlayItem> result = new List<IPlayItem>();
 
             while (startTime<data.StopTime)
             {
@@ -58,16 +58,16 @@ namespace FCSPlayout.Domain
                             autoItem.StartTime = startTime;
                             if (maxDuration >= autoItem.PlayDuration)
                             {
-                                result.Add(autoItem);
+                                data.AddResult(autoItem);
                                 startTime = autoItem.GetStopTime();
                             }
                             else
                             {
-                                if (timingItem.PlaybillItem.Category == PlaybillItemCategory.Timing)
+                                if (timingItem.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing)
                                 {
                                     // 截短。
                                     autoItem.PlayDuration = maxDuration;
-                                    result.Add(autoItem);
+                                    data.AddResult(autoItem);
                                     startTime = autoItem.GetStopTime();
                                 }
                                 else
@@ -78,7 +78,7 @@ namespace FCSPlayout.Domain
                                     AutoPlayItem second = null;
                                     autoItem.Split(maxDuration, out first, out second);
                                     first.StartTime = startTime;
-                                    result.Add(first);
+                                    data.AddResult(first);
                                     startTime = first.GetStopTime();
 
                                     segmentItem = second;
@@ -93,7 +93,7 @@ namespace FCSPlayout.Domain
                         {
                             // 插入自动垫片。
                             IPlayItem autoPadding = CreateAutoPadding(startTime, maxDuration);
-                            result.Add(autoPadding);
+                            data.AddResult(autoPadding);
                         }
                         #endregion 1.1
                     }
@@ -102,17 +102,17 @@ namespace FCSPlayout.Domain
                         #region 1.2
                         Debug.Assert(startTime == timingItem.StartTime);
 
-                        if (timingItem.PlaybillItem.Category == PlaybillItemCategory.Timing && autoItem != null && isSegment)
+                        if (timingItem.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing && autoItem != null && isSegment)
                         {
                             // 完全截断。
                             autoItem.StartTime = startTime;
                             autoItem.PlayDuration = TimeSpan.Zero;
-                            result.Add(autoItem);
+                            data.AddResult(autoItem);
 
                             autoItem = null;
                         }
 
-                        result.Add(timingItem);
+                        data.AddResult(timingItem);
                         startTime = timingItem.GetStopTime();
                         timingItem = null;
                         #endregion 1.2
@@ -123,7 +123,6 @@ namespace FCSPlayout.Domain
                 else if(autoItem!=null)
                 {
                     #region 2
-                    #endregion 2
                     var maxDuration = data.StopTime.Subtract(startTime);
                     autoItem.StartTime = startTime;
                     if (autoItem.PlayDuration > maxDuration)
@@ -131,8 +130,11 @@ namespace FCSPlayout.Domain
                         // 截短。
                         autoItem.PlayDuration = maxDuration;
                     }
+                    data.AddResult(autoItem);
                     startTime = autoItem.GetStopTime();
                     autoItem = null;
+                    #endregion 2
+
                 }
                 else
                 {
@@ -142,7 +144,7 @@ namespace FCSPlayout.Domain
                         // 插入自动垫片。
                         TimeSpan duration = data.StopTime.Subtract(startTime);
                         IPlayItem autoPadding = CreateAutoPadding(startTime, duration);
-                        result.Add(autoPadding);
+                        data.AddResult(autoPadding);
                     }
                     startTime = data.StopTime;
                     #endregion 3
@@ -157,7 +159,7 @@ namespace FCSPlayout.Domain
                 autoItem.StartTime = data.StopTime;
                 autoItem.PlayDuration = TimeSpan.Zero;
 
-                result.Add(autoItem);
+                data.AddResult(autoItem);
                 autoItem = null;
             }
 
@@ -169,11 +171,11 @@ namespace FCSPlayout.Domain
                 autoItem.StartTime = data.StopTime;
                 autoItem.PlayDuration = TimeSpan.Zero;
 
-                result.Add(autoItem);
+                data.AddResult(autoItem);
                 autoItem = null;
             }
 
-            return result;
+            return data.Result;
         }
 
         private IPlayItem CreateAutoPadding(DateTime startTime,TimeSpan duration)

@@ -1,0 +1,35 @@
+﻿<UserControl 
+             x:Class="FCSPlayout.WPF.Core.CGImageItemView2"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FCSPlayout.WPF.Core"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TabControl>
+            <TabItem Header="Images">
+                <local:CGImageItemListView x:Name="imageItemListView" CGItems="{Binding CGItems,RelativeSource={RelativeSource AncestorType=UserControl,Mode=FindAncestor},Mode=OneWay}" />
+            </TabItem>
+            <TabItem Header="Texts">
+                <local:CGTextItemListView x:Name="textItemListView" CGItems="{Binding CGItems,RelativeSource={RelativeSource AncestorType=UserControl,Mode=FindAncestor},Mode=OneWay}" />
+            </TabItem>
+            <TabItem Header="Ticker">
+                <local:CGTickerItemListView x:Name="tickerItemListView" CGItems="{Binding CGItems,RelativeSource={RelativeSource AncestorType=UserControl,Mode=FindAncestor},Mode=OneWay}" />
+            </TabItem>
+        </TabControl>
+        <StackPanel Grid.Row="3" VerticalAlignment="Top" HorizontalAlignment="Right" Orientation="Horizontal" Margin="10">
+            <Button Content="确定" Margin="5" Name="btnOK" Click="btnOK_Click"/>
+            <Button Content="取消" Margin="5" Name="btnCancel" Click="btnCancel_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="FCSPlayout.WPF.Core.LoadPlaybillView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FCSPlayout.WPF.Core"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <local:TimeCodeConverter x:Key="TimeCodeConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid Name="dgPlaybill" AutoGenerateColumns="False" ItemsSource="{Binding Playbills}" SelectedItem="{Binding SelectedPlaybill,Mode=TwoWay}" SelectionMode="Single"
+                  SelectionChanged="DataGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Id}" Header="ID"/>
+                <DataGridTextColumn Binding="{Binding StartTime, Converter={StaticResource TimeCodeConverter}}" Header="StartTime"/>
+                <DataGridTextColumn Binding="{Binding StopTime, Converter={StaticResource TimeCodeConverter}}" Header="StopTime"/>
+                <DataGridTextColumn Binding="{Binding Duration, Converter={StaticResource TimeCodeConverter}}" Header="Duration"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Name="btnOk" IsEnabled="False" Click="btnOk_Click" Content="确定" Margin="5"/>
+            <Button Name="btnCancel" Click="btnCancel_Click" Content="取消" Margin="5"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

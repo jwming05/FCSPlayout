@@ -5,16 +5,27 @@ namespace FCSPlayout.Domain
     public class TimingPlaybillItem : PlaybillItem, IPlayItem
     {
         public TimingPlaybillItem(IPlaySource playSource, DateTime startTime, bool isBreak)
-            :base(playSource,isBreak ? PlaybillItemCategory.TimingBreak : PlaybillItemCategory.Timing)
+            :base(playSource,isBreak ? PlayScheduleMode.TimingBreak : PlayScheduleMode.Timing)
         {
+            
             base.StartTime = startTime;
         }
+
+        
 
         IPlaybillItem IPlayItem.PlaybillItem
         {
             get
             {
                 return this;
+            }
+        }
+
+        PlayRange IPlayItem.PlayRange
+        {
+            get
+            {
+                return this.GetPlayRange();
             }
         }
 
@@ -32,6 +43,11 @@ namespace FCSPlayout.Domain
             {
                 return base.StartTime.Value;
             }
+        }
+
+        public long EditId
+        {
+            get;set;
         }
     }
 }

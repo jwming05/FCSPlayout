@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+namespace FCSPlayout.Domain
+{
+    public interface IPlaylist
+    {
+        bool Contains(IPlayItem playItem);
+        IPlayItem this[int index] { get; }
+        IPlaylistEditor Edit();
+
+        int FindLastIndex(Func<IPlayItem, bool> predicate);
+        int FindFirstIndex(Func<IPlayItem, bool> predicate);
+
+        int FindLastIndex(int lastStartIndex, Func<IPlayItem, bool> predicate);
+        int FindFirstIndex(int startIndex, Func<IPlayItem, bool> predicate);
+
+        void ValidateTimeRange(DateTime startTime, TimeSpan duration);
+
+        int Count { get; }
+
+        void Update(int index, int length, IList<IPlayItem> newItems);
+        IList<IPlayItem> GetPlayItems(int beginIndex, int endIndex);
+
+        event EventHandler<TimeValidationEventArgs> ValidateStartTime;
+
+        void Clear();
+        void Append(IList<IPlayItem> playItems);
+    }
+}

@@ -17,7 +17,7 @@ namespace FCSPlayout.Domain
         }
 
         public AutoPlaybillItem(IPlaySource playSource)
-            :base(playSource,PlaybillItemCategory.Auto)
+            :base(playSource,PlayScheduleMode.Auto)
         {
         }
     }

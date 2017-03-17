@@ -8,7 +8,8 @@ namespace FCSPlayout.Domain
 {
     public class PlayoutConfiguration : IPlayoutConfiguration
     {
-        private static IPlayoutConfiguration _current;
+        private static IPlayoutConfiguration _current=new PlayoutConfiguration();
+        private static TimeSpan _defaultDuration=TimeSpan.FromHours(1);
 
         public static IPlayoutConfiguration Current
         {
@@ -23,14 +24,32 @@ namespace FCSPlayout.Domain
             }
         }
 
+        public PlayoutConfiguration()
+        {
+            this.MinPlayDuration = TimeSpan.FromSeconds(5);
+            this.AutoPaddingMediaSource = new AutoPaddingMediaSource();
+        }
+
         public virtual IMediaSource AutoPaddingMediaSource
         {
-            get;protected set;
+            get; set;
+        }
+
+        public TimeSpan DefaultDuration
+        {
+            get
+            {
+                return _defaultDuration;
+            }
+            set
+            {
+                _defaultDuration = value;
+            }
         }
 
         public virtual TimeSpan MinPlayDuration
         {
-            get; protected set;
+            get; set;
         }
     }
 }

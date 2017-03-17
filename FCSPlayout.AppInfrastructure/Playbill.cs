@@ -1,0 +1,242 @@
+﻿using FCSPlayout.CG;
+using FCSPlayout.Domain;
+using FCSPlayout.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+
+namespace FCSPlayout.AppInfrastructure
+{
+    public class Playbill
+    {
+        private PlaybillEntity _entity;
+
+        public Playbill()
+        {
+        }
+
+        private Playbill(PlaybillEntity billEntity)
+        {
+            _entity = billEntity;
+        }
+
+        public IPlayItemCollection PlayItemCollection { get; set; }
+
+        public void Save()
+        {
+            ValidatePlayItems();
+            if (_entity == null)
+            {
+                _entity = new PlaybillEntity();
+            }
+
+            var playItemEntities = ToEntities(_entity, this.PlayItemCollection);
+
+            _entity.StartTime = playItemEntities[0].StartTime;
+            _entity.Duration = playItemEntities[playItemEntities.Count - 1].StopTime.Subtract(_entity.StartTime).TotalSeconds;
+
+            PlayoutRepository.SavePlaybill(_entity,playItemEntities);
+            //throw new NotImplementedException();
+        }
+
+        private void ValidatePlayItems()
+        {
+            
+        }
+
+        private IList<PlayItemEntity> ToEntities(PlaybillEntity billEntity, IPlayItemCollection playItemCollection)
+        {
+            List<PlayItemEntity> result = new List<PlayItemEntity>();
+
+            for(int i = 0; i < playItemCollection.Count; i++)
+            {
+                result.Add(ToEntity(billEntity, playItemCollection[i]));
+            }
+
+            return result;
+        }
+
+        public PlayItemEntity ToEntity(PlaybillEntity billEntity, IPlayItem playItem)
+        {
+            var dtoItem = new PlayItemEntity();
+            dtoItem.Id = playItem.Id;
+            //if (_dtoItem == null)
+            //{
+            //    _dtoItem = new PlayItemEntity() { State = ObjectState.Added };
+            //}
+
+            dtoItem.StartTime = playItem.StartTime;
+            dtoItem.PlayDuration = playItem.PlayDuration.TotalSeconds;
+            dtoItem.MarkerIn = playItem.PlayRange.StartPosition.TotalSeconds;
+            dtoItem.MarkerDuration = playItem.PlayRange.Duration.TotalSeconds;
+
+            dtoItem.PlaybillItem = ToEntity(billEntity, playItem.PlaybillItem); //.ToEntity();
+            return dtoItem;
+        }
+
+        public PlaybillItemEntity ToEntity(PlaybillEntity billEntity, IPlaybillItem billItem)
+        {
+            var dtoItem = new PlaybillItemEntity();
+            dtoItem.Id = billItem.Id;
+
+            dtoItem.Playbill = billEntity;
+
+            dtoItem.StartTime = billItem.StartTime;
+            dtoItem.MarkerIn = billItem.GetPlayRange().StartPosition.TotalSeconds;
+            dtoItem.ScheduleMode = billItem.ScheduleMode;
+            dtoItem.MarkerDuration = billItem.GetPlayRange().Duration.TotalSeconds;
+            //_dtoItem.SegmentId = this.SegmentId;
+
+            if (billItem.PlaySource.MediaSource.Category!=MediaSourceCategory.Null)
+            {
+                dtoItem.MediaSourceId = billItem.PlaySource.MediaSource.Id;
+            }
+            else
+            {
+                dtoItem.MediaSourceTitle = billItem.PlaySource.MediaSource.Title;
+                dtoItem.MediaSourceDuration = billItem.PlaySource.MediaSource.Duration.Value.TotalSeconds;
+            }
+
+            var autoBillItem = billItem as AutoPlaybillItem;
+            if (autoBillItem != null)
+            {
+                dtoItem.IsAutoPadding = autoBillItem.IsAutoPadding;
+            }
+            
+
+            var fileMediaSource = billItem.PlaySource.MediaSource as IFileMediaSource;
+            if (fileMediaSource != null)
+            {
+                dtoItem.AudioGain = fileMediaSource.AudioGain;
+            }
+
+            if (billItem.PlaySource.CGItems != null)
+            {
+                dtoItem.CGContents = CGItemCollection.ToXml(billItem.PlaySource.CGItems);
+            }
+            
+            return dtoItem;
+        }
+
+        public static Playbill Load(Guid id, IList<IPlayItem> playItemList)
+        {
+            PlaybillEntity billEntity = PlayoutRepository.GetPlaybill(id); // GetEntity(id);
+            Playbill playbill = null;
+            Dictionary<Guid,IPlaybillItem> playbillItemDict = new Dictionary<Guid, IPlaybillItem>();
+            if (billEntity != null)
+            {
+                playbill= new Playbill(billEntity);
+                for(int i = 0; i < billEntity.PlayItems.Count; i++)
+                {
+                    PlayItemEntity playItemEntity = billEntity.PlayItems[i];
+                    IPlaybillItem playbillItem = null;
+                    if (!playbillItemDict.ContainsKey(playItemEntity.PlaybillItemId))
+                    {
+                        playbillItem = FromEntity(playItemEntity.PlaybillItem);
+                    }
+                    else
+                    {
+                        playbillItem = playbillItemDict[playItemEntity.PlaybillItemId];
+                    }
+
+                    IPlayItem playItem = FromEntity(playItemEntity,playbillItem);
+                    playItemList.Add(playItem);
+                }
+            }
+            return playbill;
+        }
+
+        private static IPlayItem FromEntity(PlayItemEntity entity, IPlaybillItem playbillItem)
+        {
+            if (playbillItem.ScheduleMode == PlayScheduleMode.Auto)
+            {
+                var autoPlayItem = new AutoPlayItem(playbillItem);
+                autoPlayItem.StartTime = entity.StartTime;
+                autoPlayItem.PlayDuration = TimeSpan.FromSeconds(entity.PlayDuration);
+                autoPlayItem.PlayRange = new PlayRange(TimeSpan.FromSeconds(entity.MarkerIn), TimeSpan.FromSeconds(entity.MarkerDuration));
+                //autoPlayItem.PlaybillItem = playbillItem;
+                autoPlayItem.Id = entity.Id;
+                return autoPlayItem;
+            }
+            else
+            {
+                return (TimingPlaybillItem)playbillItem;
+            }
+            //throw new NotImplementedException();
+        }
+
+        private static IPlaybillItem FromEntity(PlaybillItemEntity entity)
+        {
+
+            MediaSourceEntity sourceEntity = entity.MediaSource;
+            IMediaSource mediaSource = null;
+            if (sourceEntity == null)
+            {
+                mediaSource = new NullMediaSource(entity.MediaSourceTitle, TimeSpan.FromSeconds(entity.MediaSourceDuration.Value));
+            }
+            else
+            {
+                mediaSource = FromEntity(entity, entity.MediaSource);
+            }
+
+            IPlaySource playSource = Create(entity, mediaSource);
+            IPlaybillItem result = null;
+            switch (entity.ScheduleMode)
+            {
+                case PlayScheduleMode.Auto:
+                    result= PlaybillItem.Auto(playSource);
+                    break;
+                case PlayScheduleMode.Timing:
+                    result= PlaybillItem.Timing(playSource, entity.StartTime.Value);
+                    break;
+                case PlayScheduleMode.TimingBreak:
+                    result= PlaybillItem.TimingBreak(playSource, entity.StartTime.Value);
+                    break;
+            }
+            result.Id = entity.Id;
+            return result;
+        }
+
+        private static IPlaySource Create(PlaybillItemEntity entity, IMediaSource mediaSource)
+        {
+            var range = new PlayRange(TimeSpan.FromSeconds(entity.MarkerIn), TimeSpan.FromSeconds(entity.MarkerDuration));
+            var mediaItem = new MediaItem(mediaSource, range);
+
+            var playSource = new PlaySource(mediaItem);
+            if (entity.CGContents != null)
+            {
+                playSource.CGItems = CGItemCollection.FromXml(entity.CGContents);
+            }
+            return playSource;
+        }
+
+        private static IMediaSource FromEntity(PlaybillItemEntity billItemEntity, MediaSourceEntity entity)
+        {
+            IMediaSource result = null;
+            MediaFileEntity fileEntity = entity as MediaFileEntity;
+            if (fileEntity != null)
+            {
+                var fileSource= new FileMediaSource(fileEntity);
+                fileSource.AudioGain = billItemEntity.AudioGain;
+                result = fileSource;
+            }
+            else
+            {
+                ChannelInfo ci = entity as ChannelInfo;
+                if (ci != null)
+                {
+                    var channelSource= new ChannelMediaSource(ci);
+                    result = channelSource;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
+            }
+            return result;
+        }
+    }
+}

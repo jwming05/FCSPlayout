@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="FCSPlayout.WPFApp.Views.PlayoutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FCSPlayout.WPFApp.Views"
+             xmlns:core="clr-namespace:FCSPlayout.WPF.Core;assembly=FCSPlayout.WPF.Core"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <core:SecondsToTimeCode x:Key="SecondsToTimeCode"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid Background="Black">
+                <MediaElement Source="{Binding SourceUri}" />
+            </Grid>
+            <core:MAudioMeter x:Name="audioMeter" MinWidth="50" Grid.Column="1"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <ProgressBar Name="pbPlayItem"  Background="Black" BorderBrush="Black" Margin="5" Height="10" Minimum="0" Maximum="{Binding CurrentPlayItem.PlayRange.Duration.TotalSeconds,Mode=OneWay,FallbackValue=1}"
+                         Value="{Binding CurrentPlayItemPosition.TotalSeconds,Mode=OneWay,FallbackValue=0}"/>
+            <TextBlock Text="{Binding CurrentPlayItem.Title,Mode=OneWay}" HorizontalAlignment="Center"/>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Center" Foreground="White" Text="{Binding ElementName=pbPlayItem,Path=Value,Converter={StaticResource SecondsToTimeCode}}" Margin="10 0 50 0"/>
+                <TextBlock HorizontalAlignment="Right" Foreground="White" Text="{Binding ElementName=pbPlayItem,Path=Maximum,Converter={StaticResource SecondsToTimeCode}}"/>
+                <TextBlock HorizontalAlignment="Right" Margin="350 0 0 0" Foreground="White" Text="开播计时：" />
+                <TextBlock x:Name="djs" HorizontalAlignment="Right" Foreground="White" Text="00:00:00" />
+            </StackPanel>
+            <ProgressBar Name="pbPlaylist"   Background="Black" BorderBrush="Black" Margin="5" Grid.Row="2" Height="10" Minimum="0" Maximum="{Binding PlaylistDuration,Mode=OneWay,FallbackValue=1}"
+                         Value="{Binding PlaylistPosition,Mode=OneWay,FallbackValue=0}"/>
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Center" Foreground="White" Text="{Binding ElementName=pbPlaylist,Path=Value,Converter={StaticResource SecondsToTimeCode}}" Margin="10 0 50 0"/>
+                <TextBlock HorizontalAlignment="Right" Foreground="White" Text="{Binding ElementName=pbPlaylist,Path=Maximum,Converter={StaticResource SecondsToTimeCode}}"/>
+                <TextBlock HorizontalAlignment="Right" Margin="350 0 0 0" Foreground="White" Text="播出结束：" />
+                <TextBlock HorizontalAlignment="Right" Foreground="White"  Text="{Binding PlaylistStopTime,StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" />
+            </StackPanel>
+
+            <!--<ListBox Grid.Row="4" ItemsSource="{Binding PlayRecords,Mode=OneWay}" MinHeight="50" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            </ListBox>-->
+        </Grid>
+        <!--<StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Content="Start" Margin="5" Command="{Binding StartPlayoutCommand}"/>
+            <Button Content="Stop" Margin="5" Command="{Binding StopPlayoutCommand}"/>
+            <Button Content="StartDelay" Margin="5" Command="{Binding StartDelayCommand}"/>
+            <Button Content="StopDelay" Margin="5" Command="{Binding StopDelayCommand}"/>
+        </StackPanel>-->
+    </Grid>
+</UserControl>

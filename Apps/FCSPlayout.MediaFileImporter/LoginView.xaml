@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="FCSPlayout.MediaFileImporter.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FCSPlayout.MediaFileImporter"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+        <TextBlock Text="用户名：" Margin="5"/>
+        <TextBox Grid.Column="1" Name="txtUser" Margin="5" TextChanged="txtUser_TextChanged"/>
+        <TextBlock Text="密码：" Grid.Row="1" Margin="5"/>
+        <PasswordBox Name="pwdBox" Grid.Row="1" Grid.Column="1" Margin="5" PasswordChanged="pwdBox_PasswordChanged"/>
+        
+        
+        <TextBlock Name="txtMessage" Foreground="Red" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5"/>
+    </Grid>
+</UserControl>

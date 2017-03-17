@@ -10,11 +10,17 @@ namespace FCSPlayout.Domain
     {
         private List<AutoPlayItem> _autoBillItems = new List<AutoPlayItem>();
         private SortedList<DateTime, TimingPlaybillItem> _timingBillItems = new SortedList<DateTime, TimingPlaybillItem>();
+
+        public PlaylistBuildData(long editId)
+        {
+            this.EditId = editId;
+            this.Result = new List<IPlayItem>();
+        }
+
         public DateTime StartTime { get; set; }
         public DateTime StopTime { get; set; }
         public void AddAuto(AutoPlayItem autoItem)
         {
-            //AutoPlaybillItem autoItem = (AutoPlaybillItem)billItem;
             if (!autoItem.IsAutoPadding)
             {
                 if (_autoBillItems.Count > 0)
@@ -58,5 +64,19 @@ namespace FCSPlayout.Domain
         {
             get { return _timingBillItems.Count > 0; }
         }
+
+        public long EditId { get; private set; }
+
+        internal void AddResult(IPlayItem playItem)
+        {
+            var autoItem = playItem as AutoPlayItem;
+            if (autoItem != null)
+            {
+                autoItem.EditId = this.EditId;
+            }
+            this.Result.Add(playItem);
+        }
+
+        public IList<IPlayItem> Result { get; private set; }
     }
 }

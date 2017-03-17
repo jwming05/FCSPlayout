@@ -1,0 +1,33 @@
+﻿<Window x:Class="FCSPlayout.WPFApp.FormatWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FCSPlayout.WPFApp"
+        mc:Ignorable="d"
+        Title="LiveWindow" Height="300" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+
+        <TextBlock Text="Video Fromat:" Margin="5" Grid.Row="0"/>
+        <local:VideoFormatComboBox x:Name="videoFormatComboBox" Grid.Row="0" Grid.Column="1" Margin="5"/>
+
+        <TextBlock Text="Audio Fromat:" Margin="5" Grid.Row="1"/>
+        <local:AudioFormatComboBox x:Name="audioFormatComboBox" Grid.Row="1" Grid.Column="1" Margin="5"/>
+
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Button Content="确定" Margin="5" Padding="5" Name="btnOK" Click="btnOK_Click"/>
+            <Button Content="取消" Margin="5" Padding="5" Name="btnCancel" Click="btnCancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

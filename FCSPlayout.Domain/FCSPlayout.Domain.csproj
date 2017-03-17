@@ -30,6 +30,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -41,30 +59,65 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationService.cs" />
+    <Compile Include="AutoPaddingMediaSource.cs" />
+    <Compile Include="DefaultDateTimeService.cs" />
+    <Compile Include="Exceptions\InvalidPlayRangeException.cs" />
+    <Compile Include="Abstract\IChannelSwitcher.cs" />
+    <Compile Include="Abstract\IDateTimeService.cs" />
+    <Compile Include="Abstract\IFileMediaSource.cs" />
+    <Compile Include="Abstract\ILog.cs" />
+    <Compile Include="Abstract\IPlayItemCollection.cs" />
+    <Compile Include="Abstract\IPlaylist2.cs" />
+    <Compile Include="Abstract\IPlayParameters.cs" />
+    <Compile Include="Abstract\IRangeMarkable.cs" />
+    <Compile Include="IPlayItemCollection2.cs" />
+    <Compile Include="MediaSourceCategory.cs" />
+    <Compile Include="MPlaylistSettings.cs" />
+    <Compile Include="Abstract\IApplicationExitAware.cs" />
+    <Compile Include="Abstract\ITimer.cs" />
+    <Compile Include="Abstract\ITimerAware.cs" />
+    <Compile Include="MediaItem.cs" />
+    <Compile Include="Concrete\NullMediaSource.cs" />
+    <Compile Include="MRendererSettings.cs" />
+    <Compile Include="PagingItems.cs" />
     <Compile Include="Concrete\AutoPlaybillItem.cs" />
     <Compile Include="Concrete\AutoPlayItem.cs" />
     <Compile Include="Concrete\PlaylistEditor.cs" />
     <Compile Include="Concrete\TimingPlaybillItem.cs" />
-    <Compile Include="IMediaSource.cs" />
-    <Compile Include="InvalidTimeException.cs" />
-    <Compile Include="IPlaybillItem.cs" />
-    <Compile Include="IPlayItem.cs" />
-    <Compile Include="IPlaylist.cs" />
-    <Compile Include="IPlaylistEditor.cs" />
-    <Compile Include="IPlayoutConfiguration.cs" />
-    <Compile Include="IPlaySource.cs" />
+    <Compile Include="Abstract\IMediaFilePathResolver.cs" />
+    <Compile Include="Abstract\IMediaSource.cs" />
+    <Compile Include="Exceptions\InvalidTimeException.cs" />
+    <Compile Include="Abstract\IPlaybillItem.cs" />
+    <Compile Include="Abstract\IPlayItem.cs" />
+    <Compile Include="Abstract\IPlaylist.cs" />
+    <Compile Include="Abstract\IPlaylistEditor.cs" />
+    <Compile Include="Abstract\IPlayoutConfiguration.cs" />
+    <Compile Include="Abstract\IPlaySource.cs" />
+    <Compile Include="MediaFileDurationGetter.cs" />
+    <Compile Include="Enums\MediaFileStorage.cs" />
+    <Compile Include="PagingInfo.cs" />
+    <Compile Include="PasswordProcessor.cs" />
     <Compile Include="PlaybillItem.cs" />
-    <Compile Include="PlaybillItemCategory.cs" />
+    <Compile Include="Enums\PlayScheduleMode.cs" />
     <Compile Include="Concrete\PlaylistBuilder.cs" />
     <Compile Include="Concrete\PlaylistBuildData.cs" />
     <Compile Include="Concrete\PlayoutConfiguration.cs" />
     <Compile Include="Helper\PlayoutUtils.cs" />
     <Compile Include="Concrete\Playlist.cs" />
-    <Compile Include="PlaylistSegment.cs" />
+    <Compile Include="Concrete\Playlist2.cs" />
+    <Compile Include="PlayoutSettings.cs" />
     <Compile Include="PlayRange.cs" />
     <Compile Include="Concrete\PlaySource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StartTimeValidationEventArgs.cs" />
+    <Compile Include="TimeCodeUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FCSPlayout.CG\FCSPlayout.CG.csproj">
+      <Project>{1cfebc86-db01-4aa6-ab0d-d855da674d10}</Project>
+      <Name>FCSPlayout.CG</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

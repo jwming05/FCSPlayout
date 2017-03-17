@@ -3,31 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FCSPlayout.CG;
 
 namespace FCSPlayout.Domain
 {
-    internal class PlaySource : IPlaySource
+    public class PlaySource : IPlaySource
     {
         internal static PlaySource CreateAutoPadding(TimeSpan duration)
         {
-            return new PlaySource(PlayoutConfiguration.Current.AutoPaddingMediaSource, new Domain.PlayRange(duration));
+            var mediaItem = new MediaItem(PlayoutConfiguration.Current.AutoPaddingMediaSource, new Domain.PlayRange(duration));
+            return new PlaySource(mediaItem);
         }
 
-        public PlaySource(IMediaSource mediaSource)
+        
+        public PlaySource(MediaItem mediaItem)
         {
-            if (mediaSource.Duration != null)
+            if (mediaItem.Source.Duration != null)
             {
-                PlayoutUtils.ValidatePlayDuration(mediaSource.Duration.Value);
+                PlayoutUtils.ValidatePlayDuration(mediaItem.Source.Duration.Value);
             }
 
-            this.MediaSource = mediaSource;
-        }
-
-        public PlaySource(IMediaSource mediaSource,PlayRange playRange)
-            :this(mediaSource)
-        {
-            PlayoutUtils.ValidatePlayDuration(playRange.Duration);
-            this.PlayRange = playRange;
+            //mediaItem.Source.ValidatePlayRange(mediaItem.PlayRange);
+            this.MediaSource = mediaItem.Source;
+            this.PlayRange = mediaItem.PlayRange;
         }
 
         public IMediaSource MediaSource
@@ -35,9 +33,27 @@ namespace FCSPlayout.Domain
             get;private set;
         }
 
-        public PlayRange? PlayRange
+        public PlayRange PlayRange
         {
             get;private set;
+        }
+
+        //public IPlayParameters Parameters
+        //{
+        //    get;set;
+        //}
+
+        public string Title
+        {
+            get
+            {
+                return this.MediaSource.Title;
+            }
+        }
+
+        public CGItemCollection CGItems
+        {
+            get;set;
         }
     }
 }

@@ -1,0 +1,45 @@
+﻿<Window x:Class="FCSPlayout.WPFApp.LiveWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FCSPlayout.WPFApp"
+        mc:Ignorable="d"
+        Title="LiveWindow" Height="300" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Video:" Margin="5"/>
+        <local:LiveDeviceComboBox x:Name="videoComboBox" LiveDeviceType="Video" Grid.Column="1" Margin="5"
+                                  DownStream="{Binding ElementName=videoLineInComboBox}"/>
+
+        <TextBlock Text="Video Line In:" Margin="5" Grid.Row="1"/>
+        <local:LiveDeviceComboBox x:Name="videoLineInComboBox" LiveDeviceType="VideoLineIn" Grid.Row="1" Grid.Column="1" Margin="5"
+                                  DownStream="{Binding ElementName=videoFormatComboBox}"/>
+
+        <TextBlock Text="Audio:" Margin="5" Grid.Row="2"/>
+        <local:LiveDeviceComboBox x:Name="audioComboBox" LiveDeviceType="Audio" Grid.Row="2" Grid.Column="1" Margin="5"
+                                  DownStream="{Binding ElementName=audioLineInComboBox}"/>
+
+        <TextBlock Text="Audio Line In:" Margin="5" Grid.Row="3"/>
+        <local:LiveDeviceComboBox x:Name="audioLineInComboBox" LiveDeviceType="AudioLineIn" Grid.Row="3" Grid.Column="1" Margin="5"
+                                  DownStream="{Binding ElementName=audioFormatComboBox}"/>
+
+        <TextBlock Text="Video Fromat:" Margin="5" Grid.Row="4"/>
+        <local:VideoFormatComboBox x:Name="videoFormatComboBox" Grid.Row="4" Grid.Column="1" Margin="5"/>
+
+        <TextBlock Text="Audio Fromat:" Margin="5" Grid.Row="5"/>
+        <local:AudioFormatComboBox x:Name="audioFormatComboBox" Grid.Row="5" Grid.Column="1" Margin="5"/>
+    </Grid>
+</Window>

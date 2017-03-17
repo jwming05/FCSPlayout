@@ -18,7 +18,7 @@ namespace FCSPlayout.Domain
 
         internal static PlayRange Merge(PlayRange range1, PlayRange range2)
         {
-            if (CanMerge(range1, range2)) throw new InvalidOperationException();
+            if (!CanMerge(range1, range2)) throw new InvalidOperationException();
 
             var startPos = range1.StartPosition < range2.StartPosition ? range1.StartPosition : range2.StartPosition;
 
