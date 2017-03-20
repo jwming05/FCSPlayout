@@ -35,7 +35,8 @@ namespace FCSPlayout.PlayEngine
         private static void SetProperties(MPlaylistClass mplaylist)
         {
             mplaylist.PropsSet("loop", "false");
-            mplaylist.PropsSet("playlist.on_next", "pause_out"/*"stop"*/);
+            //mplaylist.PropsSet("playlist.on_next", "pause_out"/*"stop"*/);
+            mplaylist.PropsSet("playlist.on_next", "stop");
             mplaylist.PropsSet("background_rewind ", "true");
         }
 

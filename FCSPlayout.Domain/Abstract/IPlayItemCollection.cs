@@ -15,5 +15,10 @@ namespace FCSPlayout.Domain
         bool Contains(IPlayItem playItem);
         void Clear();
         void Append(IList<IPlayItem> playItems);
+
+        bool IsDirty { get; set; }
+
+        void ValidateTimeRange(DateTime startTime, TimeSpan duration);
+        void ValidateTimeRange(DateTime startTime, TimeSpan duration, IPlayItem excludeItem);
     }
 }

@@ -8,9 +8,9 @@ using MLCHARGENLib;
 
 namespace FCSPlayout.CG
 {
+    [Serializable]
     public class MLCGTickerItem:MLCGGenericItem
     {
-
         protected override void Attach(CoMLCharGen charGen, string id)
         {
             charGen.TickerAddNew("<ticker type='crawl'/>", this.X, this.Y, this.Width, this.Height, 

@@ -5,6 +5,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using FCSPlayout.WPFApp.Models;
 
 namespace FCSPlayout.WPFApp.Views
 {
@@ -26,7 +27,7 @@ namespace FCSPlayout.WPFApp.Views
                 new FrameworkPropertyMetadata(null, OnLogPropertyChanged));
 
         public static readonly DependencyProperty SelectedPlayItemProperty =
-            DependencyProperty.Register("SelectedPlayItem", typeof(IPlayItem), typeof(PlayoutView),
+            DependencyProperty.Register("SelectedPlayItem", typeof(BindablePlayItem), typeof(PlayoutView),
                 new FrameworkPropertyMetadata(null, OnSelectedPlayItemPropertyChanged));
 
         private static void OnPlaylistPropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
@@ -46,12 +47,12 @@ namespace FCSPlayout.WPFApp.Views
 
         private static void OnSelectedPlayItemPropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
         {
-            ((PlayoutView)dpObj).OnSelectedPlayItemChanged((IPlayItem)e.OldValue, (IPlayItem)e.NewValue);
+            ((PlayoutView)dpObj).OnSelectedPlayItemChanged((BindablePlayItem)e.OldValue, (BindablePlayItem)e.NewValue);
         }
 
-        private void OnSelectedPlayItemChanged(IPlayItem oldValue, IPlayItem newValue)
+        private void OnSelectedPlayItemChanged(BindablePlayItem oldValue, BindablePlayItem newValue)
         {
-            _viewModel.SelectedPlayItem = this.SelectedPlayItem;
+            _viewModel.SelectedPlayItem = this.SelectedPlayItem==null ? null : this.SelectedPlayItem.PlayItem;
         }
 
         private void OnLogChanged(ILog oldValue, ILog newValue)
@@ -124,9 +125,9 @@ namespace FCSPlayout.WPFApp.Views
             set { SetValue(LogProperty, value); }
         }
 
-        public IPlayItem SelectedPlayItem
+        public BindablePlayItem SelectedPlayItem
         {
-            get { return (IPlayItem)GetValue(SelectedPlayItemProperty); }
+            get { return (BindablePlayItem)GetValue(SelectedPlayItemProperty); }
             set { SetValue(SelectedPlayItemProperty, value); }
         }
 

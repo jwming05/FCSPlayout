@@ -2,6 +2,7 @@
 
 namespace FCSPlayout.Domain
 {
+    [Serializable]
     public abstract class PlaybillItem : IPlaybillItem
     {
         protected PlaybillItem(IPlaySource playSource, PlayScheduleMode scheduleMode)
@@ -25,6 +26,13 @@ namespace FCSPlayout.Domain
         {
             get;protected set;
         }
+
+        IPlaybillItem IPlaybillItem.Clone()
+        {
+            return this.Clone();
+        }
+
+        protected abstract PlaybillItem Clone();
 
         public Guid Id { get; set; }
         public static PlaybillItem Timing(MediaItem mediaItem, DateTime startTime)

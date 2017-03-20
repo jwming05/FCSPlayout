@@ -12,5 +12,15 @@ namespace FCSPlayout.Domain
         void Start();
         void Stop();
         void OnTimer();
+
+        IPlayItem NextPlayItem { get; set; }
+        IPlayItem CurrentPlayItem { get; set; }
+
+        bool CanForcePlay(IPlayItem playItem);
+        //void ForcePlay(IPlayItem playItem);
+
+        bool CanDelete(IPlayItem playItem);
+
+        void SendPlaylistSyncRequest();
     }
 }

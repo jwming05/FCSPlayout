@@ -37,5 +37,14 @@ namespace FCSPlayout.Domain
         {
             throw new NotSupportedException();
         }
+
+        public IMediaSource Clone()
+        {
+            var source = this;
+            return new NullMediaSource(source.Title,source.Duration.Value)
+            {
+                Id = source.Id,
+            };
+        }
     }
 }

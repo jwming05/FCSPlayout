@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FCSPlayout.AppInfrastructure
 {
+    [Serializable]
     public class ChannelMediaSource : MediaSourceBase, IChannelMediaSource
     {
         
@@ -32,6 +33,13 @@ namespace FCSPlayout.AppInfrastructure
         public override PlayRange? Adjust(PlayRange playRange)
         {
             return new PlayRange(TimeSpan.Zero, playRange.Duration);
+        }
+
+        public override IMediaSource Clone()
+        {
+            var result = new ChannelMediaSource(this.Channel);
+            result.Id = this.Id;
+            return result;
         }
     }
 }

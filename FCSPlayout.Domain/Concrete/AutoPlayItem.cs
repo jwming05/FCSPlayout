@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace FCSPlayout.Domain
 {
+    [Serializable]
     public class AutoPlayItem : IPlayItem
     {
         internal static AutoPlayItem CreateAutoPadding(DateTime startTime, TimeSpan duration)
@@ -126,6 +127,17 @@ namespace FCSPlayout.Domain
 
             first = new AutoPlayItem(this.PlaybillItem, firstRange);
             second = new AutoPlayItem(this.PlaybillItem, secondRange);
+        }
+
+        public IPlayItem Clone()
+        {
+            var result = new AutoPlayItem(this.PlaybillItem.Clone());
+            result._playDuration = this._playDuration;
+            result._playRange = this._playRange;
+            result.Id = this.Id;
+            result.StartTime = this.StartTime;
+
+            return result;
         }
     }
 

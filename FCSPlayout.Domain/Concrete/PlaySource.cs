@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FCSPlayout.CG;
+﻿using FCSPlayout.CG;
+using System;
 
 namespace FCSPlayout.Domain
 {
+    [Serializable]
     public class PlaySource : IPlaySource
     {
         internal static PlaySource CreateAutoPadding(TimeSpan duration)
@@ -15,7 +12,8 @@ namespace FCSPlayout.Domain
             return new PlaySource(mediaItem);
         }
 
-        
+        private PlayRange _playRange;
+
         public PlaySource(MediaItem mediaItem)
         {
             if (mediaItem.Source.Duration != null)
@@ -35,7 +33,12 @@ namespace FCSPlayout.Domain
 
         public PlayRange PlayRange
         {
-            get;private set;
+            get { return _playRange; }
+            set
+            {
+                this.MediaSource.ValidatePlayRange(value);
+                _playRange = value;
+            }
         }
 
         //public IPlayParameters Parameters
@@ -54,6 +57,19 @@ namespace FCSPlayout.Domain
         public CGItemCollection CGItems
         {
             get;set;
+        }
+
+        public IPlaySource Clone()
+        {
+            //var source = this;
+            var mediaItem = new MediaItem(this.MediaSource.Clone(), this.PlayRange);
+            var result = new PlaySource(mediaItem);
+            if (this.CGItems != null)
+            {
+                result.CGItems = this.CGItems.Clone();
+            }
+            
+            return result;
         }
     }
 }

@@ -47,39 +47,32 @@ namespace FCSPlayout.WPFApp
 
         private void OnButtonClick(object sender, RoutedEventArgs e)
         {
-            RadioButton rb = sender as RadioButton;
-            if (rb != null)
-            {
-                BMDSwitcherInputInfo info = rb.Tag as BMDSwitcherInputInfo;
-                if (info != null)
-                {
-                    ChannelSwitcher.Instance.Switch(info.Name);
-
-                    //if (info.Value == curProgram.value)
-                    //{
-                    //    r.IsChecked = true;
-                    //    break;
-                    //}
-                }
-            }
-            //throw new NotImplementedException();
+            //RadioButton rb = sender as RadioButton;
+            //if (rb != null)
+            //{
+            //    BMDSwitcherInputInfo info = rb.Tag as BMDSwitcherInputInfo;
+            //    if (info != null)
+            //    {
+            //        ChannelSwitcher.Instance.Switch(info.Name);
+            //    }
+            //}
         }
 
         private void OnCurrentProgramChanged(object sender, EventArgs e)
         {
-            var curProgram = ChannelSwitcher.Instance.CurrentProgram;
-            foreach(var r in _radioButtons)
-            {
-                BMDSwitcherInputInfo info = r.Tag as BMDSwitcherInputInfo;
-                if (info != null)
-                {
-                    if (info.Value == curProgram.value)
-                    {
-                        r.IsChecked = true;
-                        break;
-                    }
-                }
-            }
+            //var curProgram = ChannelSwitcher.Instance.CurrentProgram;
+            //foreach(var r in _radioButtons)
+            //{
+            //    BMDSwitcherInputInfo info = r.Tag as BMDSwitcherInputInfo;
+            //    if (info != null)
+            //    {
+            //        if (info.Value == curProgram.value)
+            //        {
+            //            r.IsChecked = true;
+            //            break;
+            //        }
+            //    }
+            //}
         }
     }
 }

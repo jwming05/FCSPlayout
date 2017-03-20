@@ -10,6 +10,8 @@ namespace FCSPlayout.PlayEngine
         private IPlayerItem _currentItem;
         private IPlaylist2 _playlist;
         private LoopPlayToken _loopPlayToken;
+        private bool _isRunning=false;
+        private bool _forcePlayRequest = false;
 
         public event EventHandler<PlayerItemEventArgs> CurrentPlayItemChanged;
         public event EventHandler<PlayerItemEventArgs> NextPlayItemChanged;
@@ -62,10 +64,15 @@ namespace FCSPlayout.PlayEngine
 
         public void OnTimer()
         {
-            if (_loopPlayToken == null)
+            if (_isRunning && _loopPlayToken == null)
             {
                 _playlist.OnTimer();
                 _scheduler.OnTimer();
+
+                if (_forcePlayRequest)
+                {
+                    _forcePlayRequest = false;
+                }
             }
         }
 
@@ -73,12 +80,18 @@ namespace FCSPlayout.PlayEngine
         {
             _playlist.Start();
             _scheduler.Start();
+
+            _isRunning = true;
         }
 
         public void Stop()
         {
             _scheduler.Stop();
             _playlist.Stop();
+
+            _isRunning = false;
+            _loopPlayToken = null;
+            _forcePlayRequest = false;
         }
 
         public void Dispose()
@@ -86,53 +99,79 @@ namespace FCSPlayout.PlayEngine
         }
 
         #region
-        public bool CanStopDelay()
+        public bool CanStopDelay(ILoopPlayToken token=null)
         {
-            return _loopPlayToken != null;
+            return _isRunning && !_forcePlayRequest && _loopPlayToken != null && _loopPlayToken==token;
         }
 
         public bool CanStartDelay()
         {
-            return _loopPlayToken==null && _nextItem == null && _currentItem != null && _playlist.CanEnterLoop(_currentItem.PlayItem);
+            return _isRunning && !_forcePlayRequest && _loopPlayToken == null && _nextItem == null && _currentItem != null && _currentItem.MediaSource.Category == MediaSourceCategory.External;
         }
 
         public bool CanForcePlay(IPlayItem playItem)
         {
-            return _loopPlayToken == null && _nextItem == null && _currentItem != null && _playlist.CanForcePlay(playItem);
+            return _isRunning && !_forcePlayRequest && _loopPlayToken == null && _nextItem == null && _currentItem != null && _currentItem.PlayItem != playItem && _playlist.CanForcePlay(playItem);
         }
 
-        public ILoopPlayToken StartDelay()
+        public bool StartDelay(out ILoopPlayToken token)
         {
+            token = null;
             if (CanStartDelay())
             {
-                _loopPlayToken = new LoopPlayToken();
-                _loopPlayToken.RequestStop += LoopPlayToken_RequestStop;
-                return _loopPlayToken;
+                if (_currentItem.PlayerToken.RemainTime >= TimeSpan.FromSeconds(2.0))
+                {
+                    _loopPlayToken = new LoopPlayToken();
+                    _loopPlayToken.RequestStop += LoopPlayToken_RequestStop;
+                    token = _loopPlayToken;
+                    return true;
+                }
             }
 
-            throw new InvalidOperationException();
+            return false;
         }
 
         private void LoopPlayToken_RequestStop(object sender, EventArgs e)
         {
-            StopDelay();
+            StopDelay(sender as ILoopPlayToken);
         }
 
-        private void StopDelay()
+        private void StopDelay(ILoopPlayToken token)
         {
-            if (CanStopDelay())
+            if (CanStopDelay(token))
             {
                 _loopPlayToken.RequestStop -= LoopPlayToken_RequestStop;
                 _loopPlayToken = null;
             }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+            
         }
 
-        public void ForcePlay(IPlayItem playItem)
+        public bool ForcePlay(IPlayItem playItem)
         {
+            bool result = false;
             if (CanForcePlay(playItem))
             {
-                _playlist.ForcePlay(playItem);
+                DateTime now = DefaultDateTimeService.Instance.GetLocalNow();
+                var remainDuration = _currentItem.LoadRange.Duration - now.Subtract(_currentItem.StartTime);
+                if (remainDuration >= TimeSpan.FromSeconds(2.0))
+                {
+                    using (var editor = (IPlaylistEditor2)_playlist.Edit())
+                    {
+                        result= editor.ForcePlay(playItem, now.AddSeconds(1.0));
+                    }
+
+                    if (result)
+                    {
+                        _forcePlayRequest = true;
+                        //this.OnTimer();
+                    }
+                }
             }
+            return result;
         }
         #endregion
 

@@ -131,7 +131,7 @@
                     <views:PlayoutView Grid.Row="1" x:Name="playoutView" Timer="{Binding DataContext.Timer,Mode=OneWay,RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}" 
                                Playlist="{Binding Playlist,ElementName=playbillView}" 
                                Log="{Binding ElementName=logView,Path=.}" 
-                               SelectedPlayItem="{Binding SelectedPlayItem,ElementName=playbillView,Mode=OneWay}"/>
+                               SelectedPlayItem="{Binding DataContext.SelectedPlayItem,ElementName=playbillView,Mode=OneWay}"/>
                 </Grid>
             </Border>
             <TabControl  Margin="0 10 0 0 " Grid.Row="1"  BorderBrush="#D29A00" BorderThickness="1 1 0 1">

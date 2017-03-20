@@ -2,6 +2,7 @@
 
 namespace FCSPlayout.Domain
 {
+    [Serializable]
     public class TimingPlaybillItem : PlaybillItem, IPlayItem
     {
         public TimingPlaybillItem(IPlaySource playSource, DateTime startTime, bool isBreak)
@@ -48,6 +49,19 @@ namespace FCSPlayout.Domain
         public long EditId
         {
             get;set;
+        }
+
+        IPlayItem IPlayItem.Clone()
+        {
+            return (IPlayItem)this.Clone();
+        }
+
+        protected override PlaybillItem Clone()
+        {
+            var result= new TimingPlaybillItem(this.PlaySource.Clone(),
+                this.StartTime.Value, this.ScheduleMode == PlayScheduleMode.TimingBreak);
+            result.Id = this.Id;
+            return result;
         }
     }
 }

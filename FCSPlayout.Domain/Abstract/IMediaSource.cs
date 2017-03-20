@@ -15,6 +15,8 @@ namespace FCSPlayout.Domain
         MediaSourceCategory Category { get; }
         string Title { get; }
         Guid Id { get; }
+
+        IMediaSource Clone();
     }
 
     

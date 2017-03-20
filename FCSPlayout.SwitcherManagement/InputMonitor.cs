@@ -8,7 +8,10 @@ namespace FCSPlayout.SwitcherManagement
         public event SwitcherEventHandler LongNameChanged;
 
         private IBMDSwitcherInput m_input;
-        public IBMDSwitcherInput Input { get { return m_input; } }
+        public IBMDSwitcherInput Input
+        {
+            get { return m_input; }
+        }
 
         public InputMonitor(IBMDSwitcherInput input)
         {

@@ -41,10 +41,11 @@ namespace FCSPlayout.PlayEngine
         public void Load(IPlayerItem playerItem)
         {
             Debug.Assert(_nextItem == null);
-
+            
             PlayerToken playToken = new PlayerToken(playerItem, _dateTimeService);
             if (IsMLSource(playerItem.MediaSource))
             {
+                playToken.MPlaylist = _mplaylist;
                 M_Load(playToken);
             }
             else
@@ -116,10 +117,10 @@ namespace FCSPlayout.PlayEngine
 
                 if (_currentItem != null)
                 {
-                    if (IsMLSource(_currentItem.MediaSource))
-                    {
-                        M_StopCurrent();
-                    }
+                    //if (IsMLSource(_currentItem.MediaSource))
+                    //{
+                    //    M_StopCurrent();
+                    //}
 
                     OnCurrentItemStopped();
                 }
@@ -353,10 +354,10 @@ namespace FCSPlayout.PlayEngine
             ApplyParameters(playToken);
         }
 
-        private void M_StopCurrent()
-        {
-            ((PlayerToken)_currentItem.PlayerToken).MItem.FilePlayStop(0.0);
-        }
+        //private void M_StopCurrent()
+        //{
+        //    ((PlayerToken)_currentItem.PlayerToken).MItem.FilePlayStop(0.0);
+        //}
 
         private void M_PlayNext()
         {

@@ -1,4 +1,5 @@
-﻿using FCSPlayout.Domain;
+﻿using FCSPlayout.AppInfrastructure;
+using FCSPlayout.Domain;
 using FCSPlayout.WPF.Core;
 using FCSPlayout.WPFApp.Models;
 using Prism.Commands;
@@ -58,7 +59,7 @@ namespace FCSPlayout.WPFApp.ViewModels
 
             //_bindablePlayItems = new ObservableCollection<BindablePlayItem>();
             //_bindablePlayItems.CollectionChanged += BindablePlayItems_CollectionChanged;
-            _playItemCollection = new PlayItemCollection2();
+            _playItemCollection = new PlayItemCollection2(PlayControlService.Current);
             this.Playlist = new Playlist2(_playItemCollection);
 
             //_playItemList = new WPFApp.PlayItemList(_bindablePlayItems);
@@ -161,6 +162,8 @@ namespace FCSPlayout.WPFApp.ViewModels
                 this._deletePlayItemCommand.RaiseCanExecuteChanged();
 
                 _forcePlayCommand.RaiseCanExecuteChanged();
+
+                this.OnPropertyChanged(() => this.SelectedPlayItem);
             }
         }
 

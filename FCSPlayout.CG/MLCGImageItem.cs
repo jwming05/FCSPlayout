@@ -9,6 +9,7 @@ using System.IO;
 
 namespace FCSPlayout.CG
 {
+    [Serializable]
     public class MLCGImageItem : MLCGGenericItem
     {
         private static string _tempDir = null;

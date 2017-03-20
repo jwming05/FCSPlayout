@@ -15,7 +15,6 @@ namespace FCSPlayout.PlayEngine
         private PlayItemWrapper _currentPlayItem;
 
         private IChannelSwitcher _switcher;
-
         public event EventHandler CurrentPlayItemChanged;
         public event EventHandler NextPlayItemChanged;
 
@@ -89,10 +88,10 @@ namespace FCSPlayout.PlayEngine
 
             private set
             {
-                if (_currentPlayItem != null)
-                {
-                    _currentPlayItem.OnStopped();
-                }
+                //if (_currentPlayItem != null)
+                //{
+                //    _currentPlayItem.OnStopped();
+                //}
 
                 _currentPlayItem = value;
                 OnCurrentPlayItemChanged();
@@ -137,7 +136,7 @@ namespace FCSPlayout.PlayEngine
         private bool ShouldPlayNext()
         {
             DateTime now = _dateTimeService.GetLocalNow();
-            return this.NextPlayItem.ExpectedPlayTime.Subtract(now) <= TimeSpan.FromMilliseconds(150);
+            return this.NextPlayItem.ExpectedPlayTime.Subtract(now) <= PlayoutConfiguration.Current.PlayTimeTolerance;
         }
 
         private void PlayNext()
@@ -152,8 +151,8 @@ namespace FCSPlayout.PlayEngine
         private bool TryLoadNextPlayItem()
         {
             DateTime now = _dateTimeService.GetLocalNow();
-            DateTime minStartTime = now.Add(TimeSpan.FromSeconds(1));
-            DateTime maxStartTime = now.Add(TimeSpan.FromSeconds(3));
+            DateTime minStartTime = now.Add(PlayoutConfiguration.Current.MinLoadDelay);
+            DateTime maxStartTime = now.Add(PlayoutConfiguration.Current.MaxLoadDelay);
 
             var item = _playlist.GetNextPlayItem(minStartTime, maxStartTime);
             if (item == null) return false;
@@ -175,15 +174,22 @@ namespace FCSPlayout.PlayEngine
 
         internal class PlayItemWrapper : IPlayerItem
         {
-            private IPlayItem _playItem;
+            //private IPlayItem _playItem;
             private PlayRange _playRange;
             private IPlayerToken _playerToken;
 
             public PlayItemWrapper(IPlayItem item)
             {
-                this._playItem = item;
-                _playRange = item.PlayRange;
+                this.PlayItem = item;
+                _playRange =new PlayRange(item.PlayRange.StartPosition,item.PlayDuration);
+
                 this.ExpectedPlayTime = item.StartTime;
+                if (item.PlaybillItem.PlaySource.CGItems != null)
+                {
+                    this.CGItems = item.PlaybillItem.PlaySource.CGItems.Clone();
+                }
+                
+                this.MediaSource = item.PlaybillItem.PlaySource.MediaSource.Clone();
             }
 
             public PlayItemWrapper(IPlayItem item, DateTime expectedPlayTime) : this(item)
@@ -192,12 +198,12 @@ namespace FCSPlayout.PlayEngine
 
                 this.ExpectedPlayTime = expectedPlayTime;
 
-                var oldRange = item.PlayRange;
+                //var oldRange = item.PlayRange;
                 TimeSpan delta = expectedPlayTime.Subtract(item.StartTime);
 
-                var newStartPos = oldRange.StartPosition + delta;
+                var newStartPos = _playRange.StartPosition + delta;
 
-                _playRange = new PlayRange(newStartPos, oldRange.StopPosition - newStartPos);
+                _playRange = new PlayRange(newStartPos, _playRange.StopPosition - newStartPos);
             }
 
             public DateTime ExpectedPlayTime { get; private set; }
@@ -237,20 +243,24 @@ namespace FCSPlayout.PlayEngine
                 //}
             }
 
-            CGItemCollection IPlayerItem.CGItems
+            public CGItemCollection CGItems
             {
-                get
-                {
-                    return _playItem.PlaybillItem.PlaySource.CGItems;
-                }
+                //get
+                //{
+                //    return _playItem.PlaybillItem.PlaySource.CGItems;
+                //}
+                get;
+                private set;
             }
 
-            IMediaSource IPlayerItem.MediaSource
+            public IMediaSource MediaSource
             {
-                get
-                {
-                    return _playItem.PlaybillItem.PlaySource.MediaSource; 
-                }
+                //get
+                //{
+                //    return _playItem.PlaybillItem.PlaySource.MediaSource; 
+                //}
+                get;
+                private set;
             }
 
             //IPlayParameters IPlayerItem.PlayParameters
@@ -261,17 +271,18 @@ namespace FCSPlayout.PlayEngine
             //    }
             //}
 
-            public string Title
-            {
-                get { return _playItem.PlaybillItem.PlaySource.Title; }
-            }
+            //public string Title
+            //{
+            //    //get { return _playItem.PlaybillItem.PlaySource.Title; }
+            //}
 
             public IPlayItem PlayItem
             {
-                get
-                {
-                    return _playItem;
-                }
+                //get
+                //{
+                //    return _playItem;
+                //}
+                get;private set;
             }
 
             internal void SetStatus(PlayerItemStatus status)

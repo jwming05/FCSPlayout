@@ -125,7 +125,7 @@ namespace FCSPlayout.WPFApp.Models
         {
             if (CanStartDelay())
             {
-                _loopPlayToken= _innerPlayout.StartDelay(/*() => { }*/);
+                //_loopPlayToken= _innerPlayout.StartDelay(/*() => { }*/);
                 //OnStateChanged();
             }
         }

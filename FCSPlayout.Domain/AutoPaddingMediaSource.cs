@@ -41,5 +41,11 @@ namespace FCSPlayout.Domain
         {
             return new PlayRange(playRange.Duration);
         }
+
+        public IMediaSource Clone()
+        {
+            var source = this;
+            return new AutoPaddingMediaSource() { Id = source.Id };
+        }
     }
 }

@@ -107,7 +107,7 @@ namespace FCSPlayout.AppInfrastructure
                 RegistryKey machineIdKey = Registry.LocalMachine.OpenSubKey(_machineIdKeyPath, true);
                 if (machineIdKey == null)
                 {
-                    Registry.LocalMachine.CreateSubKey(_machineIdKeyPath);
+                    machineIdKey=Registry.LocalMachine.CreateSubKey(_machineIdKeyPath);
                 }
                 return machineIdKey;
             }

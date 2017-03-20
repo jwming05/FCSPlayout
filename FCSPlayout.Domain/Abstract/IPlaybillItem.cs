@@ -19,6 +19,8 @@ namespace FCSPlayout.Domain
         /// 获取播放源。
         /// </summary>
         IPlaySource PlaySource { get; }
+
+        IPlaybillItem Clone();
     }
 
     public static class PlaybillItemExtensions

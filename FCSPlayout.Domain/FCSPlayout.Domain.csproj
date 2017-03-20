@@ -71,7 +71,9 @@
     <Compile Include="Abstract\IPlaylist2.cs" />
     <Compile Include="Abstract\IPlayParameters.cs" />
     <Compile Include="Abstract\IRangeMarkable.cs" />
-    <Compile Include="IPlayItemCollection2.cs" />
+    <Compile Include="Abstract\IPlayItemCollection2.cs" />
+    <Compile Include="Abstract\IPlaylistEditor2.cs" />
+    <Compile Include="Abstract\IPlayControlService.cs" />
     <Compile Include="MediaSourceCategory.cs" />
     <Compile Include="MPlaylistSettings.cs" />
     <Compile Include="Abstract\IApplicationExitAware.cs" />
@@ -106,6 +108,14 @@
     <Compile Include="Helper\PlayoutUtils.cs" />
     <Compile Include="Concrete\Playlist.cs" />
     <Compile Include="Concrete\Playlist2.cs" />
+    <Compile Include="Concrete\PlaylistEditor2.cs" />
+    <Compile Include="PlayControlService\PlaylistRequestCategory.cs" />
+    <Compile Include="PlayControlService\PlaylistRequestEventArgs.cs" />
+    <Compile Include="PlayControlService\PlaylistRequestMessage.cs" />
+    <Compile Include="PlayControlService\PlaylistResponseEventArgs.cs" />
+    <Compile Include="PlayControlService\PlaylistResponseMessage.cs" />
+    <Compile Include="PlayControlService\RequestMessageToken.cs" />
+    <Compile Include="PlayControlService\ResponseMessageToken.cs" />
     <Compile Include="PlayoutSettings.cs" />
     <Compile Include="PlayRange.cs" />
     <Compile Include="Concrete\PlaySource.cs" />

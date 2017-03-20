@@ -30,6 +30,8 @@ namespace FCSPlayout.Domain
         /// 该播放范围包含的时长大于<seealso cref="PlayDuration"/>。
         /// </remarks>
         PlayRange PlayRange { get; }
+
+        IPlayItem Clone();
     }
 
     public static class PlayItemExtensions

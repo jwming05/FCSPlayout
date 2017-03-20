@@ -8,6 +8,7 @@ using MLCHARGENLib;
 
 namespace FCSPlayout.CG
 {
+    [Serializable]
     public class MLCGTextItem : MLCGGenericItem
     {
         //#AABBGGRR

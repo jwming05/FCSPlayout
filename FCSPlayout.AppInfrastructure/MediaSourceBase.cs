@@ -4,6 +4,7 @@ using System;
 
 namespace FCSPlayout.AppInfrastructure
 {
+    [Serializable]
     public abstract class MediaSourceBase : IMediaSource
     {
         internal static MediaSourceBase Create(MediaSourceEntity entity)
@@ -26,8 +27,9 @@ namespace FCSPlayout.AppInfrastructure
         }
 
         protected MediaSourceBase(MediaSourceCategory category, MediaSourceEntity entity)
+            :this(category)
         {
-            this.Category = category;
+            //this.Category = category;
 
             this.Title = entity.Title;
             var fileEntity = entity as MediaFileEntity;
@@ -68,5 +70,7 @@ namespace FCSPlayout.AppInfrastructure
         {
             return playRange;
         }
+
+        public abstract IMediaSource Clone();
     }
 }

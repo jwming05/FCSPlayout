@@ -15,6 +15,7 @@ namespace FCSPlayout.Domain
         int FindFirstIndex(int startIndex, Func<IPlayItem, bool> predicate);
 
         void ValidateTimeRange(DateTime startTime, TimeSpan duration);
+        void ValidateTimeRange(DateTime startTime, TimeSpan duration,IPlayItem excludeItem);
 
         int Count { get; }
 
@@ -25,5 +26,7 @@ namespace FCSPlayout.Domain
 
         void Clear();
         void Append(IList<IPlayItem> playItems);
+
+        bool CanDelete(IPlayItem playItem);
     }
 }

@@ -12,13 +12,15 @@ namespace FCSPlayout.Domain
         /// <summary>
         /// 获取应用于媒体源的入出点。
         /// </summary>
-        PlayRange PlayRange { get; }
+        PlayRange PlayRange { get; set; }
 
         //IPlayParameters Parameters { get; }
 
         string Title { get; }
 
         CGItemCollection CGItems { get; set; }
+
+        IPlaySource Clone();
     }
 
     public static class PlaySourceExtensions

@@ -4,6 +4,7 @@ using System;
 
 namespace FCSPlayout.AppInfrastructure
 {
+    [Serializable]
     public class FileMediaSource : MediaSourceBase, IFileMediaSource
     {
         public FileMediaSource(MediaFileEntity entity) : base(MediaSourceCategory.File, entity)
@@ -83,6 +84,13 @@ namespace FCSPlayout.AppInfrastructure
                 return null;
             }
             return playRange;
+        }
+
+        public override IMediaSource Clone()
+        {
+            var result = new FileMediaSource(this.FileEntity);
+            result.AudioGain = this.AudioGain;
+            return result;
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Xml.Linq;
 
 namespace FCSPlayout.CG
 {
+    [Serializable]
     public abstract class MLCGGenericItem:MLCGItemBase
     {
         protected MLCGGenericItem()

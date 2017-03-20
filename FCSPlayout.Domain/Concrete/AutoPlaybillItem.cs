@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace FCSPlayout.Domain
 {
+    [Serializable]
     public class AutoPlaybillItem: PlaybillItem
     {
         public bool IsAutoPadding { get; private set; }
@@ -19,6 +20,14 @@ namespace FCSPlayout.Domain
         public AutoPlaybillItem(IPlaySource playSource)
             :base(playSource,PlayScheduleMode.Auto)
         {
+        }
+
+        protected override PlaybillItem Clone()
+        {
+            var result = new AutoPlaybillItem(this.PlaySource.Clone());
+            result.IsAutoPadding = this.IsAutoPadding; // ?
+            result.Id = this.Id;
+            return result;
         }
     }
 }

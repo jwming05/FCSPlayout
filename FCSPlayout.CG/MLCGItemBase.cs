@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace FCSPlayout.CG
 {
+    [Serializable]
     public abstract class MLCGItemBase : CGItem
     {
         public sealed override string Attach(object obj)

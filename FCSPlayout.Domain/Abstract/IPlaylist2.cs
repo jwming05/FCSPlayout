@@ -9,12 +9,13 @@ namespace FCSPlayout.Domain
         DateTime? StartTime { get; }
         IPlayItem NextItem { get; set; }
         IPlayItem CurrentItem { get; set; }
+        //IPlayItem PreLoadItem { get; set; }
 
         IPlayItem GetNextPlayItem(DateTime minStartTime, DateTime maxStartTime);
         bool CanEnterLoop(IPlayItem playItem);
         void OnTimer();
         bool CanForcePlay(IPlayItem playItem);
-        void ForcePlay(IPlayItem playItem);
+        //void ForcePlay(IPlayItem playItem);
         void Start();
         void Stop();
     }

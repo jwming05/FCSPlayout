@@ -9,6 +9,7 @@ using System.Xml.Linq;
 
 namespace FCSPlayout.CG
 {
+    [Serializable]
     public class CGItemCollection : Collection<CGItem>
     {
         public CGItemCollection()

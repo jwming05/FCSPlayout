@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FCSPlayout.Entities
 {
     [Table("ChannelInfos")]
+    [Serializable]
     public class ChannelInfo : MediaSourceEntity, IEquatable<ChannelInfo>
     {
         public bool Special { get; set; }

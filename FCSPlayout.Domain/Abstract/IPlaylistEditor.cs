@@ -9,5 +9,10 @@ namespace FCSPlayout.Domain
         void InsertTiming(PlaybillItem billItem);
         void ClearAll();
         void Append(IList<IPlayItem> playItems);
+        void Delete(IPlayItem playItem);
+
+        event EventHandler Disposed;
+
+        //void ChangeStartTime(IPlayItem playItem, DateTime newStartTime);
     }
 }

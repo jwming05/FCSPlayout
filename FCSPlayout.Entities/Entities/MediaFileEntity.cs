@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FCSPlayout.Entities
 {
     [Table("MediaFiles")]
+    [Serializable]
     public class MediaFileEntity : MediaSourceEntity, IModificationTimestamp, IRangeMarkable
     {
         public string FileName { get; set; }
@@ -16,21 +17,6 @@ namespace FCSPlayout.Entities
         public DateTime CreationTime { get; set; }
 
         public DateTime ModificationTime { get; set; }
-
-        //public ENUM_AspectRatio AspectRatio
-        //{
-        //    get;set;
-        //}
-
-        //public MPFieldsType MPFieldsType
-        //{
-        //    get;set;
-        //}
-
-        //public ENUM_StretchMode StretchMode
-        //{
-        //    get;set;
-        //}
 
         public double Duration { get; set; }
 
@@ -53,7 +39,10 @@ namespace FCSPlayout.Entities
 
         public DateTime? DeleteTime { get; set; }
 
-        public UserEntity Creator { get; set; }
+        public UserEntity Creator
+        {
+            get;set;
+        }
 
         [ForeignKey("Creator")]
         public Guid CreatorId { get; set; }

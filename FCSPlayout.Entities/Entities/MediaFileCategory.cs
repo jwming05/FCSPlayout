@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FCSPlayout.Entities
 {
     [Table("MediaFileCategory")]
+    [Serializable]
     public class MediaFileCategory : IGuidIdentifier
     {
         [Key]

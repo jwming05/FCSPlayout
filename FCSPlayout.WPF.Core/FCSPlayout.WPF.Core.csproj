@@ -220,20 +220,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FCSPlayout.CG\FCSPlayout.CG.csproj">
-      <Project>{1cfebc86-db01-4aa6-ab0d-d855da674d10}</Project>
-      <Name>FCSPlayout.CG</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FCSPlayout.Domain\FCSPlayout.Domain.csproj">
-      <Project>{13e94826-defa-4246-ae86-0ab9c9606932}</Project>
-      <Name>FCSPlayout.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FCSPlayout.Entities\FCSPlayout.Entities.csproj">
-      <Project>{7855474c-5ec6-4c71-9fba-c8bbd44bf1c2}</Project>
-      <Name>FCSPlayout.Entities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="AddChannelMediaItemsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -317,6 +303,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FCSPlayout.CG\FCSPlayout.CG.csproj">
+      <Project>{1cfebc86-db01-4aa6-ab0d-d855da674d10}</Project>
+      <Name>FCSPlayout.CG</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FCSPlayout.Domain\FCSPlayout.Domain.csproj">
+      <Project>{13e94826-defa-4246-ae86-0ab9c9606932}</Project>
+      <Name>FCSPlayout.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FCSPlayout.Entities\FCSPlayout.Entities.csproj">
+      <Project>{7855474c-5ec6-4c71-9fba-c8bbd44bf1c2}</Project>
+      <Name>FCSPlayout.Entities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

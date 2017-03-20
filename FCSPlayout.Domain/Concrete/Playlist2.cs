@@ -48,12 +48,24 @@ namespace FCSPlayout.Domain
 
         public bool CanForcePlay(IPlayItem playItem)
         {
-            return false; // throw new NotImplementedException();
+            return _playItemCollection.CanForcePlay(playItem);
         }
 
-        public void ForcePlay(IPlayItem playItem)
+        //public void ForcePlay(IPlayItem playItem)
+        //{
+        //    if (CanForcePlay(playItem))
+        //    {
+        //        _playItemCollection.ForcePlay(playItem);
+        //    }
+        //    else
+        //    {
+        //        throw new InvalidOperationException();
+        //    }
+        //}
+
+        protected override PlaylistEditor CreateEditor()
         {
-            throw new NotImplementedException();
+            return new PlaylistEditor2(this);
         }
 
         public IPlayItem GetNextPlayItem(DateTime minStartTime, DateTime maxStartTime)
@@ -74,6 +86,27 @@ namespace FCSPlayout.Domain
         public void Stop()
         {
             _playItemCollection.Stop();
+        }
+
+        public IPlayItem NextItem
+        {
+            get { return _playItemCollection.NextPlayItem; }
+            set
+            {
+                _playItemCollection.NextPlayItem = value;
+            }
+        }
+        public IPlayItem CurrentItem { get; set; }
+
+        public override bool CanDelete(IPlayItem playItem)
+        {
+            return _playItemCollection.CanDelete(playItem);
+        }
+
+        protected override void OnEditorDisposed(long editId)
+        {
+            _playItemCollection.SendPlaylistSyncRequest();
+            //base.OnEditorDisposed(editId);
         }
     }
 }

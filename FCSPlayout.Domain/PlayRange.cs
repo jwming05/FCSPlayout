@@ -2,6 +2,7 @@
 
 namespace FCSPlayout.Domain
 {
+    [Serializable]
     public struct PlayRange:IEquatable<PlayRange>
     {
         #region Static Members

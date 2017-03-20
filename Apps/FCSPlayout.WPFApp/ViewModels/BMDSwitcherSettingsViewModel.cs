@@ -105,12 +105,13 @@ namespace FCSPlayout.WPFApp.ViewModels
 
         IEnumerable<BMDSwitcherInputInfo> CreateInputInfo(BMDSwitcherInfo switcherInfo)
         {
-            var switcherOperator = FCSPlayout.SwitcherManagement.SwitcherWrapper.Get(switcherInfo.Address);
+            return new List<BMDSwitcherInputInfo>();
+            //var switcherOperator = FCSPlayout.SwitcherManagement.SwitcherWrapper.Get(switcherInfo.Address);
             
-            foreach(var inputItem in switcherOperator.GetPrograms())
-            {
-                yield return new BMDSwitcherInputInfo { Name=inputItem.Item2,Value=inputItem.Item1 };
-            }
+            //foreach(var inputItem in switcherOperator.GetPrograms())
+            //{
+            //    yield return new BMDSwitcherInputInfo { Name=inputItem.Item2,Value=inputItem.Item1 };
+            //}
         }
 
         public string CurrentName

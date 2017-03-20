@@ -50,15 +50,29 @@ namespace FCSPlayout.Domain
                 throw new InvalidOperationException();
             }
 
-            _editor = new PlaylistEditor(this);
+            _editor = CreateEditor();
             _editor.Disposed += Editor_Disposed;
             return _editor;
         }
 
+        protected virtual PlaylistEditor CreateEditor()
+        {
+            return new PlaylistEditor(this);
+        }
         private void Editor_Disposed(object sender, EventArgs e)
         {
             long editId = _editor.Id;
+            if (_playItems.IsDirty)
+            {
+                OnEditorDisposed(editId);
+                _playItems.IsDirty = false;
+            }
             _editor = null;
+        }
+
+        protected virtual void OnEditorDisposed(long editId)
+        {
+
         }
 
         public IList<IPlayItem> GetPlayItems(int beginIndex, int endIndex)
@@ -86,33 +100,27 @@ namespace FCSPlayout.Domain
 
         public void ValidateTimeRange(DateTime startTime, TimeSpan duration)
         {
-            var e = new TimeValidationEventArgs(startTime);
-            OnValidateStartTime(e);
-            if (!e.IsValid)
-            {
-                throw new InvalidTimeException(startTime);
-            }
+            _playItems.ValidateTimeRange(startTime,duration);
 
-            ValidateTimeRange(startTime, startTime.Add(duration));
+            //var e = new TimeValidationEventArgs(startTime);
+            //OnValidateStartTime(e);
+            //if (!e.IsValid)
+            //{
+            //    throw new InvalidTimeException(startTime);
+            //}
+
+            //ValidateTimeRange(startTime, startTime.Add(duration));
         }
 
-        private void ValidateTimeRange(DateTime startTime, DateTime stopTime)
+        public void ValidateTimeRange(DateTime startTime, TimeSpan duration, IPlayItem excludeItem)
         {
-            for(int i = 0; i < _playItems.Count; i++)
-            {
-                var item = _playItems[i];
-                if (item.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing || item.PlaybillItem.ScheduleMode==PlayScheduleMode.TimingBreak)
-                {
-                    var startTime2 = item.StartTime;
-                    var stopTime2 = item.GetStopTime();
-
-                    if(stopTime>startTime2 && stopTime2 > startTime)
-                    {
-                        throw new ArgumentException();
-                    }
-                }
-            }
+            _playItems.ValidateTimeRange(startTime, duration, excludeItem);
         }
+
+        //private void ValidateTimeRange(DateTime startTime, DateTime stopTime, IPlayItem excludeItem)
+        //{
+
+        //}
 
         public bool Contains(IPlayItem playItem)
         {
@@ -162,5 +170,12 @@ namespace FCSPlayout.Domain
         {
             _playItems.Append(playItems);
         }
+
+        public virtual bool CanDelete(IPlayItem playItem)
+        {
+            return this.Contains(playItem);
+        }
+
+        
     }
 }

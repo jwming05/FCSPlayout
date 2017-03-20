@@ -30,6 +30,7 @@ namespace FCSPlayout.PlayEngine
 
         //internal string Id { get; private set; }
 
+        internal MPlaylistClass MPlaylist { get; set; }
         public CGItemCollection CGItems { get; private set; }
 
         public void Dispose()
@@ -39,11 +40,22 @@ namespace FCSPlayout.PlayEngine
                 Marshal.ReleaseComObject(this.MItem);
                 this.MItem = null;
             }
+
+            if (this.MPlaylist != null)
+            {
+                this.MPlaylist = null;
+            }
         }
 
+        private TimeSpan _position;
         public TimeSpan Position
         {
-            get;private set;
+            get { return _position; }
+            private set
+            {
+                _position = value;
+                this.RemainTime = this.LoadRange.Duration - _position;
+            }
         }
 
         public DateTime StartTime { get; internal set; }
@@ -54,9 +66,8 @@ namespace FCSPlayout.PlayEngine
             {
                 eMState mstate;
                 double dblRemain;
-
                 this.MItem.FileStateGet(out mstate, out dblRemain);
-
+                
                 if (mstate == eMState.eMS_Closed)
                 {
                     return;
@@ -67,12 +78,20 @@ namespace FCSPlayout.PlayEngine
                     double dblPos;
                     this.MItem.FilePosGet(out dblPos);
 
-                    this.RemainTime = TimeSpan.FromSeconds(dblRemain);
-                    this.Position = TimeSpan.FromSeconds(dblPos);
+                    //this.RemainTime = TimeSpan.FromSeconds(dblRemain);
+                    this.Position = TimeSpan.FromSeconds(dblPos)-this.LoadRange.StartPosition;
+                    if (this.MPlaylist != null)
+                    {
+                        this.MPlaylist.ObjectStateGet(out mstate);
+                        if (mstate == eMState.eMS_Stopped)
+                        {
+                            OnStopped();
+                        }
+                    }
                 }
                 else if(mstate!=eMState.eMS_Paused) // Error, Break, Stopped
                 {
-                    this.RemainTime = TimeSpan.Zero;
+                    //this.RemainTime = TimeSpan.Zero;
                     this.Position = this.LoadRange.Duration;
                     OnStopped();
                 }
@@ -83,14 +102,14 @@ namespace FCSPlayout.PlayEngine
                 var stopTime = this.StartTime.Add(this.LoadRange.Duration);
                 if (now >= stopTime)
                 {
-                    this.RemainTime = TimeSpan.Zero;
+                    //this.RemainTime = TimeSpan.Zero;
                     this.Position = this.LoadRange.Duration;
                     OnStopped();
                 }
                 else
                 {
                     this.Position = now.Subtract(this.StartTime);
-                    this.RemainTime = this.LoadRange.Duration - this.Position;
+                    //this.RemainTime = this.LoadRange.Duration - this.Position;
                 }
             }
         }

@@ -26,8 +26,16 @@ namespace FCSPlayout.Domain
 
         public PlayoutConfiguration()
         {
-            this.MinPlayDuration = TimeSpan.FromSeconds(5);
+            this.MinPlayDuration = TimeSpan.FromSeconds(4);
             this.AutoPaddingMediaSource = new AutoPaddingMediaSource();
+
+            this.PlayTimeTolerance = TimeSpan.FromMilliseconds(100);
+
+            this.MinLoadDelay = TimeSpan.FromSeconds(1);
+            this.MaxLoadDelay = TimeSpan.FromSeconds(2);
+
+            this.MinPreLoadDelay = TimeSpan.FromSeconds(1.5);
+            this.MaxPreLoadDelay= TimeSpan.FromSeconds(3);
         }
 
         public virtual IMediaSource AutoPaddingMediaSource
@@ -51,5 +59,27 @@ namespace FCSPlayout.Domain
         {
             get; set;
         }
+
+        public TimeSpan PlayTimeTolerance { get; set; }
+
+        /// <summary>
+        /// 获取或设置最小加载延迟。
+        /// </summary>
+        public TimeSpan MinLoadDelay { get; set; }
+
+        /// <summary>
+        /// 获取或设置最大加载延迟。
+        /// </summary>
+        public TimeSpan MaxLoadDelay { get; set; }
+
+        /// <summary>
+        /// 获取或设置最小预加载延迟。
+        /// </summary>
+        public TimeSpan MinPreLoadDelay { get; set; }
+
+        /// <summary>
+        /// 获取或设置最大预加载延迟。
+        /// </summary>
+        public TimeSpan MaxPreLoadDelay { get; set; }
     }
 }
