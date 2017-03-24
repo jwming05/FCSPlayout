@@ -81,7 +81,7 @@ namespace FCSPlayout.PlaybillEditor
                 if (item.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing || item.PlaybillItem.ScheduleMode == PlayScheduleMode.TimingBreak)
                 {
                     var startTime2 = item.StartTime;
-                    var stopTime2 = item.GetStopTime();
+                    var stopTime2 = item.CalculatedStopTime;
 
                     if (stopTime > startTime2 && stopTime2 > startTime)
                     {
@@ -106,7 +106,7 @@ namespace FCSPlayout.PlaybillEditor
                     item.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing || item.PlaybillItem.ScheduleMode == PlayScheduleMode.TimingBreak)
                 {
                     var startTime2 = item.StartTime;
-                    var stopTime2 = item.GetStopTime();
+                    var stopTime2 = item.CalculatedStopTime;
 
                     if (stopTime > startTime2 && stopTime2 > startTime)
                     {
@@ -114,6 +114,16 @@ namespace FCSPlayout.PlaybillEditor
                     }
                 }
             }
+        }
+
+        public bool CanClear()
+        {
+            return true;
+        }
+
+        public DateTime? GetStartTime()
+        {
+            return null;
         }
 
         public bool IsDirty

@@ -1,4 +1,5 @@
 ﻿using System;
+using FCSPlayout.CG;
 
 namespace FCSPlayout.Domain
 {
@@ -17,9 +18,9 @@ namespace FCSPlayout.Domain
             get;private set;
         }
 
-        public IPlaySource PlaySource
+        internal/*public*/ IPlaySource PlaySource
         {
-            get;private set;
+            get; private set;
         }
 
         public DateTime? StartTime
@@ -27,17 +28,50 @@ namespace FCSPlayout.Domain
             get;protected set;
         }
 
-        IPlaybillItem IPlaybillItem.Clone()
-        {
-            return this.Clone();
-        }
+        //IPlaybillItem IPlaybillItem.Clone()
+        //{
+        //    return this.Clone();
+        //}
 
-        protected abstract PlaybillItem Clone();
+        //protected abstract PlaybillItem Clone();
 
         public Guid Id { get; set; }
+
+        public IMediaSource MediaSource
+        {
+            get
+            {
+                return this.PlaySource.MediaSource;
+            }
+        }
+
+        public PlayRange PlayRange
+        {
+            get
+            {
+                return this.PlaySource.PlayRange;
+            }
+        }
+
+        public virtual string Title
+        {
+            get
+            {
+                return this.PlaySource.Title;
+            }
+        }
+
+        public CGItemCollection CGItems
+        {
+            get
+            {
+                return this.PlaySource.CGItems;
+            }
+        }
+
         public static PlaybillItem Timing(MediaItem mediaItem, DateTime startTime)
         {
-            return new TimingPlaybillItem(new PlaySource(mediaItem), startTime, false);
+            return new TimingPlaybillItem(new PlaySource(mediaItem.Source,mediaItem.PlayRange), startTime, false);
         }
 
         public static PlaybillItem Timing(IPlaySource playSource, DateTime startTime)
@@ -47,7 +81,7 @@ namespace FCSPlayout.Domain
 
         public static PlaybillItem Auto(MediaItem mediaItem)
         {
-            return new AutoPlaybillItem(new PlaySource(mediaItem));
+            return new AutoPlaybillItem(new PlaySource(mediaItem.Source,mediaItem.PlayRange));
         }
 
         public static PlaybillItem Auto(IPlaySource playSource)
@@ -57,7 +91,7 @@ namespace FCSPlayout.Domain
 
         public static PlaybillItem TimingBreak(MediaItem mediaItem, DateTime startTime)
         {
-            return new TimingPlaybillItem(new PlaySource(mediaItem), startTime, true);
+            return new TimingPlaybillItem(new PlaySource(mediaItem.Source,mediaItem.PlayRange), startTime, true);
         }
 
         public static PlaybillItem TimingBreak(IPlaySource playSource, DateTime startTime)

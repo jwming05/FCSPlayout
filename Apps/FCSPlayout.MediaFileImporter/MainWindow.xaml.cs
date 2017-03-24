@@ -1,10 +1,24 @@
-﻿using FCSPlayout.Domain;
+﻿
+using FCSPlayout.Domain;
+using FCSPlayout.Entities;
 using FCSPlayout.WPF.Core;
+using Prism.Interactivity.InteractionRequest;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace FCSPlayout.MediaFileImporter
@@ -14,14 +28,44 @@ namespace FCSPlayout.MediaFileImporter
     /// </summary>
     public partial class MainWindow : Window, IUploadProgressFeedback
     {
+      
         public MainWindow()
         {
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
             this.mediaItemListView.UploadProgressFeedback = this;
-           mw = this;
+           //mw = this;
+         
+        
 
             Debug.WriteLine("主线程：" + System.Threading.Thread.CurrentThread.ManagedThreadId);
+          
+            this.KeyUp += MainWindow_KeyUp;
+
+            //this.previewInteractionRequestTrigger.sou
+        }
+
+        private void MainWindow_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F5)
+            {
+
+                //if (this.playControl.canpause())
+                //{ 
+                //    this.playControl.pause();
+                //}
+                //else
+                //{
+                //    this.playControl.play();
+                //}
+            }
+           
+            
+        }
+
+        private void MainWindow_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -36,22 +80,30 @@ namespace FCSPlayout.MediaFileImporter
 
             var timer = new DispatcherTimer(DispatcherPriority.Send);
             timer.Interval = TimeSpan.FromMilliseconds(30);
-            timer.Tick += OnTimer_Tick;
             timer.Start();
-            
-            this.DataContext = new MainViewModel(new TimerAdapter(timer));
+            timer.Tick += OnTimer_Tick;
+            var viewModel= new MainViewModel(new TimerAdapter(timer));
+            this.playControl.Init(PlayoutRepository.GetMPlaylistSettings());
+            viewModel.Player = this.playControl;
+            this.DataContext = viewModel;
+
             //CbType.ItemsSource = Enum.GetValues(typeof(MPFieldsType));
             //CbMode.ItemsSource = Enum.GetValues(typeof(ENUM_StretchMode));
             //CbRatio.ItemsSource = Enum.GetValues(typeof(ENUM_AspectRatio));
             comboBoxAudioGain_Loaded(CbAg);
+            comboBoxMediaFileCategoryId_Loaded(CbMediaFileCategoryId);
+          
 
+      
+            mymediafilechannel(cece);
         }
 
+    
         private void OnTimer_Tick(object sender, EventArgs e)
         {
             //this.logView.OnTimer();
-            MLLicenseLib.MLLicenseManager.Instance.Timer();
-            FCSPlayout.AppInfrastructure.WPFApplicationManager.Current.OnTimer();
+          
+            
         }
 
         void IUploadProgressFeedback.Open()
@@ -78,8 +130,31 @@ namespace FCSPlayout.MediaFileImporter
                     break;
             }
         }
-    
-      void comboBoxAudioGain_Loaded(ComboBox CbAg)
+
+
+
+        public void mymediafilechannel(ComboBox CbAg)
+        {
+
+            CbAg.ItemsSource = PlayoutRepository.MediaFileChannels;
+            CbAg.SelectedValuePath = "Key";
+            CbAg.DisplayMemberPath = "Value";
+
+            CbMediaFileCategoryText.ItemsSource = PlayoutRepository.MediaFileCategories;
+            CbMediaFileCategoryText.SelectedValuePath = "Key";
+            CbMediaFileCategoryText.DisplayMemberPath = "Value";
+
+            CbMediaFileChannelText.ItemsSource = PlayoutRepository.MediaFileChannels;
+            CbMediaFileChannelText.SelectedValuePath = "Key";
+            CbMediaFileChannelText.DisplayMemberPath = "Value";
+
+        }
+
+
+
+
+
+        void comboBoxAudioGain_Loaded(ComboBox CbAg)
         {
            
           
@@ -101,19 +176,60 @@ namespace FCSPlayout.MediaFileImporter
 
         }
 
-        public static MainWindow mw;
+        void comboBoxMediaFileCategoryId_Loaded(ComboBox CbAg)
+        {
+            CbAg.ItemsSource = PlayoutRepository.MediaFileCategories;
+            CbAg.SelectedValuePath = "Key";
+            CbAg.DisplayMemberPath = "Value";
+            //CbAg.SelectedIndex =0;
+            //CbAg.SelectedItem = 0;
+
+
+        }
+
+
+        //public static MainWindow mw;
+
+
+        //public WPF.Core.PlayControl2 mw1
+        //{
+        //    get
+        //    {
+        //        return playControl;
+        //    }
+        //    set
+        //    {
+        //        this.playControl = value;
+
+        //        //_playRange = _playRange.ModifyByStopPosition(value);
+        //    }
+        //}
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
             this.pagingControl.RaiseRequestPagingItems(0);
+            PlaybillEditor.datagridHepler.SetShowRowIndexProperty(mediaItemListView2.dgMediaItem, true);
         }
 
         private void pagingControl_RequestPagingItems(object sender, RequestPagingItemsEventArgs e)
         {
             e.Result = this.mediaItemListView2.LoadMediaItems(e.PagingInfo);
         }
+
+
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

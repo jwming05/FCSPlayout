@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FCSPlayout.CG;
 
 namespace FCSPlayout.Domain
 {
     [Serializable]
     public class AutoPlayItem : IPlayItem
     {
+        #region Static Members
         internal static AutoPlayItem CreateAutoPadding(DateTime startTime, TimeSpan duration)
         {
             AutoPlaybillItem billItem = AutoPlaybillItem.CreateAutoPadding(duration);
@@ -20,8 +22,8 @@ namespace FCSPlayout.Domain
         internal static bool CanMerge(AutoPlayItem item1, AutoPlayItem item2)
         {
             if (item1.PlaybillItem != item2.PlaybillItem ||
-                item1.PlayRange == item1.PlaybillItem.GetPlayRange() || 
-                item2.PlayRange == item2.PlaybillItem.GetPlayRange())
+                item1.PlayRange == item1.PlaybillItem.PlayRange ||
+                item2.PlayRange == item2.PlaybillItem.PlayRange)
             {
                 return false;
             }
@@ -35,7 +37,7 @@ namespace FCSPlayout.Domain
 
             var range = FCSPlayout.Domain.PlayRange.Merge(item1.PlayRange, item2.PlayRange);
 
-            if (range == item1.PlaybillItem.GetPlayRange())
+            if (range == item1.PlaybillItem.PlayRange)
             {
                 return new AutoPlayItem(item1.PlaybillItem);
             }
@@ -44,6 +46,8 @@ namespace FCSPlayout.Domain
                 return new AutoPlayItem(item1.PlaybillItem, range);
             }
         }
+        #endregion Static Members
+
 
         private TimeSpan? _playDuration;
         private PlayRange? _playRange;
@@ -77,7 +81,7 @@ namespace FCSPlayout.Domain
             {
                 if (_playRange == null)
                 {
-                    return this.PlaybillItem.GetPlayRange();
+                    return this.PlaybillItem.PlayRange;
                 }
                 else
                 {
@@ -88,7 +92,7 @@ namespace FCSPlayout.Domain
             set { _playRange = value; }
         }
 
-        public TimeSpan PlayDuration
+        public TimeSpan CalculatedPlayDuration
         {
             get
             {
@@ -108,15 +112,73 @@ namespace FCSPlayout.Domain
             }
         }
 
+        public PlayRange CalculatedPlayRange
+        {
+            get
+            {
+                if (_playDuration == null)
+                {
+                    return this.PlayRange;
+                }
+                else
+                {
+                    return new PlayRange(this.PlayRange.StartPosition, this.CalculatedPlayDuration);
+                }
+            }
+        }
+
+        public DateTime CalculatedStopTime
+        {
+            get
+            {
+                return this.StartTime.Add(this.CalculatedPlayDuration);
+            }
+        }
+
         public DateTime StartTime
         {
             get; set;
         }
         public bool IsAutoPadding { get{ return ((AutoPlaybillItem)this.PlaybillItem).IsAutoPadding; } }
 
-        public long EditId
+        [NonSerialized]
+        private long? _editId;
+        public long? EditId
         {
-            get;set;
+            get { return _editId; }
+            set { _editId = value; }
+        }
+
+        public PlayScheduleMode ScheduleMode
+        {
+            get
+            {
+                return this.PlaybillItem.ScheduleMode;
+            }
+        }
+
+        public IMediaSource MediaSource
+        {
+            get
+            {
+                return this.PlaybillItem.MediaSource;
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                return this.PlaybillItem.Title;
+            }
+        }
+
+        public CGItemCollection CGItems
+        {
+            get
+            {
+                return this.PlaybillItem.CGItems;
+            }
         }
 
         internal void Split(TimeSpan duration,out AutoPlayItem first,out AutoPlayItem second)
@@ -129,23 +191,15 @@ namespace FCSPlayout.Domain
             second = new AutoPlayItem(this.PlaybillItem, secondRange);
         }
 
-        public IPlayItem Clone()
-        {
-            var result = new AutoPlayItem(this.PlaybillItem.Clone());
-            result._playDuration = this._playDuration;
-            result._playRange = this._playRange;
-            result.Id = this.Id;
-            result.StartTime = this.StartTime;
+        //public IPlayItem Clone()
+        //{
+        //    var result = new AutoPlayItem(this.PlaybillItem.Clone());
+        //    result._playDuration = this._playDuration;
+        //    result._playRange = this._playRange;
+        //    result.Id = this.Id;
+        //    result.StartTime = this.StartTime;
 
-            return result;
-        }
+        //    return result;
+        //}
     }
-
-    //public static class AutoPlayItemExtensions
-    //{
-    //    public static PlayRange GetPlayRange(this AutoPlayItem playItem)
-    //    {
-    //        return playItem.PlayRange == null ? playItem.PlaybillItem.GetPlayRange() : playItem.PlayRange.Value;
-    //    }
-    //}
 }

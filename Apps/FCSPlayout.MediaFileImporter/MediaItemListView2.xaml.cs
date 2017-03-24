@@ -1,4 +1,5 @@
 ﻿//using FCSPlayout.Domain;
+
 using FCSPlayout.Domain;
 using FCSPlayout.MediaFileImporter;
 using FCSPlayout.WPF.Core;
@@ -90,11 +91,11 @@ namespace FCSPlayout.WPFApp.Views
             this.SelectedMediaItem = _viewModel.SelectedMediaItem;
         }
 
-        public IUploadProgressFeedback UploadProgressFeedback
-        {
-            get { return _viewModel.ProgressFeedback; }
-            set { _viewModel.ProgressFeedback = value; }
-        }
+        //public IUploadProgressFeedback UploadProgressFeedback
+        //{
+        //    get { return _viewModel.ProgressFeedback; }
+        //    set { _viewModel.ProgressFeedback = value; }
+        //}
 
         //public IInteractionRequest EditMediaItemInteractionRequest
         //{
@@ -220,6 +221,19 @@ namespace FCSPlayout.WPFApp.Views
             return result;
         }
         public static MediaItemListView2 mv;
+        //public WPF.Core.PlayControl2 mw1
+        //{
+        //    get
+        //    {
+        //        return MainWindow.mw.playControl;
+        //    }
+        //    set
+        //    {
+        //        MainWindow.mw.playControl = value;
+
+        //        //_playRange = _playRange.ModifyByStopPosition(value);
+        //    }
+        //}
 
         public event EventHandler<DataGridRowDoubleClickEventArgs> MediaItemDoubleClicked;
     }

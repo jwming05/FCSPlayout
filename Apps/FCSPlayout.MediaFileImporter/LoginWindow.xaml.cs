@@ -59,6 +59,9 @@ namespace FCSPlayout.MediaFileImporter
                 ShowMessage("用户名或密码错误。");
                 return;
             }
+            //MainWindow mw = new MainWindow();
+            //mw.Show();
+            //mw.DialogResult = true;
 
             this.DialogResult = true;
             this.Close();

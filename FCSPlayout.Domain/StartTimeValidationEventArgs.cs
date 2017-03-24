@@ -15,6 +15,10 @@ namespace FCSPlayout.Domain
         }
 
         public DateTime Time { get; private set; }
-        public bool IsValid { get; set; }
+        public bool IsValid
+        {
+            get;
+            set;
+        }
     }
 }

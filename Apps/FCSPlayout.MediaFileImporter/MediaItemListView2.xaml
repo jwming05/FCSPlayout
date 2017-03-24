@@ -14,7 +14,7 @@
     <core:ViewBase.Resources>
         <core:TimeCodeConverter x:Key="TimeCodeConverter"/>
         <code:MediaFileCategoryConverter x:Key="MediaFileCategoryConverter"/>
-      
+        <code:MediaFileChannelConverter x:Key="MediaFileChannelConverter"/>
         <!--<inf:PlayItemStyleSelector x:Key="PlayItemStyleSelector"/>-->
     </core:ViewBase.Resources>
     <i:Interaction.Triggers>
@@ -31,7 +31,7 @@
                       MouseDoubleClick="dgMediaItem_MouseDoubleClick">
             
             <DataGrid.Columns>
-                <DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="缩略图">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Image MinWidth="30" Height="30" Source="{Binding Image,Mode=OneWay}"/>
@@ -39,16 +39,19 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Binding="{Binding OriginalFileName}" Header="文件名"/>
-                <DataGridTextColumn Binding="{Binding Title}" Header="标题"/>
-                <DataGridTextColumn Binding="{Binding MediaFileCategoryId,Converter={StaticResource MediaFileCategoryConverter}}" Header="素材类型"/>
+                <DataGridTextColumn Binding="{Binding Title}" Header="素材标题"/>
+               
                 <DataGridTextColumn Binding="{Binding StartPosition, Converter={StaticResource TimeCodeConverter}}" Header="入点"/>
                 <DataGridTextColumn Binding="{Binding StopPosition, Converter={StaticResource TimeCodeConverter}}" Header="出点"/>
                 <DataGridTextColumn Binding="{Binding PlayDuration, Converter={StaticResource TimeCodeConverter}}" Header="播放时长"/>
                 <DataGridTextColumn Binding="{Binding Duration, Converter={StaticResource TimeCodeConverter}}" Header="总时长"/>
                 <DataGridTextColumn Binding="{Binding AspectRatio}" Header="画面比例"/>
                 <DataGridTextColumn Binding="{Binding MPFieldsType}" Header="场类型"/>
+                <DataGridTextColumn Binding="{Binding MediaFileCategoryId,Converter={StaticResource MediaFileCategoryConverter}}" Header="节目类型"/>
+                <DataGridTextColumn Binding="{Binding MediaFileChannelId,Converter={StaticResource MediaFileChannelConverter}}" Header="频道类型"/>
                 <DataGridTextColumn Binding="{Binding StretchMode}" Header="缩放模式"/>
                 <DataGridTextColumn Binding="{Binding AudioGain}" Header="音频增益"/>
+                <DataGridTextColumn Binding="{Binding CreationTime,StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" Header="日期" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

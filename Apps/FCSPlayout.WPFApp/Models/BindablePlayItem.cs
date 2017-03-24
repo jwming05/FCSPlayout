@@ -57,7 +57,7 @@ namespace FCSPlayout.WPFApp.Models
         {
             get
             {
-                return _playItem.PlaybillItem.PlaySource.Title; //.Title;
+                return _playItem.PlaybillItem.Title; //.Title;
             }
         }
 
@@ -82,13 +82,13 @@ namespace FCSPlayout.WPFApp.Models
         {
             get
             {
-                return _playItem.GetStopTime();
+                return _playItem.CalculatedStopTime; //.GetStopTime();
             }
         }
 
         public TimeSpan Duration
         {
-            get { return _playItem.PlayDuration; }// .PlayRange.Duration; 
+            get { return _playItem.CalculatedPlayDuration; }// .PlayRange.Duration; 
         }
 
         public BitmapSource StartImage
@@ -129,7 +129,7 @@ namespace FCSPlayout.WPFApp.Models
         {
             get
             {
-                return _playItem.PlaybillItem.PlaySource.MediaSource;
+                return _playItem.PlaybillItem.MediaSource;
             }
         }
 
@@ -172,12 +172,13 @@ namespace FCSPlayout.WPFApp.Models
         {
             get
             {
-                return _playItem.PlaybillItem.PlaySource.CGItems;
+                return _playItem.PlaybillItem.CGItems;
             }
 
             set
             {
-                _playItem.PlaybillItem.PlaySource.CGItems = value;
+                // TODO: change the CGItems
+                //_playItem.PlaybillItem.CGItems = value;
             }
         }
 

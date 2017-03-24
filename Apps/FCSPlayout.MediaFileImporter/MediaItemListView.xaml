@@ -7,13 +7,19 @@
              xmlns:mi="http://schemas.microsoft.com/expression/2010/interactions"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:local="clr-namespace:FCSPlayout.WPFApp.Views"
-             xmlns:core="clr-namespace:FCSPlayout.WPF.Core;assembly=FCSPlayout.WPF.Core"
+             xmlns:core="clr-namespace:FCSPlayout.WPF.Core;assembly=FCSPlayout.WPF.Core"  
              xmlns:code="clr-namespace:FCSPlayout.MediaFileImporter"
+             xmlns:entities="clr-namespace:FCSPlayout.Entities;assembly=FCSPlayout.Entities"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             x:Name="mediaItemListView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <core:ViewBase.Resources>
         <core:TimeCodeConverter x:Key="TimeCodeConverter"/>
         <code:MediaFileCategoryConverter x:Key="MediaFileCategoryConverter"/>
+        <code:MediaFileChannelConverter x:Key="MediaFileChannelConverter"/>
+        <!--<common:ConvertItemToIndex x:Key="IndexConverter"/>-->
+      
     </core:ViewBase.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="MediaItemDoubleClicked" SourceObject="{Binding RelativeSource={RelativeSource AncestorType=core:ViewBase,Mode=FindAncestor}}">
@@ -21,31 +27,61 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
-        <DataGrid Name="dgMediaItem" AutoGenerateColumns="False" 
+        <DataGrid Name="dgMediaItem" AutoGenerateColumns="False"
                   ContextMenuOpening="dgMediaItem_ContextMenuOpening"
                   ContextMenuClosing="dgMediaItem_ContextMenuClosing"
-                      ItemsSource="{Binding MediaItemView}" SelectionMode="Single" IsReadOnly="True"
-                      SelectedItem="{Binding SelectedMediaItem, Mode=OneWayToSource}"
-                      MouseDoubleClick="dgMediaItem_MouseDoubleClick">
+                  ItemsSource="{Binding MediaItemView}" SelectionMode="Single"
+                  IsReadOnly="False"
+                  SelectedItem="{Binding SelectedMediaItem,Mode=TwoWay}"
+                  >
+            <!--MouseDoubleClick="dgMediaItem_MouseDoubleClick"-->
+            <!--<DataGrid.RowHeaderStyle>
+                <Style TargetType="{x:Type DataGridRowHeader}">
+                    <Setter Property="Content" Value="{Binding Converter={StaticResource IndexConverter},ConverterParameter=dgMediaItem}" />
+                </Style>
+            </DataGrid.RowHeaderStyle>-->
+           
             <DataGrid.Columns>
-                <DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="缩略图" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image MinWidth="30" Height="30" Source="{Binding Image,Mode=OneWay}"/>
+                            <code:MediaFileImageControl MediaFileItem="{Binding}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDoubleClick">
+                                        <i:InvokeCommandAction Command="{Binding PreviewCommand,RelativeSource={RelativeSource AncestorType=core:ViewBase,Mode=FindAncestor}}"
+                                                               CommandParameter="{Binding}"></i:InvokeCommandAction>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </code:MediaFileImageControl>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Binding="{Binding OriginalFileName}" Header="文件名"/>
-                <DataGridTextColumn Binding="{Binding Title}" Header="标题"/>
-                <DataGridTextColumn Binding="{Binding MediaFileCategoryId,Converter={StaticResource MediaFileCategoryConverter}}" Header="素材类型"/>
-                <DataGridTextColumn Binding="{Binding StartPosition, Converter={StaticResource TimeCodeConverter}}" Header="入点"/>
-                <DataGridTextColumn Binding="{Binding StopPosition, Converter={StaticResource TimeCodeConverter}}" Header="出点"/>
-                <DataGridTextColumn Binding="{Binding PlayDuration, Converter={StaticResource TimeCodeConverter}}" Header="播放时长"/>
-                <DataGridTextColumn Binding="{Binding Duration, Converter={StaticResource TimeCodeConverter}}" Header="总时长"/>
-                <DataGridTextColumn Binding="{Binding AspectRatio}" Header="画面比例"/>
-                <DataGridTextColumn Binding="{Binding MPFieldsType}" Header="场类型"/>
-                <DataGridTextColumn Binding="{Binding StretchMode}" Header="缩放模式"/>
-                <DataGridTextColumn Binding="{Binding AudioGain}" Header="音频增益"/>
+                <DataGridTextColumn Binding="{Binding OriginalFileName}" Header="文件名" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding Title}" Header="素材标题"/>
+
+                <DataGridTextColumn Binding="{Binding StartPosition, Converter={StaticResource TimeCodeConverter}}" Header="入点" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding StopPosition, Converter={StaticResource TimeCodeConverter}}" Header="出点" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding PlayDuration, Converter={StaticResource TimeCodeConverter}}" Header="播放时长" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Duration, Converter={StaticResource TimeCodeConverter}}" Header="总时长" IsReadOnly="True"/>
+                <DataGridComboBoxColumn Header="节目类型"
+                                        ItemsSource="{x:Static entities:PlayoutRepository.MediaFileCategories}" 
+                                        SelectedValuePath="Key" DisplayMemberPath="Value" SelectedValueBinding="{Binding MediaFileCategoryId}"/>
+                <DataGridComboBoxColumn Header="频道类型"
+                                        ItemsSource="{x:Static entities:PlayoutRepository.MediaFileChannels}"
+                                        SelectedValuePath="Key" DisplayMemberPath="Value" SelectedValueBinding="{Binding MediaFileChannelId}"/>
+                <DataGridTemplateColumn Header="音频增益">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding AudioGain}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <xctk:IntegerUpDown Value="{Binding AudioGain}" Minimum="-60" Maximum="60"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <!--<DataGridTextColumn Binding="{Binding CreationTime,StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" Header="日期" />-->
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

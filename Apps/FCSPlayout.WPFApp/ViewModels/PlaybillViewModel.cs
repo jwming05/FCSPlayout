@@ -390,7 +390,7 @@ namespace FCSPlayout.WPFApp.ViewModels
                                 billItem = PlaybillItem.Timing(bindableMediaItem.MediaItem, this.PlayScheduleInfo.StartTime.Value);
                                 using (var editor = this.Playlist.Edit())
                                 {
-                                    editor.InsertTiming(billItem);
+                                    editor.AddTiming((IPlayItem)billItem);
                                 }
                                 break;
                             case PlayScheduleMode.Auto:
@@ -399,7 +399,7 @@ namespace FCSPlayout.WPFApp.ViewModels
                                     billItem = PlaybillItem.Auto(bindableMediaItem.MediaItem);
                                     using (var editor = this.Playlist.Edit())
                                     {
-                                        editor.AddAutoAfter(this.SelectedPlayItem.PlayItem, (AutoPlaybillItem)billItem);
+                                        editor.AddAuto(this.SelectedPlayItem.PlayItem, new AutoPlayItem(billItem));
                                     }
                                 }
                                 break;
@@ -407,7 +407,7 @@ namespace FCSPlayout.WPFApp.ViewModels
                                 billItem = PlaybillItem.TimingBreak(bindableMediaItem.MediaItem, this.PlayScheduleInfo.StartTime.Value);
                                 using (var editor = this.Playlist.Edit())
                                 {
-                                    editor.InsertTiming(billItem);
+                                    editor.AddTiming((IPlayItem)billItem);
                                 }
                                 break;
                         }

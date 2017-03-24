@@ -37,44 +37,6 @@ namespace FCSPlayout.AppInfrastructure
             }
         }
 
-        //public ENUM_AspectRatio AspectRatio
-        //{
-        //    get { return this.FileEntity.AspectRatio; }
-        //    set
-        //    {
-        //        if (this.FileEntity.AspectRatio != value)
-        //        {
-        //            this.FileEntity.AspectRatio = value;
-        //        }
-        //    }
-        //}
-
-        //public MPFieldsType MPFieldsType
-        //{
-        //    get { return this.FileEntity.MPFieldsType; }
-        //    set
-        //    {
-        //        if (this.FileEntity.MPFieldsType != value)
-        //        {
-        //            this.FileEntity.MPFieldsType = value;
-        //        }
-
-        //    }
-        //}
-
-        //public ENUM_StretchMode StretchMode
-        //{
-        //    get { return this.FileEntity.StretchMode; }
-        //    set
-        //    {
-        //        if (this.FileEntity.StretchMode != value)
-        //        {
-        //            this.FileEntity.StretchMode = value;
-        //        }
-
-        //    }
-        //}
-
         private MediaFileEntity FileEntity { get { return (MediaFileEntity)base.Entity; } }
 
         public override PlayRange? Adjust(PlayRange playRange)

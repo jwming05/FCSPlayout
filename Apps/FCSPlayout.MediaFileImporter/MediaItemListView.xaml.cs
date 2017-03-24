@@ -1,11 +1,26 @@
-﻿using FCSPlayout.MediaFileImporter;
+﻿//using FCSPlayout.Domain;
+
+using FCSPlayout.Entities;
+using FCSPlayout.MediaFileImporter;
 using FCSPlayout.WPF.Core;
+//using FCSPlayout.WPFApp.Models;
 using FCSPlayout.WPFApp.ViewModels;
+using Prism.Commands;
+using Prism.Interactivity.InteractionRequest;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace FCSPlayout.WPFApp.Views
 {
@@ -17,20 +32,22 @@ namespace FCSPlayout.WPFApp.Views
 
         public static readonly DependencyProperty SelectedMediaItemProperty =
             DependencyProperty.Register("SelectedMediaItem", typeof(BindableMediaFileItem), typeof(MediaItemListView), new FrameworkPropertyMetadata(null));
+    
 
 
         private MediaItemListViewModel _viewModel;
-
+        
         public MediaItemListView()
         {
             InitializeComponent();
             _viewModel = new MediaItemListViewModel();
             _viewModel.SelectedMediaItemChanged += ViewModel_SelectedMediaItemChanged;
+          
             this.DataContext = _viewModel;
-            this.dgMediaItem.MouseMove += DgMediaItem_MouseMove;
-            mv = this;
-       
+            this.dgMediaItem.MouseMove += DgMediaItem_MouseMove;            
         }
+
+     
 
         private void DgMediaItem_MouseMove(object sender, MouseEventArgs e)
         {
@@ -71,6 +88,7 @@ namespace FCSPlayout.WPFApp.Views
         private void ViewModel_SelectedMediaItemChanged(object sender, EventArgs e)
         {
             this.SelectedMediaItem = _viewModel.SelectedMediaItem;
+           
         }
 
         public IUploadProgressFeedback UploadProgressFeedback
@@ -78,31 +96,7 @@ namespace FCSPlayout.WPFApp.Views
             get { return _viewModel.ProgressFeedback; }
             set { _viewModel.ProgressFeedback = value; }
         }
-
-        //public IInteractionRequest EditMediaItemInteractionRequest
-        //{
-        //    get
-        //    {
-        //        return _viewModel.EditMediaItemInteractionRequest;
-        //    }
-        //}
-
-        //public IInteractionRequest AddNullMediaItemInteractionRequest
-        //{
-        //    get
-        //    {
-        //        return _viewModel.AddNullMediaItemInteractionRequest;
-        //    }
-        //}
-
-        //public IInteractionRequest AddChannelMediaItemsInteractionRequest
-        //{
-        //    get
-        //    {
-        //        return _viewModel.AddChannelMediaItemsInteractionRequest;
-        //    }
-        //}
-
+      
         public ICommand AddMediaItemCommand
         {
             get
@@ -110,24 +104,6 @@ namespace FCSPlayout.WPFApp.Views
                 return _viewModel.AddMediaItemCommand;
             }
         }
-
-        
-
-        //public ICommand AddNullMediaItemCommand
-        //{
-        //    get
-        //    {
-        //        return _viewModel.AddNullMediaItemCommand;
-        //    }
-        //}
-
-        //public ICommand AddChannelMediaItemsCommand
-        //{
-        //    get
-        //    {
-        //        return _viewModel.AddChannelMediaItemsCommand;
-        //    }
-        //}
 
         public ICommand DeleteMediaItemCommand
         {
@@ -153,14 +129,6 @@ namespace FCSPlayout.WPFApp.Views
             }
         }
 
-        //public ICommand LoadMediaItemsCommand
-        //{
-        //    get
-        //    {
-        //        return _viewModel.LoadMediaItemsCommand;
-        //    }
-        //}
-
         private void dgMediaItem_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             //
@@ -184,7 +152,12 @@ namespace FCSPlayout.WPFApp.Views
                     MediaItemDoubleClicked(this, new DataGridRowDoubleClickEventArgs(row.Item));
                 }
             }
+
+
+            //this.playerControl.Init(_notification.FilePath, _notification.PlayRange, PlayoutRepository.GetMPlaylistSettings());
         }
+
+
 
         private DataGridRow FindDataGridRow(IInputElement element)
         {
@@ -199,9 +172,22 @@ namespace FCSPlayout.WPFApp.Views
 
             return result;
         }
-        public static MediaItemListView mv;
 
         public event EventHandler<DataGridRowDoubleClickEventArgs> MediaItemDoubleClicked;
+
+        public ICommand PreviewCommand
+        {
+            get { return (ICommand)GetValue(PreviewCommandProperty); }
+            set { SetValue(PreviewCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty PreviewCommandProperty =
+            DependencyProperty.Register("PreviewCommand", typeof(ICommand), typeof(MediaItemListView), 
+                new FrameworkPropertyMetadata(null, OnPreviewCommandPropertyChanged));
+
+        private static void OnPreviewCommandPropertyChanged(DependencyObject dpObj,DependencyPropertyChangedEventArgs e)
+        {
+        }
     }
 
     public class DataGridRowDoubleClickEventArgs:EventArgs
@@ -211,9 +197,5 @@ namespace FCSPlayout.WPFApp.Views
             this.Item= item;
         }
         public object Item { get; private set; }
-
-     
     }
-
-  
 }

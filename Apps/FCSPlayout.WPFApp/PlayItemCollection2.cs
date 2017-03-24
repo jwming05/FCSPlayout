@@ -314,6 +314,40 @@ namespace FCSPlayout.WPFApp
             return playItems;
         }
 
+        public void ValidateTimeRange(DateTime startTime, TimeSpan duration)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ValidateTimeRange(DateTime startTime, TimeSpan duration, IPlayItem excludeItem)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CanClear()
+        {
+            if (_listView == null)
+            {
+                return true;
+            }
+            else
+            {
+                return _listView.CanClear();
+            }
+        }
+
+        public DateTime? GetStartTime()
+        {
+            if (_listView == null)
+            {
+                return null;
+            }
+            else
+            {
+                return _listView.GetStartTime();
+            }
+        }
+
         class ListView
         {
             private IList<BindablePlayItem> _playItemList;
@@ -377,7 +411,7 @@ namespace FCSPlayout.WPFApp
                         }
 
                         
-                        if (playItem.PlayDuration - expiredDuration < PlayoutConfiguration.Current.MinPlayDuration)
+                        if (playItem.CalculatedPlayDuration - expiredDuration < PlayoutConfiguration.Current.MinPlayDuration)
                         {
                             // skip
                             this.Take();
@@ -499,6 +533,16 @@ namespace FCSPlayout.WPFApp
             {
                 _offset = 0;
                 this.PreLoadItem = null;
+            }
+
+            internal bool CanClear()
+            {
+                return true;
+            }
+
+            internal DateTime? GetStartTime()
+            {
+                throw new NotImplementedException();
             }
 
             public bool IsDirty

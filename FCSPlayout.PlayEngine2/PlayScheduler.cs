@@ -144,7 +144,7 @@ namespace FCSPlayout.PlayEngine
             if (this.NextPlayItem != null)
             {
                 _player.PlayNext();
-                _switcher.SwitchChannelFor(this.CurrentPlayItem.PlayItem.PlaybillItem.PlaySource.MediaSource);
+                _switcher.SwitchChannelFor(this.CurrentPlayItem.PlayItem.PlaybillItem.MediaSource);
             }
         }
 
@@ -181,15 +181,15 @@ namespace FCSPlayout.PlayEngine
             public PlayItemWrapper(IPlayItem item)
             {
                 this.PlayItem = item;
-                _playRange =new PlayRange(item.PlayRange.StartPosition,item.PlayDuration);
+                _playRange =new PlayRange(item.PlayRange.StartPosition,item.CalculatedPlayDuration);
 
                 this.ExpectedPlayTime = item.StartTime;
-                if (item.PlaybillItem.PlaySource.CGItems != null)
+                if (item.PlaybillItem.CGItems != null)
                 {
-                    this.CGItems = item.PlaybillItem.PlaySource.CGItems.Clone();
+                    this.CGItems = item.PlaybillItem.CGItems.Clone();
                 }
                 
-                this.MediaSource = item.PlaybillItem.PlaySource.MediaSource.Clone();
+                this.MediaSource = item.PlaybillItem.MediaSource.Clone();
             }
 
             public PlayItemWrapper(IPlayItem item, DateTime expectedPlayTime) : this(item)

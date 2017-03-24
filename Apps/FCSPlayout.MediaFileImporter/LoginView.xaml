@@ -18,9 +18,9 @@
         </Grid.ColumnDefinitions>
         
         <TextBlock Text="用户名：" Margin="5"/>
-        <TextBox Grid.Column="1" Name="txtUser" Margin="5" TextChanged="txtUser_TextChanged"/>
-        <TextBlock Text="密码：" Grid.Row="1" Margin="5"/>
-        <PasswordBox Name="pwdBox" Grid.Row="1" Grid.Column="1" Margin="5" PasswordChanged="pwdBox_PasswordChanged"/>
+        <TextBox Grid.Column="1" Name="txtUser" Background="#868686" Margin="5" TextChanged="txtUser_TextChanged"/>
+        <TextBlock Text="密  码：" Grid.Row="1" Margin="5"/>
+        <PasswordBox Name="pwdBox" Grid.Row="1" Grid.Column="1" Background="#868686" Margin="5" PasswordChanged="pwdBox_PasswordChanged"/>
         
         
         <TextBlock Name="txtMessage" Foreground="Red" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5"/>

@@ -31,15 +31,15 @@ namespace FCSPlayout.AppInfrastructure
             record.PlaybillItemId = playerItem.PlayItem.PlaybillItem.Id;
             record.ScheduleMode = playerItem.PlayItem.PlaybillItem.ScheduleMode;
 
-            record.SourceId = playerItem.PlayItem.PlaybillItem.PlaySource.MediaSource.Id;
-            record.SourceTitle = playerItem.PlayItem.PlaybillItem.PlaySource.MediaSource.Title;
-            var sourceDuration = playerItem.PlayItem.PlaybillItem.PlaySource.MediaSource.Duration;
+            record.SourceId = playerItem.PlayItem.PlaybillItem.MediaSource.Id;
+            record.SourceTitle = playerItem.PlayItem.PlaybillItem.MediaSource.Title;
+            var sourceDuration = playerItem.PlayItem.PlaybillItem.MediaSource.Duration;
             if (sourceDuration != null)
             {
                 record.SourceDuration = sourceDuration.Value.TotalSeconds;
             }
 
-            record.SourceCategory = playerItem.PlayItem.PlaybillItem.PlaySource.MediaSource.Category;
+            record.SourceCategory = playerItem.PlayItem.PlaybillItem.MediaSource.Category;
 
 
             record.ActualStartTime = playerItem.StartTime;
@@ -51,7 +51,7 @@ namespace FCSPlayout.AppInfrastructure
             record.LoadMarkerDuration = playerItem.LoadRange.Duration.TotalSeconds;
 
             record.PlayItemMarkerIn = playerItem.PlayItem.PlayRange.StartPosition.TotalSeconds;
-            record.PlayItemDuration = playerItem.PlayItem.PlayDuration.TotalSeconds;
+            record.PlayItemDuration = playerItem.PlayItem.CalculatedPlayDuration.TotalSeconds;
 
             PlayoutRepository.AddPlayRecord(record);
         }

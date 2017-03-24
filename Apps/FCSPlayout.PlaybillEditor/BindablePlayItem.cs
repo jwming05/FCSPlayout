@@ -52,7 +52,7 @@ namespace FCSPlayout.WPFApp.Models
             get
             {
                 //return _playItem.Title;
-                return _playItem.PlaybillItem.PlaySource.Title;
+                return _playItem.PlaybillItem.Title;
             }
         }
 
@@ -77,7 +77,7 @@ namespace FCSPlayout.WPFApp.Models
         {
             get
             {
-                return _playItem.GetStopTime();
+                return _playItem.CalculatedStopTime;
             }
         }
 
@@ -87,13 +87,13 @@ namespace FCSPlayout.WPFApp.Models
             {
                 //return _playItem.PlaybillItem.Duration;
                 //return _playItem.PlayRange.Duration;
-                return this._playItem.PlayDuration; //.Source.Duration;
+                return this._playItem.CalculatedPlayDuration; //.Source.Duration;
             }
         }
 
         public TimeSpan PlayDuration
         {
-            get { return _playItem.PlayDuration; }
+            get { return _playItem.CalculatedPlayDuration; }
         }
         public BitmapSource StartImage
         {
@@ -147,7 +147,7 @@ namespace FCSPlayout.WPFApp.Models
         {
             get
             {
-                return _playItem.PlaybillItem.PlaySource.MediaSource;
+                return _playItem.PlaybillItem.MediaSource;
             }
         }
 
@@ -284,7 +284,7 @@ namespace FCSPlayout.WPFApp.Models
         {
             get
             {
-                var source = this._playItem.PlaybillItem.PlaySource.MediaSource as IFileMediaSource;
+                var source = this._playItem.PlaybillItem.MediaSource as IFileMediaSource;
                 if (source != null)
                 {
                     return source.AudioGain;
@@ -323,7 +323,7 @@ namespace FCSPlayout.WPFApp.Models
             get
             {
                
-                return _playItem.PlaybillItem.PlaySource.MediaSource.Category;
+                return _playItem.PlaybillItem.MediaSource.Category;
             }
         }
         //添加新属性

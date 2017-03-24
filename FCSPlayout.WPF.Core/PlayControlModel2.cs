@@ -1,4 +1,5 @@
-﻿using FCSPlayout.Domain;
+﻿
+using FCSPlayout.Domain;
 using MPLATFORMLib;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -31,13 +32,19 @@ namespace FCSPlayout.WPF.Core
         private PlayRange _playRange;
         private double _playRate=1.0;
 
-        public PlayControlModel2(DispatcherTimer timer, MPlaylistSettings mplaylistSettings)
+        internal Func<bool> _canSetInAction;
+        internal Action<double> _setInAction;
+
+        internal Func<bool> _canSetOutAction;
+        internal Action<double> _setOutAction;
+
+        public PlayControlModel2(DispatcherTimer timer, MPlaylistSettings mplaylistSettings, Player2 player)
         {
             _timer = timer;
 
             _timer.Tick += Timer_Tick;
-            
-            _player = new Player2(mplaylistSettings);
+
+            _player = player; // new Player2(mplaylistSettings);
             _player.StatusChanged += Player_StatusChanged;
 
             _playCommand = new DelegateCommand(Play, CanPlay);
@@ -332,12 +339,12 @@ namespace FCSPlayout.WPF.Core
             }
         }
 
-        private bool CanPause()
+      public bool CanPause()
         {
             return _player.Status == PlayerStatus.Running;
         }
 
-        private void Pause()
+   public void Pause()
         {
             if (this.CanPause())
             {
@@ -351,7 +358,7 @@ namespace FCSPlayout.WPF.Core
             return _player.Status == PlayerStatus.Stopped || _player.Status == PlayerStatus.Paused;
         }
 
-        private void Play()
+       public void Play()
         {
             if (this.CanPlay())
             {
@@ -362,7 +369,7 @@ namespace FCSPlayout.WPF.Core
 
         private bool CanSetOut()
         {
-            return _player.Status == PlayerStatus.Paused;
+            return _player.Status == PlayerStatus.Paused && (_canSetOutAction==null || _canSetOutAction());
         }
 
         private void SetOut()
@@ -370,19 +377,29 @@ namespace FCSPlayout.WPF.Core
             if (this.CanSetOut())
             {
                 this.OutPosition = this.Position;
+                if (_setOutAction != null)
+                {
+                    _setOutAction(this.Position);
+                }
+                
             }
         }
 
         private bool CanSetIn()
         {
-            return _player.Status == PlayerStatus.Paused;
+            return _player.Status == PlayerStatus.Paused && (_canSetInAction==null || _canSetInAction());
         }
 
         private void SetIn()
         {
             if (this.CanSetIn())
             {
+           
                 this.InPosition = this.Position;
+                if (_setInAction != null)
+                {
+                    _setInAction(this.Position);
+                }
             }
         }
 
@@ -457,7 +474,7 @@ namespace FCSPlayout.WPF.Core
 
     internal partial class PlayControlModel2
     {
-        enum PlayerStatus
+        internal enum PlayerStatus
         {
             Closed,
             Stopped,
@@ -465,7 +482,7 @@ namespace FCSPlayout.WPF.Core
             Paused
         }
 
-        class Player2 : IDisposable
+        public class Player2 : IDisposable
         {
             public event EventHandler StatusChanged;
             private void OnStatusChanged()
@@ -490,7 +507,7 @@ namespace FCSPlayout.WPF.Core
             {
                 _mplaylistSettings = mplaylistSettings;
             }
-            public PlayerStatus Status
+            internal PlayerStatus Status
             {
                 get { return _status; }
                 private set
@@ -683,6 +700,7 @@ namespace FCSPlayout.WPF.Core
                 {
                     //_mplaylist.PlaylistPosSet(0, pos, 0.0);
                     _mplaylist.FilePosSet(pos, 0.0);
+                
                 }
             }
 

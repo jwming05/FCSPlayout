@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FCSPlayout.MediaFileImporter"
         mc:Ignorable="d"
         Title="用户登录" Height="180" Width="300" WindowStartupLocation="CenterOwner">
-    <Grid>
+    <Grid Background="#404040">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>

@@ -22,36 +22,36 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <MediaElement Source="{Binding SourceUri}"/>
-            <local:MAudioMeter Grid.Column="1" MinWidth="40" x:Name="audioMeter"/>
+            <local:MAudioMeter  Grid.Column="1" MinWidth="40" x:Name="audioMeter"/>
         </Grid>
-        <local:PlaySlider2 Grid.Row="1" Height="20" x:Name="slider" 
+        <local:PlaySlider2  Grid.Row="1" Height="20" x:Name="slider" 
                           Position="{Binding Position,Mode=TwoWay}"
                           MaxPosition="{Binding MaxPosition,Mode=OneWay}"/>
-        <Grid Grid.Row="2">
-            <TextBlock HorizontalAlignment="Center" 
+        <Grid Grid.Row="2" >
+            <TextBlock HorizontalAlignment="Center"  
                        Text="{Binding ElementName=slider,Path=ScrollPosition,Mode=OneWay,Converter={StaticResource SecondsToTimeCode}}"/>
             <!--<TextBlock Text="时长：" HorizontalAlignment="Right" Margin="0 0 70 0"/>-->
-            <TextBlock Text="{Binding MaxPosition,Mode=OneWay,Converter={StaticResource SecondsToTimeCode}}" HorizontalAlignment="Right" Margin="0 0 5 0"/>
+            <TextBlock Foreground="#c9c9c9" Text="{Binding MaxPosition,Mode=OneWay,Converter={StaticResource SecondsToTimeCode}}" HorizontalAlignment="Right" Margin="0 0 5 0"/>
         </Grid>
-        <StackPanel Grid.Row="3" Orientation="Horizontal">
-            <Button Content="Play" Command="{Binding PlayCommand}" Margin="5"/>
-            <Button Content="Pause" Command="{Binding PauseCommand}" Margin="5"/>
-            <Button Content="Stop" Command="{Binding StopCommand}" Margin="5"/>
-            <Button Content="&gt;|" Command="{Binding NextFrameCommand}" Margin="5"/>
-            <Button Content="|&lt;" Command="{Binding PreviousFrameCommand}" Margin="5"/>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" >
+            <Button ToolTip="播放" Command="{Binding PlayCommand}" Margin="5"/>
+            <Button ToolTip="Pause" Command="{Binding PauseCommand}" Margin="5"/>
+            <Button ToolTip="Stop" Command="{Binding StopCommand}" Margin="5"/>
+            <Button ToolTip="上一帧;" Command="{Binding NextFrameCommand}" Margin="5"/>
+            <Button ToolTip="下一帧" Command="{Binding PreviousFrameCommand}" Margin="5"/>
 
-            <TextBlock Text="入点：" Margin="5"/>
-            <TextBlock MinWidth="75" Text="{Binding InPosition,Mode=OneWay,Converter={StaticResource SecondsToTimeCode}}" Margin="5"/>
+            <TextBlock Text="入点：" Margin="5" Foreground="#c9c9c9"/>
+            <TextBlock MinWidth="75" Text="{Binding InPosition,Mode=OneWay,Converter={StaticResource SecondsToTimeCode}}" Foreground="#c9c9c9" Margin="5"/>
             <Button Margin="5" Content=" I " Command="{Binding SetInCommand}"/>
-            <Button Margin="5" Content="G" Command="{Binding GoInCommand}"/>
+            <Button Margin="5" Content="GO" Command="{Binding GoInCommand}"/>
 
-            <TextBlock Text="出点：" Margin="5"/>
-            <TextBlock MinWidth="75" Text="{Binding OutPosition,Mode=OneWay,Converter={StaticResource SecondsToTimeCode}}" Margin="5"/>
+            <TextBlock Text="出点：" Margin="5" Foreground="#c9c9c9"/>
+            <TextBlock MinWidth="75" Text="{Binding OutPosition,Mode=OneWay,Converter={StaticResource SecondsToTimeCode}}" Foreground="#c9c9c9" Margin="5"/>
             <Button Margin="5" Content="O" Command="{Binding SetOutCommand}"/>
-            <Button Margin="5" Content="G" Command="{Binding GoOutCommand}"/>
+            <Button Margin="5" Content="GO" Command="{Binding GoOutCommand}"/>
 
-            <Slider Name="rateSlider" Minimum="0.1" Maximum="10" Value="{Binding PlayRate,Mode=TwoWay}" VerticalAlignment="Center" MinWidth="50"/>
-            <TextBlock Text="{Binding ElementName=rateSlider,Path=Value,StringFormat={}{0:N2}}" VerticalAlignment="Center"/>
+            <Slider Name="rateSlider" TickFrequency="1.0" IsSnapToTickEnabled="True" TickPlacement="BottomRight" Minimum="1.0" MouseDoubleClick="rateSlider_MouseDoubleClick" Maximum="10" Value="{Binding PlayRate,Mode=TwoWay}" VerticalAlignment="Center" MinWidth="100"/>
+            <TextBlock Foreground="#c9c9c9" Text="{Binding ElementName=rateSlider,Path=Value,StringFormat={}{0}}" VerticalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </UserControl>

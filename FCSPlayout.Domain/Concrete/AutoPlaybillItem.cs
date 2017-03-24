@@ -22,12 +22,12 @@ namespace FCSPlayout.Domain
         {
         }
 
-        protected override PlaybillItem Clone()
-        {
-            var result = new AutoPlaybillItem(this.PlaySource.Clone());
-            result.IsAutoPadding = this.IsAutoPadding; // ?
-            result.Id = this.Id;
-            return result;
-        }
+        //protected override PlaybillItem Clone()
+        //{
+        //    var result = new AutoPlaybillItem(this.PlaySource.Clone());
+        //    result.IsAutoPadding = this.IsAutoPadding; // ?
+        //    result.Id = this.Id;
+        //    return result;
+        //}
     }
 }

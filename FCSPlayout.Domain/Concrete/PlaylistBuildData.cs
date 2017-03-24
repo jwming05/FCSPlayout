@@ -74,6 +74,13 @@ namespace FCSPlayout.Domain
             {
                 autoItem.EditId = this.EditId;
             }
+            else
+            {
+                if (playItem.EditId == null)
+                {
+                    playItem.EditId = this.EditId;
+                }
+            }
             this.Result.Add(playItem);
         }
 

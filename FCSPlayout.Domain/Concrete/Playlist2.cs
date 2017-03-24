@@ -21,7 +21,7 @@ namespace FCSPlayout.Domain
             {
                 if (this.Count > 0)
                 {
-                    return this[this.Count - 1].GetStopTime().Subtract(this.StartTime.Value);
+                    return this[this.Count - 1].CalculatedStopTime.Subtract(this.StartTime.Value);
                 }
 
                 return TimeSpan.Zero;

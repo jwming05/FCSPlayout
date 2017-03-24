@@ -1,9 +1,14 @@
 ﻿using FCSPlayout.AppInfrastructure;
 using FCSPlayout.Domain;
+
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace FCSPlayout.MediaFileImporter
@@ -11,22 +16,10 @@ namespace FCSPlayout.MediaFileImporter
     /// <summary>
     /// App.xaml 的交互逻辑
     /// </summary>
-    public partial class App : WPFApplicationBase
+    public partial class App : Application
     {
         public static readonly string Name = "入库系统";
 
-        private static WPFApplicationConfiguration CreateAppConfiguration()
-        {
-            return new WPFApplicationConfiguration
-            {
-                RequireGarbageCollection=true,
-            };
-        }
-
-        public App():base(CreateAppConfiguration())
-        {
-
-        }
         protected override void OnStartup(StartupEventArgs e)
         {
             this.Initialize();

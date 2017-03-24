@@ -8,22 +8,50 @@ namespace FCSPlayout.Domain
     {
         internal static PlaySource CreateAutoPadding(TimeSpan duration)
         {
-            var mediaItem = new MediaItem(PlayoutConfiguration.Current.AutoPaddingMediaSource, new Domain.PlayRange(duration));
-            return new PlaySource(mediaItem);
+            return new PlaySource(PlayoutConfiguration.Current.AutoPaddingMediaSource, new Domain.PlayRange(duration));
         }
 
         private PlayRange _playRange;
 
-        public PlaySource(MediaItem mediaItem)
+        public PlaySource(IMediaSource mediaSource)
         {
-            if (mediaItem.Source.Duration != null)
+            if (mediaSource.Duration != null)
             {
-                PlayoutUtils.ValidatePlayDuration(mediaItem.Source.Duration.Value);
+                PlayoutUtils.ValidatePlayDuration(mediaSource.Duration.Value);
             }
+            this.MediaSource = mediaSource;
+            TimeSpan duration = mediaSource.Duration == null ? PlayoutConfiguration.Current.DefaultDuration : mediaSource.Duration.Value;
+            this.PlayRange = new PlayRange(duration);
+        }
 
-            //mediaItem.Source.ValidatePlayRange(mediaItem.PlayRange);
-            this.MediaSource = mediaItem.Source;
-            this.PlayRange = mediaItem.PlayRange;
+        public PlaySource(IMediaSource mediaSource,PlayRange playRange)
+        {
+            if (mediaSource.Duration != null)
+            {
+                PlayoutUtils.ValidatePlayDuration(playRange.Duration);
+            }
+                
+            //mediaSource.ValidatePlayRange(playRange);
+            this.MediaSource = mediaSource;
+            this.PlayRange = playRange;
+        }
+
+        public PlaySource(IMediaSource mediaSource, CGItemCollection cgItems)
+            :this(mediaSource)
+        {
+            if (cgItems != null)
+            {
+                this.CGItems = cgItems.Clone();
+            }
+        }
+
+        public PlaySource(IMediaSource mediaSource, PlayRange playRange, CGItemCollection cgItems)
+            : this(mediaSource, playRange)
+        {
+            if (cgItems != null)
+            {
+                this.CGItems = cgItems.Clone();
+            }
         }
 
         public IMediaSource MediaSource
@@ -34,17 +62,16 @@ namespace FCSPlayout.Domain
         public PlayRange PlayRange
         {
             get { return _playRange; }
-            set
+            private set
             {
-                this.MediaSource.ValidatePlayRange(value);
+                if (this.MediaSource != null)
+                {
+                    this.MediaSource.ValidatePlayRange(value);
+                }
+                
                 _playRange = value;
             }
         }
-
-        //public IPlayParameters Parameters
-        //{
-        //    get;set;
-        //}
 
         public string Title
         {
@@ -56,19 +83,17 @@ namespace FCSPlayout.Domain
 
         public CGItemCollection CGItems
         {
-            get;set;
+            get; private set;
         }
 
         public IPlaySource Clone()
         {
-            //var source = this;
-            var mediaItem = new MediaItem(this.MediaSource.Clone(), this.PlayRange);
-            var result = new PlaySource(mediaItem);
+            var result = new PlaySource(this.MediaSource.Clone(), this.PlayRange);
             if (this.CGItems != null)
             {
                 result.CGItems = this.CGItems.Clone();
             }
-            
+
             return result;
         }
     }

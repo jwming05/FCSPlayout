@@ -176,6 +176,25 @@ namespace FCSPlayout.Domain
             return this.Contains(playItem);
         }
 
-        
+        public bool IsLocked(IPlayItem playItem)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EditLocked(IPlayItem playItem)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual bool CanClear()
+        {
+            return _playItems.CanClear();
+            //throw new NotImplementedException();
+        }
+
+        public virtual DateTime? GetStartTime()
+        {
+            return _playItems.GetStartTime();
+        }
     }
 }

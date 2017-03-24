@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FCSPlayout.CG;
+using System;
 
 namespace FCSPlayout.Domain
 {
@@ -13,32 +14,50 @@ namespace FCSPlayout.Domain
         /// <summary>
         /// 获取播放项的播放时长。
         /// </summary>
-        TimeSpan PlayDuration { get; }
+        TimeSpan CalculatedPlayDuration { get; }
 
         /// <summary>
         /// 获取播放项对应的编单项。
         /// </summary>
         IPlaybillItem PlaybillItem { get; }
 
-        long EditId { get; set; }
+        long? EditId { get; set; }
 
         /// <summary>
         /// 获取播放项的播放范围。
         /// </summary>
         /// <remarks>
         /// 对于顺播在被后面的定时播截短的情况下，
-        /// 该播放范围包含的时长大于<seealso cref="PlayDuration"/>。
+        /// 该播放范围包含的时长大于<seealso cref="CalculatedPlayDuration"/>。
         /// </remarks>
         PlayRange PlayRange { get; }
 
-        IPlayItem Clone();
+        PlayRange CalculatedPlayRange { get; }
+
+        DateTime CalculatedStopTime { get; }
+
+        /// <summary>
+        /// 获取播放项的类型，有效类型为顺播、定时播或定时插播。
+        /// </summary>
+        PlayScheduleMode ScheduleMode { get; }
+
+        /// <summary>
+        /// 获取媒体源。
+        /// </summary>
+        IMediaSource MediaSource { get; }
+
+        string Title { get; }
+
+        CGItemCollection CGItems { get; }
+
+        //IPlayItem Clone();
     }
 
-    public static class PlayItemExtensions
-    {
-        public static DateTime GetStopTime(this IPlayItem playItem)
-        {
-            return playItem.StartTime.Add(playItem.PlayDuration);
-        }
-    }
+    //public static class PlayItemExtensions
+    //{
+    //    public static DateTime GetStopTime(this IPlayItem playItem)
+    //    {
+    //        return playItem.StartTime.Add(playItem.CalculatedPlayDuration);
+    //    }
+    //}
 }

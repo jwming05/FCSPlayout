@@ -26,15 +26,15 @@ namespace FCSPlayout.Domain
         {
             get
             {
-                return this.GetPlayRange();
+                return base.PlayRange;
             }
         }
 
-        TimeSpan IPlayItem.PlayDuration
+        TimeSpan IPlayItem.CalculatedPlayDuration
         {
             get
             {
-                return base.PlaySource.GetDuration();
+                return base.PlayRange.Duration; //.GetDuration();
             }
         }
 
@@ -46,22 +46,41 @@ namespace FCSPlayout.Domain
             }
         }
 
-        public long EditId
+        [NonSerialized]
+        private long? _editId;
+        public long? EditId
         {
-            get;set;
+            get { return _editId; }
+            set { _editId = value; }
         }
 
-        IPlayItem IPlayItem.Clone()
+        public PlayRange CalculatedPlayRange
         {
-            return (IPlayItem)this.Clone();
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        protected override PlaybillItem Clone()
+        public DateTime CalculatedStopTime
         {
-            var result= new TimingPlaybillItem(this.PlaySource.Clone(),
-                this.StartTime.Value, this.ScheduleMode == PlayScheduleMode.TimingBreak);
-            result.Id = this.Id;
-            return result;
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
+
+        //IPlayItem IPlayItem.Clone()
+        //{
+        //    return (IPlayItem)this.Clone();
+        //}
+
+        //protected override PlaybillItem Clone()
+        //{
+        //    var result= new TimingPlaybillItem(this.PlaySource.Clone(),
+        //        this.StartTime.Value, this.ScheduleMode == PlayScheduleMode.TimingBreak);
+        //    result.Id = this.Id;
+        //    return result;
+        //}
     }
 }

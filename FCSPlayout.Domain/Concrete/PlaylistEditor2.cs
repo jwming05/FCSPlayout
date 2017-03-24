@@ -18,18 +18,18 @@ namespace FCSPlayout.Domain
 
             var currentPlayItem = _playlist.CurrentItem;
             //var startTime = DefaultDateTimeService.Instance.GetLocalNow().AddSeconds(1.0);
-            var remainDuration = currentPlayItem.GetStopTime().Subtract(startTime);
+            var remainDuration = currentPlayItem.CalculatedStopTime.Subtract(startTime);
 
             
 
             var adusted = TimeSpan.FromSeconds(0.2);
-            if (currentPlayItem.PlayDuration - remainDuration >= adusted)
+            if (currentPlayItem.CalculatedPlayDuration - remainDuration >= adusted)
             {
                 remainDuration = remainDuration + adusted;
             }
             else
             {
-                remainDuration = currentPlayItem.PlayDuration;
+                remainDuration = currentPlayItem.CalculatedPlayDuration;
             }
 
             if (remainDuration < PlayoutConfiguration.Current.MinPlayDuration) return false;
@@ -67,8 +67,10 @@ namespace FCSPlayout.Domain
 
             //this.Delete(playItem);
 
-            IPlaySource playSource = currentPlayItem.PlaybillItem.PlaySource.Clone();
-            playSource.PlayRange = new PlayRange(currentPlayItem.PlayRange.StartPosition+currentPlayItem.PlayDuration - remainDuration, remainDuration);
+            IPlaySource playSource = ((PlaybillItem)currentPlayItem.PlaybillItem).PlaySource.Clone();
+
+            var temp = new PlayRange(currentPlayItem.PlayRange.StartPosition+currentPlayItem.CalculatedPlayDuration - remainDuration, remainDuration);
+
             var newAutoItem = new AutoPlayItem(PlaybillItem.Auto(playSource));
 
             PlaylistBuildData data = new PlaylistBuildData(this.Id);

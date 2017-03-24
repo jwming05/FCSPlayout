@@ -56,19 +56,19 @@ namespace FCSPlayout.Domain
                         if (autoItem != null)
                         {
                             autoItem.StartTime = startTime;
-                            if (maxDuration >= autoItem.PlayDuration)
+                            if (maxDuration >= autoItem.CalculatedPlayDuration)
                             {
                                 data.AddResult(autoItem);
-                                startTime = autoItem.GetStopTime();
+                                startTime = autoItem.CalculatedStopTime;
                             }
                             else
                             {
                                 if (timingItem.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing)
                                 {
                                     // 截短。
-                                    autoItem.PlayDuration = maxDuration;
+                                    autoItem.CalculatedPlayDuration = maxDuration;
                                     data.AddResult(autoItem);
-                                    startTime = autoItem.GetStopTime();
+                                    startTime = autoItem.CalculatedStopTime;
                                 }
                                 else
                                 {
@@ -79,7 +79,7 @@ namespace FCSPlayout.Domain
                                     autoItem.Split(maxDuration, out first, out second);
                                     first.StartTime = startTime;
                                     data.AddResult(first);
-                                    startTime = first.GetStopTime();
+                                    startTime = first.CalculatedStopTime;
 
                                     segmentItem = second;
                                     
@@ -106,14 +106,14 @@ namespace FCSPlayout.Domain
                         {
                             // 完全截断。
                             autoItem.StartTime = startTime;
-                            autoItem.PlayDuration = TimeSpan.Zero;
+                            autoItem.CalculatedPlayDuration = TimeSpan.Zero;
                             data.AddResult(autoItem);
 
                             autoItem = null;
                         }
 
                         data.AddResult(timingItem);
-                        startTime = timingItem.GetStopTime();
+                        startTime = timingItem.CalculatedStopTime;
                         timingItem = null;
                         #endregion 1.2
                     }
@@ -125,13 +125,13 @@ namespace FCSPlayout.Domain
                     #region 2
                     var maxDuration = data.StopTime.Subtract(startTime);
                     autoItem.StartTime = startTime;
-                    if (autoItem.PlayDuration > maxDuration)
+                    if (autoItem.CalculatedPlayDuration > maxDuration)
                     {
                         // 截短。
-                        autoItem.PlayDuration = maxDuration;
+                        autoItem.CalculatedPlayDuration = maxDuration;
                     }
                     data.AddResult(autoItem);
-                    startTime = autoItem.GetStopTime();
+                    startTime = autoItem.CalculatedStopTime;
                     autoItem = null;
                     #endregion 2
 
@@ -157,7 +157,7 @@ namespace FCSPlayout.Domain
             {
                 // 完全截断。
                 autoItem.StartTime = data.StopTime;
-                autoItem.PlayDuration = TimeSpan.Zero;
+                autoItem.CalculatedPlayDuration = TimeSpan.Zero;
 
                 data.AddResult(autoItem);
                 autoItem = null;
@@ -169,7 +169,7 @@ namespace FCSPlayout.Domain
                 autoItem = data.TakeAuto();
 
                 autoItem.StartTime = data.StopTime;
-                autoItem.PlayDuration = TimeSpan.Zero;
+                autoItem.CalculatedPlayDuration = TimeSpan.Zero;
 
                 data.AddResult(autoItem);
                 autoItem = null;

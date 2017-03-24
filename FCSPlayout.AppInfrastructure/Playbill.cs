@@ -69,7 +69,7 @@ namespace FCSPlayout.AppInfrastructure
             //}
 
             dtoItem.StartTime = playItem.StartTime;
-            dtoItem.PlayDuration = playItem.PlayDuration.TotalSeconds;
+            dtoItem.PlayDuration = playItem.CalculatedPlayDuration.TotalSeconds;
             dtoItem.MarkerIn = playItem.PlayRange.StartPosition.TotalSeconds;
             dtoItem.MarkerDuration = playItem.PlayRange.Duration.TotalSeconds;
 
@@ -85,19 +85,19 @@ namespace FCSPlayout.AppInfrastructure
             dtoItem.Playbill = billEntity;
 
             dtoItem.StartTime = billItem.StartTime;
-            dtoItem.MarkerIn = billItem.GetPlayRange().StartPosition.TotalSeconds;
+            dtoItem.MarkerIn = billItem.PlayRange.StartPosition.TotalSeconds;
             dtoItem.ScheduleMode = billItem.ScheduleMode;
-            dtoItem.MarkerDuration = billItem.GetPlayRange().Duration.TotalSeconds;
+            dtoItem.MarkerDuration = billItem.PlayRange.Duration.TotalSeconds;
             //_dtoItem.SegmentId = this.SegmentId;
 
-            if (billItem.PlaySource.MediaSource.Category!=MediaSourceCategory.Null)
+            if (billItem.MediaSource.Category!=MediaSourceCategory.Null)
             {
-                dtoItem.MediaSourceId = billItem.PlaySource.MediaSource.Id;
+                dtoItem.MediaSourceId = billItem.MediaSource.Id;
             }
             else
             {
-                dtoItem.MediaSourceTitle = billItem.PlaySource.MediaSource.Title;
-                dtoItem.MediaSourceDuration = billItem.PlaySource.MediaSource.Duration.Value.TotalSeconds;
+                dtoItem.MediaSourceTitle = billItem.MediaSource.Title;
+                dtoItem.MediaSourceDuration = billItem.MediaSource.Duration.Value.TotalSeconds;
             }
 
             var autoBillItem = billItem as AutoPlaybillItem;
@@ -107,15 +107,15 @@ namespace FCSPlayout.AppInfrastructure
             }
             
 
-            var fileMediaSource = billItem.PlaySource.MediaSource as IFileMediaSource;
+            var fileMediaSource = billItem.MediaSource as IFileMediaSource;
             if (fileMediaSource != null)
             {
                 dtoItem.AudioGain = fileMediaSource.AudioGain;
             }
 
-            if (billItem.PlaySource.CGItems != null)
+            if (billItem.CGItems != null)
             {
-                dtoItem.CGContents = CGItemCollection.ToXml(billItem.PlaySource.CGItems);
+                dtoItem.CGContents = CGItemCollection.ToXml(billItem.CGItems);
             }
             
             return dtoItem;
@@ -155,7 +155,7 @@ namespace FCSPlayout.AppInfrastructure
             {
                 var autoPlayItem = new AutoPlayItem(playbillItem);
                 autoPlayItem.StartTime = entity.StartTime;
-                autoPlayItem.PlayDuration = TimeSpan.FromSeconds(entity.PlayDuration);
+                autoPlayItem.CalculatedPlayDuration = TimeSpan.FromSeconds(entity.PlayDuration);
                 autoPlayItem.PlayRange = new PlayRange(TimeSpan.FromSeconds(entity.MarkerIn), TimeSpan.FromSeconds(entity.MarkerDuration));
                 //autoPlayItem.PlaybillItem = playbillItem;
                 autoPlayItem.Id = entity.Id;
@@ -205,12 +205,24 @@ namespace FCSPlayout.AppInfrastructure
             var range = new PlayRange(TimeSpan.FromSeconds(entity.MarkerIn), TimeSpan.FromSeconds(entity.MarkerDuration));
             var mediaItem = new MediaItem(mediaSource, range);
 
-            var playSource = new PlaySource(mediaItem);
+            CGItemCollection cgItems = null;
+            //var playSource = new PlaySource(mediaItem.Source,mediaItem.PlayRange);
+            
+
             if (entity.CGContents != null)
             {
-                playSource.CGItems = CGItemCollection.FromXml(entity.CGContents);
+                cgItems/*playSource.CGItems*/ = CGItemCollection.FromXml(entity.CGContents);
             }
-            return playSource;
+
+            if (cgItems == null)
+            {
+                return new PlaySource(mediaItem.Source, mediaItem.PlayRange);
+            }
+            else
+            {
+                return new PlaySource(mediaItem.Source, mediaItem.PlayRange, cgItems);
+            }
+            //return playSource;
         }
 
         private static IMediaSource FromEntity(PlaybillItemEntity billItemEntity, MediaSourceEntity entity)

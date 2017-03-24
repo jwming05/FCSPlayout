@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FCSPlayout.CG;
+using System;
 
 namespace FCSPlayout.Domain
 {
@@ -18,21 +19,38 @@ namespace FCSPlayout.Domain
         /// <summary>
         /// 获取播放源。
         /// </summary>
-        IPlaySource PlaySource { get; }
+        //IPlaySource PlaySource { get; }
 
-        IPlaybillItem Clone();
+        /// <summary>
+        /// 获取媒体源。
+        /// </summary>
+        IMediaSource MediaSource { get; }
+
+        /// <summary>
+        /// 获取应用于媒体源的入出点。
+        /// </summary>
+        PlayRange PlayRange { get; }
+
+        //IPlayParameters Parameters { get; }
+
+        string Title { get; }
+
+        CGItemCollection CGItems { get;}
+
+
+        //IPlaybillItem Clone();
     }
 
     public static class PlaybillItemExtensions
     {
-        public static DateTime GetStopTime(this IPlaybillItem playbillItem)
-        {
-            return playbillItem.StartTime.Value.Add(playbillItem.PlaySource.GetDuration());
-        }
+        //public static DateTime GetStopTime(this IPlaybillItem playbillItem)
+        //{
+        //    return playbillItem.StartTime.Value.Add(playbillItem.PlaySource.GetDuration());
+        //}
 
-        public static PlayRange GetPlayRange(this IPlaybillItem playbillItem)
-        {
-            return playbillItem.PlaySource.PlayRange;
-        }
+        //public static PlayRange GetPlayRange(this IPlaybillItem playbillItem)
+        //{
+        //    return playbillItem.PlaySource.PlayRange;
+        //}
     }
 }
