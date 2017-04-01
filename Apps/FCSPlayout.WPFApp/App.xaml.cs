@@ -14,6 +14,10 @@ namespace FCSPlayout.WPFApp
     /// </summary>
     public partial class App : WPFApplicationBase
     {
+        public App():base(ApplicationNames.PlayService)
+        {
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             //MediaSourcePathResolver.Current = new DefaultMediaSourcePathResolver(

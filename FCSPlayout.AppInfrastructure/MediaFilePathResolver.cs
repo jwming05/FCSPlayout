@@ -4,7 +4,7 @@ namespace FCSPlayout.AppInfrastructure
 {
     public class MediaFilePathResolver: IMediaFilePathResolver
     {
-        private static IMediaFilePathResolver _current=new MediaFilePathResolver();
+        private static IMediaFilePathResolver _current=new MediaFilePathResolver(MediaFileStorage.Primary);
 
         public static IMediaFilePathResolver Current
         {
@@ -19,8 +19,9 @@ namespace FCSPlayout.AppInfrastructure
             }
         }
 
-        private MediaFilePathResolver()
+        public MediaFilePathResolver(MediaFileStorage currentStorage)
         {
+            this.CurrentStorage = currentStorage;
         }
 
         public string GetDirectory(MediaFileStorage fileStorage)

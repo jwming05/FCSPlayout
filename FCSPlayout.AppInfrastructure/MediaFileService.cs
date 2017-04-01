@@ -15,16 +15,14 @@ namespace FCSPlayout.AppInfrastructure
 
         public static void DeleteMediaFile(MediaFileEntity entity, string applicationName)
         {
-            //entity.State = ObjectState.Deleted;
             PlayoutRepository.DeleteMediaFile(entity, applicationName, UserService.CurrentUser.Id, UserService.CurrentUser.Name);
         }
 
-        public static PagingItems<MediaFileEntity> GetMediaFiles(PagingInfo pagingInfo)
+        public static PagingItems<MediaFileEntity> GetMediaFiles(MediaItemSearchOptions searchOptions, PagingInfo pagingInfo)
         {
-            return PlayoutRepository.GetMediaFiles(pagingInfo);
+            return PlayoutRepository.GetMediaFiles(searchOptions, pagingInfo);
         }
 
-        //public static void Delete(Guid mediaFileId, string applicationName)
         public static void UploadFile(string filePath, string destFileName, IBackgroundWorkContext context)
         {
             if (DestinationStreamCreator == null)

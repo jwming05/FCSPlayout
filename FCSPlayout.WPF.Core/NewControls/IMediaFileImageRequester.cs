@@ -1,7 +1,6 @@
 ﻿using System.Windows.Media.Imaging;
-using FCSPlayout.AppInfrastructure;
 
-namespace FCSPlayout.MediaFileImporter
+namespace FCSPlayout.WPF.Core
 {
     public interface IMediaFileImageRequester
     {

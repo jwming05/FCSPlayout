@@ -116,12 +116,13 @@ namespace FCSPlayout.WPF.Core
             }
         }
 
-        public void RaiseRequestPagingItems(int pageIndex=0)
+        public void RaiseRequestFirstPagingItems(/*int pageIndex=0*/)
         {
-            if (pageIndex < 0)
-            {
-                throw new ArgumentOutOfRangeException("pageIndex");
-            }
+            int pageIndex = 0;
+            //if (pageIndex < 0)
+            //{
+            //    throw new ArgumentOutOfRangeException("pageIndex");
+            //}
 
             OnRequestPagingItems(pageIndex);
         }

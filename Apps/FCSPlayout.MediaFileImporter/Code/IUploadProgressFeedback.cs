@@ -12,6 +12,7 @@ namespace FCSPlayout.MediaFileImporter
         void Open();
         void Close();
         void Report(int progress, MediaFileStorage locationCategory);
+        void Reset();
     }
 
     class NullUploadProgressFeedback : IUploadProgressFeedback
@@ -38,6 +39,10 @@ namespace FCSPlayout.MediaFileImporter
         }
 
         public void Report(int progress, MediaFileStorage locationCategory)
+        {
+        }
+
+        public void Reset()
         {
         }
     }

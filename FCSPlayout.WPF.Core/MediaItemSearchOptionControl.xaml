@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="FCSPlayout.WPF.Core.MediaItemSearchOptionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FCSPlayout.WPF.Core"
+             xmlns:entities="clr-namespace:FCSPlayout.Entities;assembly=FCSPlayout.Entities"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Margin="5" VerticalAlignment="Center"   Foreground="#c9c9c9" Text="素材标题:"/>
+            <TextBox Margin="5" VerticalAlignment="Center" 
+                     Text="{Binding BindableSearchOptions.Title,Mode=TwoWay,RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                     BorderBrush="#303030" Background="Transparent" MinWidth="90" />
+            <TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="节目类型:"/>
+            <ComboBox Margin="5" MinWidth="90" ItemsSource="{x:Static entities:PlayoutRepository.MediaFileCategories}" 
+                      SelectedValuePath="Key" DisplayMemberPath="Value" 
+                      SelectedValue="{Binding BindableSearchOptions.MediaFileCategoryId,Mode=TwoWay,RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+            <TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="频道类型:"/>
+
+            <ComboBox Margin="5" MinWidth="90" VerticalAlignment="Center" Background="#868686"
+                      ItemsSource="{x:Static entities:PlayoutRepository.MediaFileChannels}"
+                      SelectedValuePath="Key" DisplayMemberPath="Value" 
+                      SelectedValue="{Binding BindableSearchOptions.MediaFileChannelId,Mode=TwoWay,RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

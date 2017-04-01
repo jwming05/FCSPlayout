@@ -1,9 +1,10 @@
-﻿<Application x:Class="FCSPlayout.MediaFileImporter.App"
+﻿<appInf:WPFApplicationBase x:Class="FCSPlayout.MediaFileImporter.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:FCSPlayout.MediaFileImporter"
-             StartupUri="MainWindow.xaml">
-    <Application.Resources>
+             xmlns:appInf="clr-namespace:FCSPlayout.AppInfrastructure;assembly=FCSPlayout.AppInfrastructure"
+             >
+    <appInf:WPFApplicationBase.Resources>
 
 
         <!--datagrid样式-->
@@ -824,5 +825,5 @@
             </Setter>
         </Style>
 
-    </Application.Resources>
-</Application>
+    </appInf:WPFApplicationBase.Resources>
+</appInf:WPFApplicationBase>

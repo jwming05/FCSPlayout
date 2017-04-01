@@ -1,27 +1,15 @@
-﻿//using FCSPlayout.Domain;
-
-using FCSPlayout.AppInfrastructure;
+﻿using FCSPlayout.AppInfrastructure;
 using FCSPlayout.Domain;
-using FCSPlayout.Entities;
-using FCSPlayout.MediaFileImporter;
 using FCSPlayout.WPF.Core;
-using FCSPlayout.WPFApp.Views;
-//using FCSPlayout.WPFApp.Models;
 using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
+using Prism.Events;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
-namespace FCSPlayout.WPFApp.ViewModels
+namespace FCSPlayout.MediaFileImporter
 {
     public class MediaItemListViewModel : ViewModelBase
     {
@@ -30,15 +18,23 @@ namespace FCSPlayout.WPFApp.ViewModels
         
         private readonly DelegateCommand _addMediaItemCommand;
         private readonly DelegateCommand _deleteMediaItemCommand;
-        private readonly DelegateCommand<object> _editMediaItemCommand;
         private readonly DelegateCommand _saveMediaItemsCommand;
+        private readonly DelegateCommand<IPlayableItem> _previewCommand;
 
         private IUploadProgressFeedback _progressFeedback;
         private DelegateBackgroundWorker _worker;
-        private BindableMediaFileItem _currentItem;
+        private BindableMediaFileItem _currentUploadItem;
+        private InteractionRequests _interactionRequests;
+        private IPlayableItem _currentPreviewItem;
 
-        public MediaItemListViewModel()
+        public MediaItemListViewModel(IEventAggregator eventAggregator,
+            InteractionRequests interactionRequests,
+            IMediaFileImageResolver imageResolver,IUserService userService)
         {
+            this.EventAggregator = eventAggregator;
+            this.ImageResolver = imageResolver;
+            this.UserService = userService;
+
             _worker = new DelegateBackgroundWorker();
             _worker.ProgressChangedHandler = this.ReportUploadProgress;
             _worker.RunCompletedHandler = this.OnUploadCompleted;
@@ -47,22 +43,35 @@ namespace FCSPlayout.WPFApp.ViewModels
             _mediaItemCollection = new ObservableCollection<BindableMediaFileItem>();
             _addMediaItemCommand = new DelegateCommand(AddMediaItem);
             _deleteMediaItemCommand = new DelegateCommand(DeleteMediaItem, CanDeleteMediaItem);
-            _editMediaItemCommand = new DelegateCommand<object>(EditMediaItem, CanEditMediaItem);
             _saveMediaItemsCommand = new DelegateCommand(SaveMediaItems, CanSaveMediaItems);
+
+            _previewCommand = new DelegateCommand<IPlayableItem>(Preview);
+
+            _interactionRequests = interactionRequests;
+        }
+
+        private void Preview(IPlayableItem playableItem)
+        {
+            if(this.EventAggregator!=null && playableItem != null)
+            {
+                _currentPreviewItem = playableItem;
+                this.EventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Publish(playableItem);
+            }
         }
 
         private bool CanDeleteMediaItem()
         {
-            return this.SelectedMediaItem != null && this.SelectedMediaItem!=_currentItem;
+            return this.SelectedMediaItem != null && this.SelectedMediaItem!=_currentUploadItem;
         }
 
         private void DeleteMediaItem()
         {
             if (CanDeleteMediaItem())
             {
-                _mediaItemCollection.Remove(this.SelectedMediaItem);
+                var item = this.SelectedMediaItem;
                 this.SelectedMediaItem = null;
-                _saveMediaItemsCommand.RaiseCanExecuteChanged();
+
+                RemoveItem(item);
             }
         }
 
@@ -84,7 +93,7 @@ namespace FCSPlayout.WPFApp.ViewModels
             }
         }
      
-        public ObservableCollection<BindableMediaFileItem> MediaItemView
+        public ObservableCollection<BindableMediaFileItem> MediaItems
         {
             get
             {
@@ -99,34 +108,25 @@ namespace FCSPlayout.WPFApp.ViewModels
             {
                 
                 _selectedMediaItem = value;
-                _editMediaItemCommand.RaiseCanExecuteChanged();
                 _deleteMediaItemCommand.RaiseCanExecuteChanged();
-                OnSelectedMediaItemChanged();
+                //OnSelectedMediaItemChanged();
             }
         }
 
-        public event EventHandler SelectedMediaItemChanged;
-        private void OnSelectedMediaItemChanged()
-        {
-            if (SelectedMediaItemChanged != null)
-            {
-                SelectedMediaItemChanged(this, EventArgs.Empty);
-            }
-        }
+        //public event EventHandler SelectedMediaItemChanged;
+        //private void OnSelectedMediaItemChanged()
+        //{
+        //    if (SelectedMediaItemChanged != null)
+        //    {
+        //        SelectedMediaItemChanged(this, EventArgs.Empty);
+        //    }
+        //}
 
         public ICommand AddMediaItemCommand
         {
             get
             {
                 return _addMediaItemCommand;
-            }
-        }
-
-        public ICommand EditMediaItemCommand
-        {
-            get
-            {
-                return _editMediaItemCommand;
             }
         }
 
@@ -146,8 +146,6 @@ namespace FCSPlayout.WPFApp.ViewModels
             }
         }
 
-        
-
         public IUploadProgressFeedback ProgressFeedback
         {
             get
@@ -161,89 +159,34 @@ namespace FCSPlayout.WPFApp.ViewModels
             }
         }
 
-        
+        public IEventAggregator EventAggregator { get; private set; }
 
         private void AddMediaItem()
         {
-            if (OpenFileInteractionRequest != null)
-            {
-                OpenFileInteractionRequest.Raise(new OpenFileDialogConfirmation() { Filter = "媒体文件(*.*)|*.*", Multiselect = true },
+            _interactionRequests.OpenFileInteractionRequest.Raise(new OpenFileDialogConfirmation() { Filter = "媒体文件(*.*)|*.*", Multiselect = true },
                 n =>
                 {
                     if (n.Confirmed)
                     {
                         var fileNames = n.FileNames.ToList();
-                        for (int j=0;j<fileNames.Count;j++)
+                        for (int j = 0; j < fileNames.Count; j++)
                         {
                             var fileName = fileNames[j];
 
-                            //TimeSpan duration = GetFileDuration(fileName);
-                            _mediaItemCollection.Add(new BindableMediaFileItem(fileName));
-                            //PlaybillEditor.datagridHepler.SetShowRowIndexProperty(MediaItemListView.mv.dgMediaItem, true);
+                            _mediaItemCollection.Add(new BindableMediaFileItem(fileName,this.UserService.CurrentUser.Id));
                             _saveMediaItemsCommand.RaiseCanExecuteChanged();
 
                         }
                     }
                 });
-            }
-        }
-
-        private bool CanEditMediaItem(object cmdParameter)
-        {
-            Views.DataGridRowDoubleClickEventArgs args = cmdParameter as Views.DataGridRowDoubleClickEventArgs;
-            if (args != null)
-            {
-                BindableMediaFileItem item = args.Item as BindableMediaFileItem;
-                return item != null;
-            }
-            return false;
-        }
-
-        BindableMediaFileItem bindable;
-        
-
-        private void EditMediaItem(object cmdParameter)
-        {
-            if (CanEditMediaItem(cmdParameter))
-            {
-                Views.DataGridRowDoubleClickEventArgs args = cmdParameter as Views.DataGridRowDoubleClickEventArgs;
-                bindable = args.Item as BindableMediaFileItem;
-                //System.Diagnostics.Debug.WriteLine(cmdParameter);
-                //bindable = this.SelectedMediaItem as BindableMediaFileItem;
-                if (bindable != null)
-                {
-                    var strPath = bindable.FilePath; // ((FileMediaSource)).Path;
-                    var range = new PlayRange(bindable.StartPosition, bindable.StopPosition - bindable.StartPosition);// new PlayRange(bindable.Duration, bindable.StartPosition, bindable.StopPosition);
-
-
-
-                    //MediaItemListView.mv.mw1.Init(strPath, range, PlayoutRepository.GetMPlaylistSettings(),
-                    //    ()=>bindable!=null, 
-                    //    (inPos)=> {
-                    //        var oldStop = bindable.PlayRange.StopPosition;
-                    //        var newInPos = TimeSpan.FromSeconds(inPos);
-                    //        var duration = oldStop - newInPos;
-                    //        bindable.PlayRange = new PlayRange(newInPos,duration<TimeSpan.Zero ? TimeSpan.Zero : duration);
-                    //            },
-                    //    () => bindable != null, 
-                    //    (outPos) => {
-                    //        var oldStart = bindable.PlayRange.StartPosition;
-                    //        var newOutPos = TimeSpan.FromSeconds(outPos);
-                    //        var duration = newOutPos - oldStart;
-                    //        bindable.PlayRange = new PlayRange(oldStart, duration < TimeSpan.Zero ? TimeSpan.Zero : duration);
-                    //    });
-                    //MediaItemListView.mv.mw1.play();            
-                }
-                else
-                {
-                }
-            }
         }
 
         #region
         private void Upload(BindableMediaFileItem item)
         {
-            _currentItem = item;
+            this.ProgressFeedback.Reset();
+
+            _currentUploadItem = item;
             _worker.State = item;
             _worker.Run((c) => { MediaFileService.UploadFile(item.FilePath, item.FileName, c); });
         }
@@ -252,7 +195,18 @@ namespace FCSPlayout.WPFApp.ViewModels
         {
             ProgressFeedback.Report(progress, (MediaFileStorage)state);
         }
-    
+
+        private void RemoveItem(BindableMediaFileItem item)
+        {
+            if (_currentPreviewItem == item)
+            {
+                item.ClosePreview();
+                _currentPreviewItem = null;
+            }
+            
+            _mediaItemCollection.Remove(item);
+            _saveMediaItemsCommand.RaiseCanExecuteChanged();
+        }
 
         private void OnUploadCompleted(Exception error,bool cancelled,object result)
         {
@@ -261,10 +215,28 @@ namespace FCSPlayout.WPFApp.ViewModels
             if (error==null && !cancelled)
             {
                 var entity = item.Entity;
-                MediaFileService.Add(item.Entity, App.Name);
+                var metadata = entity.Metadata;
 
+                if (metadata == null)
+                {
+                    metadata = new Entities.MediaFileMetadata();
+                    entity.Metadata = metadata;
+                }
+
+                if(metadata.Icon==null)
+                {
+                    var image = item.Image;
+                    if (image == null)
+                    {
+                        //image = item.ResolveImage();
+                        image = this.ResolveImage(item);
+                    }
+                    metadata.Icon = GetIcon(image);
+                }
+
+                MediaFileService.Add(item.Entity, App.Current.Name);
                 _worker.State = null;
-                _mediaItemCollection.Remove(item);
+                RemoveItem(item);
             }
             else
             {
@@ -275,10 +247,6 @@ namespace FCSPlayout.WPFApp.ViewModels
                 _mediaItemCollection.Add(item);
             }
 
-            //PlaybillEditor.datagridHepler.SetShowRowIndexProperty(MainWindow.mw.dgMediaItem1, true);
-
-            //MainWindow.mw.dgMediaItem1.ItemsSource =list;
-
             if (_mediaItemCollection.Count > 0)
             {
                 item = _mediaItemCollection[0];
@@ -286,10 +254,42 @@ namespace FCSPlayout.WPFApp.ViewModels
             }
             else
             {
-                _currentItem = null;
+                _currentUploadItem = null;
                 ProgressFeedback.Close();
             }
-        }        
+        }
+
+        internal BitmapSource ResolveImage(BindableMediaFileItem item)
+        {
+            return this.ImageResolver.Resolve(item.FilePath, item.Duration.TotalMilliseconds / 2.0);
+        }
+
+        internal static byte[] GetIcon(BitmapSource image)
+        {
+            if (image != null)
+            {
+                using (var ms = new System.IO.MemoryStream())
+                {
+                    var jpegEncoder = new JpegBitmapEncoder();
+                    jpegEncoder.Frames.Add(BitmapFrame.Create(image));
+                    jpegEncoder.Save(ms);
+                    return ms.ToArray();
+                }
+            }
+
+            return null;
+        }
         #endregion
+
+        public ICommand PreviewCommand
+        {
+            get { return _previewCommand; }
+        }
+
+        public IMediaFileImageResolver ImageResolver
+        {
+            get;private set;
+        }
+        public IUserService UserService { get; private set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FCSPlayout.AppInfrastructure
+namespace FCSPlayout.WPF.Core
 {
     public class MediaFileImageRequest
     {
@@ -9,7 +9,6 @@ namespace FCSPlayout.AppInfrastructure
         public double Position { get; set; }
 
         public Action<IntPtr> Complete { get; set; }
-
         public bool Cancel { get; set; }
     }
 }

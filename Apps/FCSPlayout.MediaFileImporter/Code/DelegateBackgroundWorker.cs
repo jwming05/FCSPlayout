@@ -3,7 +3,7 @@
 using System;
 using System.ComponentModel;
 
-namespace FCSPlayout.WPFApp.ViewModels
+namespace FCSPlayout.MediaFileImporter
 {
     internal class DelegateBackgroundWorker
     {

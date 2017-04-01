@@ -148,7 +148,7 @@ namespace FCSPlayout.WPFApp.Models
                 _syncContext.Post(new System.Threading.SendOrPostCallback(SetImageInternal), ptr);
             } };
 
-            MediaFileImageExtractor.Current.GetHBitmap(_request);
+            MediaFileImageExtractor.Current.GetHBitmapAsync(_request);
         }
     }
 }

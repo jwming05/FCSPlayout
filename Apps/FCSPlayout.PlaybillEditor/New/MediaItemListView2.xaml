@@ -1,0 +1,79 @@
+﻿<core:ViewBase x:Class="FCSPlayout.PlaybillEditor.MediaItemListView2"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mi="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:core="clr-namespace:FCSPlayout.WPF.Core;assembly=FCSPlayout.WPF.Core"
+             xmlns:local="clr-namespace:FCSPlayout.PlaybillEditor"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+    <core:ViewBase.Resources>
+        <core:TimeCodeConverter x:Key="TimeCodeConverter"/>
+        <core:MediaFileCategoryConverter x:Key="MediaFileCategoryConverter"/>
+        <core:MediaFileChannelConverter x:Key="MediaFileChannelConverter"/>
+    </core:ViewBase.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <core:MediaItemSearchOptionControl SearchOptions="{Binding SearchOptions,Mode=OneWay}"/>
+            <Button Content="搜索素材" Margin="5">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <mi:CallMethodAction TargetObject="{Binding ElementName=pagingControl}" MethodName="RaiseRequestFirstPagingItems"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+            <!--<Button Content="删除素材" Margin="5" Command="{Binding DeleteMediaItemCommand}"/>-->
+        </StackPanel>
+        <DataGrid Name="dgMediaItem" Grid.Row="1" AutoGenerateColumns="False" 
+                      ItemsSource="{Binding MediaItemView}" SelectionMode="Single" IsReadOnly="True"
+                      SelectedItem="{Binding SelectedMediaItem, Mode=OneWayToSource}">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="缩略图">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <core:MediaFileImageControl MediaFileItem="{Binding}"
+                                                        MediaFileImageResolver="{Binding DataContext.ImageResolver,RelativeSource={RelativeSource AncestorType=core:ViewBase,Mode=FindAncestor}}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDoubleClick">
+                                        <i:InvokeCommandAction Command="{Binding DataContext.PreviewCommand,RelativeSource={RelativeSource AncestorType=core:ViewBase,Mode=FindAncestor}}"
+                                                               CommandParameter="{Binding}"></i:InvokeCommandAction>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </core:MediaFileImageControl>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding OriginalFileName}" Header="文件名"/>
+                <DataGridTextColumn Binding="{Binding Title}" Header="素材标题"/>
+               
+                <DataGridTextColumn Binding="{Binding StartPosition, Converter={StaticResource TimeCodeConverter}}" Header="入点"/>
+                <DataGridTextColumn Binding="{Binding StopPosition, Converter={StaticResource TimeCodeConverter}}" Header="出点"/>
+                <DataGridTextColumn Binding="{Binding PlayDuration, Converter={StaticResource TimeCodeConverter}}" Header="播放时长"/>
+                <DataGridTextColumn Binding="{Binding Duration, Converter={StaticResource TimeCodeConverter}}" Header="总时长"/>
+                
+                <DataGridTextColumn Binding="{Binding MediaFileCategoryId,Converter={StaticResource MediaFileCategoryConverter}}" Header="节目类型"/>
+                <DataGridTextColumn Binding="{Binding MediaFileChannelId,Converter={StaticResource MediaFileChannelConverter}}" Header="频道类型"/>
+                
+                <DataGridTextColumn Binding="{Binding AudioGain}" Header="音频增益"/>
+                <DataGridTextColumn Binding="{Binding CreationTime,StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" Header="创建日期" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <core:PagingControl x:Name="pagingControl" Grid.Row="2" HorizontalAlignment="Center" 
+                            RowsPerPage="{Binding PageSize,Mode=TwoWay}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="RequestPagingItems">
+                    <core:CustomInvokeCommandAction Command="{Binding SearchCommand}"></core:CustomInvokeCommandAction>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </core:PagingControl>
+    </Grid>
+</core:ViewBase>

@@ -1,6 +1,7 @@
 ﻿using FCSPlayout.Domain;
 using FCSPlayout.Entities;
 using System;
+using System.Linq;
 
 namespace FCSPlayout.AppInfrastructure
 {
@@ -22,14 +23,19 @@ namespace FCSPlayout.AppInfrastructure
             {
                 throw new InvalidOperationException();
             }
-            var u = PlayoutRepository.GetUser(name, PasswordProcessor.Current.Encrypt(password));
-            if (u == null)
+            var userEntity = PlayoutRepository.GetUser(name, PasswordProcessor.Current.Encrypt(password));
+            if (userEntity == null)
             {
                 return false;
             }
 
-            _user = new User { Id = u.Id, Name = u.Name };
+            var user = new User { Id = userEntity.Id, Name = userEntity.Name,Roles=userEntity.Roles.Select(r=>r.Name).ToArray() };
+            if(!user.IsInRole(applicationName) && !user.IsAdmin())
+            {
+                return false;
+            }
 
+            _user = user;
             var action = new UserAction
             {
                 Category = UserActionCategory.Login,

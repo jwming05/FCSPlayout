@@ -1,5 +1,8 @@
 ﻿using FCSPlayout.Domain;
+using FCSPlayout.WPF.Core;
+using MPLATFORMLib;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using System;
 using System.Windows.Input;
@@ -7,10 +10,9 @@ using System.Windows.Threading;
 
 namespace FCSPlayout.MediaFileImporter
 {
-    internal partial class PlayControlModel2 : BindableBase
+    public partial class PlayControlModel2 : BindableBase
     {
         private Player2 _player;
-        //private string _fileName;
         private IPlayableItem _playableItem;
 
         private readonly DelegateCommand _playCommand;
@@ -24,27 +26,25 @@ namespace FCSPlayout.MediaFileImporter
         private readonly DelegateCommand _previousFrameCommand;
 
         private readonly DelegateCommand _applyCommand;
+        private readonly DelegateCommand _resetRateCommand;
 
         private double _maxPosition;
-        private string _sourceName;
-        private DispatcherTimer _timer;
+        private ITimer _timer;
         private PlayRange _playRange;
         private double _playRate = 1.0;
         private int _audioGain=0;
+        private IMObject _mobject;
+        
 
-        //internal Func<bool> _canSetInAction;
-        //internal Action<double> _setInAction;
-
-        //internal Func<bool> _canSetOutAction;
-        //internal Action<double> _setOutAction;
-
-        public PlayControlModel2(DispatcherTimer timer, MPlaylistSettings mplaylistSettings/*, Player2 player*/)
+        public PlayControlModel2(MPlaylistSettings mplaylistSettings, IEventAggregator eventAggregator)
         {
-            _timer = timer;
 
-            _timer.Tick += Timer_Tick;
+            eventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Subscribe(Preview);
 
-            _player = new Player2(mplaylistSettings); //player;
+            _player = new Player2(mplaylistSettings);
+
+            _player.Opened += Player_Opened;
+            _player.Closed += Player_Closed;
             _player.StatusChanged += Player_StatusChanged;
 
             _playCommand = new DelegateCommand(Play, CanPlay);
@@ -61,52 +61,94 @@ namespace FCSPlayout.MediaFileImporter
             _previousFrameCommand = new DelegateCommand(GoPreviousFrame, CanGoPreviousFrame);
 
             _applyCommand = new DelegateCommand(Apply, CanApply);
+            _resetRateCommand = new DelegateCommand(ResetRate, CanResetRate);
         }
 
-        
-
-        public event EventHandler Opened
+        private void Preview(IPlayableItem playableItem)
         {
-            add { _player.Opened += value; }
-            remove { _player.Opened -= value; }
+            if (_playableItem == playableItem) return;
+
+            if (_player.Status != PlayerStatus.Closed)
+            {
+                _player.Close();
+            }
+
+            if (_playableItem != null)
+            {
+                _playableItem.PreviewClosing -= PlayableItem_PreviewClosing;
+            }
+
+            if (playableItem != null && !string.IsNullOrEmpty(playableItem.FilePath) && System.IO.File.Exists(playableItem.FilePath))
+            {
+                _playableItem = playableItem;
+            }
+            else
+            {
+                _playableItem = null;
+            }
+
+
+            if (_playableItem != null)
+            {
+                _playableItem.PreviewClosing += PlayableItem_PreviewClosing;
+                this.PlayRange = _playableItem.PlayRange;
+
+                SetAudioGain(_playableItem.AudioGain, false);
+                _player.Open(_playableItem);
+
+                this.Play();
+                this.Pause();
+            }
         }
 
-        public event EventHandler Closed
+        private void PlayableItem_PreviewClosing(object sender, EventArgs e)
         {
-            add { _player.Closed += value; }
-            remove { _player.Closed -= value; }
+            Preview(null);
+        }
+
+        private void Player_Closed(object sender, EventArgs e)
+        {
+            this.MObject = null;
+        }
+
+        private void Player_Opened(object sender, EventArgs e)
+        {
+            this.MObject = _player.PlayerObject as IMObject;
+        }
+
+        public IMObject MObject
+        {
+            get { return _mobject; }
+            set
+            {
+                _mobject = value;
+                this.RaisePropertyChanged(nameof(this.MObject));
+            }
+        }
+
+        public ITimer Timer
+        {
+            get { return _timer; }
+            set
+            {
+                if (_timer != null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                _timer = value;
+                _timer.Tick += Timer_Tick;
+            }
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (_player != null && _player.Status == PlayerStatus.Running)
             {
-                OnPropertyChanged<double>(() => this.Position);
+                this.RaisePropertyChanged(nameof(this.Position));
             }
         }
-
-        //public string FileName
-        //{
-        //    get { return _fileName; }
-        //    set
-        //    {
-        //        if (_player.Status != PlayerStatus.Closed)
-        //        {
-        //            _player.Close();
-        //        }
-        //        _fileName = value;
-
-        //        if (!string.IsNullOrEmpty(_fileName) && System.IO.File.Exists(_fileName))
-        //        {
-        //            _player.Open(_fileName);
-
-        //            _player.SetRate(this.PlayRate);
-        //        }
-        //    }
-        //}
-
         
-
         #region Commands
         public ICommand PlayCommand
         {
@@ -184,58 +226,22 @@ namespace FCSPlayout.MediaFileImporter
         {
             get { return _applyCommand; }
         }
+
+        public ICommand ResetRateCommand
+        {
+            get { return _resetRateCommand; }
+        }
         #endregion Commands
 
         #region Public Properties
-        public object PlayerObject { get { return _player.PlayerObject; } }
-
-        public IPlayableItem PlayableItem
+        public bool Seekable
         {
-            get { return _playableItem; }
-            set
+            get
             {
-                if (_playableItem == value) return;
-
-                if (_player.Status != PlayerStatus.Closed)
-                {
-                    _player.Close();
-                }
-
-                if(value!=null && !string.IsNullOrEmpty(value.FilePath) && System.IO.File.Exists(value.FilePath))
-                {
-                    _playableItem = value;
-                }
-                else
-                {
-                    _playableItem = null;
-                }
-                
-
-                if (_playableItem!=null)
-                {
-                    this.PlayRange = _playableItem.PlayRange;
-
-                    //_audioGain = _playableItem.AudioGain;
-                    //this.OnPropertyChanged(() => this.AudioGain);
-                    SetAudioGain(_playableItem.AudioGain, false);
-                    _player.Open(_playableItem);
-
-                    //_player.SetRate(this.PlayRate);
-
-                    //this.AudioGain = _playableItem.AudioGain;
-
-                    this.Play();
-                    this.Pause();
-                }
-                else
-                {
-                    _player.Close();
-                }
+                return _player != null && _player.Status != PlayerStatus.Closed && _player.Status != PlayerStatus.Stopped;
             }
         }
-
         
-
         public double PlayRate
         {
             get { return _playRate; }
@@ -249,12 +255,8 @@ namespace FCSPlayout.MediaFileImporter
                     {
                         _player.SetRate(_playRate);
                     }
-                    //if (_player.Status != PlayerStatus.Closed)
-                    //{
-                    //    _player.SetRate(_playRate);
-                    //}
 
-                    this.OnPropertyChanged(() => this.PlayRate);
+                    this.RaisePropertyChanged(nameof(this.PlayRate));
                 }
             }
         }
@@ -265,20 +267,8 @@ namespace FCSPlayout.MediaFileImporter
             set
             {
                 _playRange = value;
-                this.OnPropertyChanged<double>(() => this.InPosition);
-                this.OnPropertyChanged<double>(() => this.OutPosition);
-            }
-        }
-
-        public Uri SourceUri
-        {
-            get
-            {
-                if (_player == null || _player.Status == PlayerStatus.Closed)
-                {
-                    return null;
-                }
-                return _sourceName == null ? null : new Uri("mplatform://" + _sourceName);
+                this.RaisePropertyChanged(nameof(this.InPosition));
+                this.RaisePropertyChanged(nameof(this.OutPosition));
             }
         }
 
@@ -300,7 +290,7 @@ namespace FCSPlayout.MediaFileImporter
                     _player.SetPosition(value);
                     if (_player.Status == PlayerStatus.Paused)
                     {
-                        this.OnPropertyChanged<double>(() => this.Position);
+                        this.RaisePropertyChanged(nameof(this.Position));
                     }
                 }
             }
@@ -322,7 +312,7 @@ namespace FCSPlayout.MediaFileImporter
                 if (_maxPosition != value)
                 {
                     _maxPosition = value;
-                    this.OnPropertyChanged<double>(() => this.MaxPosition);
+                    this.RaisePropertyChanged(nameof(this.MaxPosition));
                 }
             }
         }
@@ -332,14 +322,12 @@ namespace FCSPlayout.MediaFileImporter
             get { return _playRange.StartPosition.TotalSeconds; }
             set
             {
-                //_playRange = _playRange.ModifyByStartPosition(TimeSpan.FromSeconds(value));
-
                 var startPos = TimeSpan.FromSeconds(value);
                 var duration = _playRange.StopPosition - startPos;
                 if (duration >= PlayoutConfiguration.Current.MinPlayDuration)
                 {
                     _playRange = new PlayRange(startPos, duration);
-                    this.OnPropertyChanged<double>(() => this.InPosition);
+                    this.RaisePropertyChanged(nameof(this.InPosition));
                 }
             }
         }
@@ -349,16 +337,13 @@ namespace FCSPlayout.MediaFileImporter
             get { return _playRange.StopPosition.TotalSeconds; }
             set
             {
-                //_playRange = _playRange.ModifyByStopPosition(TimeSpan.FromSeconds(value));
-
                 var stopPos = TimeSpan.FromSeconds(value);
                 var duration = stopPos - _playRange.StartPosition;
                 if (duration >= PlayoutConfiguration.Current.MinPlayDuration)
                 {
                     _playRange = new PlayRange(_playRange.StartPosition, duration);
-                    this.OnPropertyChanged<double>(() => this.OutPosition);
-                }
-                
+                    this.RaisePropertyChanged(nameof(this.OutPosition));
+                }              
             }
         }
         #endregion Public Properties
@@ -416,11 +401,6 @@ namespace FCSPlayout.MediaFileImporter
             if (this.CanSetOut())
             {
                 this.OutPosition = this.Position;
-                //if (_setOutAction != null)
-                //{
-                //    _setOutAction(this.Position);
-                //}
-
             }
         }
 
@@ -433,12 +413,7 @@ namespace FCSPlayout.MediaFileImporter
         {
             if (this.CanSetIn())
             {
-
                 this.InPosition = this.Position;
-                //if (_setInAction != null)
-                //{
-                //    _setInAction(this.Position);
-                //}
             }
         }
 
@@ -454,7 +429,7 @@ namespace FCSPlayout.MediaFileImporter
                 _player.SetPosition(this.OutPosition);
                 if (_player.Status == PlayerStatus.Paused)
                 {
-                    this.OnPropertyChanged<double>(() => this.Position);
+                    this.RaisePropertyChanged(nameof(this.Position));
                 }
             }
         }
@@ -471,7 +446,7 @@ namespace FCSPlayout.MediaFileImporter
                 _player.SetPosition(this.InPosition);
                 if (_player.Status == PlayerStatus.Paused)
                 {
-                    this.OnPropertyChanged<double>(() => this.Position);
+                    this.RaisePropertyChanged(nameof(this.Position));
                 }
             }
         }
@@ -504,16 +479,26 @@ namespace FCSPlayout.MediaFileImporter
 
         private bool CanApply()
         {
-            return this.PlayableItem != null && _player.Status!=PlayerStatus.Closed;
+            return _playableItem != null && _player.Status!=PlayerStatus.Closed;
         }
 
         private void Apply()
         {
             if (this.CanApply())
             {
-                this.PlayableItem.AudioGain = this.AudioGain;
-                this.PlayableItem.PlayRange = this.PlayRange;
+                this._playableItem.AudioGain = this.AudioGain;
+                this._playableItem.PlayRange = this.PlayRange;
             }
+        }
+
+        private bool CanResetRate()
+        {
+            return true;
+        }
+
+        private void ResetRate()
+        {
+            this.PlayRate = 1.0;
         }
         #endregion Command Methods
 
@@ -536,23 +521,13 @@ namespace FCSPlayout.MediaFileImporter
 
             if (_player.Status == PlayerStatus.Stopped)
             {
-                this.OnPropertyChanged(() => this.Position);
+                this.RaisePropertyChanged(nameof(this.Position));
             }
 
-            //
-            SetSourceUri(_player.Name);
+            //SetSourceUri(_player.Name);
             this.MaxPosition = _player.Duration;
 
-            this.OnPropertyChanged(() => this.Seekable);
-        }
-
-        private void SetSourceUri(string name)
-        {
-            if (_sourceName != name)
-            {
-                _sourceName = name;
-                base.OnPropertyChanged<Uri>(() => this.SourceUri);
-            }
+            this.RaisePropertyChanged(nameof(this.Seekable));
         }
 
         private void MoveByFrames(int frames)
@@ -577,20 +552,12 @@ namespace FCSPlayout.MediaFileImporter
             if (_audioGain != audioGain)
             {
                 _audioGain = audioGain;
-                if (forceUpdate && _player != null && this.PlayableItem != null)
+                if (forceUpdate && _player != null && this._playableItem != null)
                 {
                     _player.SetAudioGain(_audioGain);
                 }
 
-                this.OnPropertyChanged(() => this.AudioGain);
-            }
-        }
-
-        public bool Seekable
-        {
-            get
-            {
-                return _player != null && _player.Status != PlayerStatus.Closed && _player.Status != PlayerStatus.Stopped;
+                this.RaisePropertyChanged(nameof(this.AudioGain));
             }
         }
     }

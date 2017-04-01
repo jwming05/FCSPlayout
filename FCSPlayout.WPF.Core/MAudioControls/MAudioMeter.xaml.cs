@@ -23,6 +23,16 @@ namespace FCSPlayout.WPF.Core
     /// </summary>
     public partial class MAudioMeter : UserControl
     {
+        public static readonly DependencyProperty MObjectProperty =
+            DependencyProperty.Register("MObject", typeof(IMObject), typeof(MAudioMeter), 
+                new FrameworkPropertyMetadata(null, OnMObjectPropertyChanged));
+
+
+        private static void OnMObjectPropertyChanged(DependencyObject dpObj,DependencyPropertyChangedEventArgs e)
+        {
+            ((MAudioMeter)dpObj).OnMObjectChanged((IMObject)e.OldValue, (IMObject)e.NewValue);
+        }
+
         private int m_nCurrentTrack = 0;
         private IMAudio m_pMAudio;
         private IMAudioTrack m_pMAudioTrack;
@@ -56,6 +66,12 @@ namespace FCSPlayout.WPF.Core
             _timerUpdate.Tick += timerUpdate_Tick;
         }
 
+        public IMObject MObject
+        {
+            get { return (IMObject)GetValue(MObjectProperty); }
+            set { SetValue(MObjectProperty, value); }
+        }
+
         public Object SetControlledObject(Object pObject)
         {
             Object pOld = (Object)m_pMAudio;
@@ -84,6 +100,11 @@ namespace FCSPlayout.WPF.Core
             }
 
             return pOld;
+        }
+
+        private void OnMObjectChanged(IMObject oldValue, IMObject newValue)
+        {
+            this.SetControlledObject(this.MObject);
         }
 
         #region

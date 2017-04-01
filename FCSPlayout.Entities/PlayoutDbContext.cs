@@ -17,7 +17,7 @@ namespace FCSPlayout.Entities
         public DbSet<MediaFileCategory> MediaFileCategories { get; set; }
 
         public DbSet<UserEntity> Users { get; set; }
-
+        public DbSet<Role> Roles { get; set; }
         public DbSet<MediaFileEntity> MediaFiles { get; set; }
 
         public DbSet<UserAction> UserActions { get; set; }

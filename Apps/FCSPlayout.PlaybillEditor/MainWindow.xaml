@@ -4,13 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FCSPlayout.PlaybillEditor"
-        xmlns:core="clr-namespace:FCSPlayout.WPF.Core;assembly=FCSPlayout.WPF.Core"
-        
+        xmlns:core="clr-namespace:FCSPlayout.WPF.Core;assembly=FCSPlayout.WPF.Core"    
         xmlns:prism="http://prismlibrary.com/"     
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:mi="http://schemas.microsoft.com/expression/2010/interactions"
-        mc:Ignorable="d"
-        Title="编单系统" Height="350" Width="800">
+        mc:Ignorable="d" WindowState="Maximized"
+        Title="编单系统" Height="800" Width="1150">
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding DisplayMessageInteractionRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True"></prism:PopupWindowAction>
@@ -55,6 +54,18 @@
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding LoginInteractionRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowContent>
+                    <core:LoginView/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+
+        <i:EventTrigger EventName="Loaded" SourceName="mainWindow">
+            <prism:InvokeCommandAction Command="{Binding LoginCommand}" />
+        </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid Background="#404040">
         <Grid.RowDefinitions>
@@ -98,26 +109,13 @@
                                      EditMediaItemInteractionRequest="{Binding DataContext.EditMediaItemInteractionRequest,RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}"/>
 
                 <StackPanel Orientation="Horizontal">
-                    <!--<Button Margin="5" Content="添加源" Command="{Binding AddMediaItemCommand,ElementName=mediaItemListView}"/>
-                <Button Margin="5" Content="添加空源" Command="{Binding AddNullMediaItemCommand,ElementName=mediaItemListView}"/>
-                
-                <Button Margin="5" Content="删除" Command="{Binding DeleteMediaItemCommand,ElementName=mediaItemListView}"/>
-                <Button Margin="5" Content="保存" Command="{Binding SaveMediaItemsCommand,ElementName=mediaItemListView}"/>-->
+                    <Button Margin="5" Content="添加空源" Command="{Binding AddNullMediaItemCommand,ElementName=mediaItemListView}"/>
                     <Button Margin="5" Content="加载" Command="{Binding LoadMediaItemsCommand,ElementName=mediaItemListView}"/>
                     <Button Margin="5" Content="添加直通通道" Command="{Binding AddChannelMediaItemsCommand,ElementName=mediaItemListView}"/>
                     <Button Margin="5" Content="添加" Command="{Binding AddPlayItemCommand, ElementName=playbillView}"/>
                     <core:PlayModeSelector x:Name="playModeSelector" />
-
                 </StackPanel>
             </Grid>
         </GroupBox>
-        <!--<TabControl Grid.Row="1">
-            <TabItem Header="编单表" Foreground="#9D9D9D">
-                
-            </TabItem>
-            <TabItem Header="资源库" Foreground="#9D9D9D">
-                
-            </TabItem>
-        </TabControl>-->
     </Grid>
 </Window>

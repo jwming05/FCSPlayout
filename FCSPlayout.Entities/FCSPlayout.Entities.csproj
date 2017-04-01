@@ -86,13 +86,14 @@
     <Compile Include="PlayoutDatabaseInitializer.cs" />
     <Compile Include="PlayoutDbContext.cs" />
     <Compile Include="PlayoutRepository.cs" />
-    <Compile Include="PlayRecord.cs" />
+    <Compile Include="Entities\PlayRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\UserAction.cs" />
     <Compile Include="Entities\UserEntity.cs" />
     <Compile Include="Entities\SettingGroup.cs" />
     <Compile Include="Entities\SettingInfo.cs" />
     <Compile Include="Entities\SettingScope.cs" />
+    <Compile Include="Entities\Role.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

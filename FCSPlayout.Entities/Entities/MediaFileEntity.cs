@@ -1,5 +1,6 @@
 ﻿using FCSPlayout.Domain;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FCSPlayout.Entities
@@ -9,21 +10,19 @@ namespace FCSPlayout.Entities
     public class MediaFileEntity : MediaSourceEntity, IModificationTimestamp, IRangeMarkable
     {
         public string FileName { get; set; }
-
         public string OriginalFileName { get; set; }
         public double MarkerIn { get; set; }
         public double MarkerDuration { get; set; }
-
-        public DateTime CreationTime { get; set; }
-
-        public DateTime ModificationTime { get; set; }
-
+        
         public double Duration { get; set; }
 
         public int AudioGain
         {
             get;set;
         }
+
+        public DateTime CreationTime { get; set; }
+        public DateTime ModificationTime { get; set; }
 
         public Guid? MediaFileCategoryId { get; set; }
 
@@ -46,5 +45,22 @@ namespace FCSPlayout.Entities
 
         [ForeignKey("Creator")]
         public Guid CreatorId { get; set; }
+
+        public MediaFileMetadata Metadata { get; set; }
+    }
+
+    
+    [Serializable]
+    public class MediaFileMetadata
+    {
+        [Key]
+        [ForeignKey("MediaFile")]
+        public Guid Id { get; set; }
+
+        public byte[] Icon { get; set; }
+
+        public string MediaInformation { get; set; }
+
+        public MediaFileEntity MediaFile { get; set; }
     }
 }

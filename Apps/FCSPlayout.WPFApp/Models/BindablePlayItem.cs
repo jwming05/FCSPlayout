@@ -278,7 +278,7 @@ namespace FCSPlayout.WPFApp.Models
                 }
             };
 
-            MediaFileImageExtractor.Current.GetHBitmap(_startImageRequest);
+            MediaFileImageExtractor.Current.GetHBitmapAsync(_startImageRequest);
         }
 
         //public void SetMaxPlayTime(DateTime maxPlayTime)

@@ -15,7 +15,7 @@ namespace FCSPlayout.Entities
         {
             using (var context = new PlayoutDbContext())
             {
-                return context.Users.SingleOrDefault(u => u.Name == name && u.Password == password && !u.Locked);
+                return context.Users.Include(u=>u.Roles).SingleOrDefault(u => u.Name == name && u.Password == password && !u.Locked);
             }
         }
 
@@ -297,21 +297,25 @@ namespace FCSPlayout.Entities
                     //action.Tag = "";
                     action.UserId = userId;
                     action.UserName = userName;
-                    context.UserActions.Add(action);
 
+                    context.UserActions.Add(action);
                     context.SaveChanges();
                 }
                 
             }
         }
 
-        public static PagingItems<MediaFileEntity> GetMediaFiles(PagingInfo pagingInfo)
+        public static PagingItems<MediaFileEntity> GetMediaFiles(MediaItemSearchOptions searchOptions, PagingInfo pagingInfo)
         {
             using (var context = new PlayoutDbContext())
             {
-                int rowCount = CountMediaFiles(context);
+                int rowCount = CountMediaFiles(context,searchOptions);
 
-                var items = context.MediaFiles.Where(i => !i.Deleted)
+                var queryable = context.MediaFiles.Include(i=>i.Metadata).Where(i => !i.Deleted);
+
+                queryable = BuildQueryable(queryable, searchOptions);
+
+                var items = queryable
                     .OrderByDescending(i => i.CreationTime)
                     .OrderBy(i => i.Id)
                     .Skip(pagingInfo.RowIndex)
@@ -322,9 +326,40 @@ namespace FCSPlayout.Entities
             }
         }
 
-        private static int CountMediaFiles(PlayoutDbContext context)
+        private static IQueryable<MediaFileEntity> BuildQueryable(IQueryable<MediaFileEntity> queryable, MediaItemSearchOptions searchOptions)
         {
-            return context.MediaFiles.Where(i => !i.Deleted).Count();
+            if (!string.IsNullOrWhiteSpace(searchOptions.Title))
+            {
+                queryable = queryable.Where(i => i.Title.Contains(searchOptions.Title));
+            }
+
+            if (searchOptions.MediaFileCategoryId != null)
+            {
+                queryable = queryable.Where(i => i.MediaFileCategoryId == searchOptions.MediaFileCategoryId);
+            }
+
+            if (searchOptions.MediaFileChannelId != null)
+            {
+                queryable = queryable.Where(i => i.MediaFileChannelId == searchOptions.MediaFileChannelId);
+            }
+
+            if (searchOptions.MinCreationTime != null)
+            {
+                queryable = queryable.Where(i => i.CreationTime >= searchOptions.MinCreationTime.Value);
+            }
+
+            if (searchOptions.MaxCreationTime != null)
+            {
+                queryable = queryable.Where(i => i.CreationTime <= searchOptions.MaxCreationTime.Value);
+            }
+            return queryable;
+        }
+
+        private static int CountMediaFiles(PlayoutDbContext context, MediaItemSearchOptions searchOptions)
+        {
+            var queryable = context.MediaFiles.Where(i => !i.Deleted);
+            queryable = BuildQueryable(queryable, searchOptions);
+            return queryable.Count();
         }
 
         public static IDictionary<Guid, string> MediaFileCategories

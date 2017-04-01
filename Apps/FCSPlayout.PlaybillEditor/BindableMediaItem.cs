@@ -1,5 +1,6 @@
 ﻿using FCSPlayout.AppInfrastructure;
 using FCSPlayout.Domain;
+using FCSPlayout.WPF.Core;
 using Prism.Mvvm;
 using System;
 using System.Threading;
@@ -72,11 +73,13 @@ namespace FCSPlayout.WPFApp.Models
                 //_mediaItem.PlayRange = value;
                 _mediaItem = new MediaItem(_mediaItem.Source, value);
                 //_mediaItem = _mediaItem.ChangePlayRange(value); 
-                this.OnPropertyChanged(() => this.PlayRange);
-                this.OnPropertyChanged(() => this.StartPosition);
-                this.OnPropertyChanged(() => this.StopPosition);
-                this.OnPropertyChanged(() => this.Duration);
-                this.OnPropertyChanged(() => this.MediaItem);
+
+                this.RaisePropertyChanged(nameof(this.PlayRange));
+                this.RaisePropertyChanged(nameof(this.StartPosition));
+                this.RaisePropertyChanged(nameof(this.StopPosition));
+                this.RaisePropertyChanged(nameof(this.Duration));
+                this.RaisePropertyChanged(nameof(this.MediaItem));
+
                 if (_image != null)
                 {
                     this.Image = null;
@@ -119,7 +122,7 @@ namespace FCSPlayout.WPFApp.Models
                 if (_image != value)
                 {
                     _image = value;
-                    this.OnPropertyChanged(() => this.Image);
+                    this.RaisePropertyChanged(nameof(this.Image));
                 }
             }
         }
@@ -147,7 +150,7 @@ namespace FCSPlayout.WPFApp.Models
                 _syncContext.Post(new System.Threading.SendOrPostCallback(SetImageInternal), ptr);
             } };
 
-            MediaFileImageExtractor.Current.GetHBitmap(_request);
+            MediaFileImageExtractor.Current.GetHBitmapAsync(_request);
         }
     }
 }

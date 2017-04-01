@@ -9,17 +9,17 @@
              d:DesignHeight="300" d:DesignWidth="450">
     <Grid>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" IsEnabled="False" Name="panel">
-            <Button Content="First" Margin="5" Name="btnFirst" Click="btnFirst_Click"/>
-            <Button Content="Prev" Margin="5" Name="btnPrev" Click="btnPrev_Click"/>
-            <Button Content="Next" Margin="5" Name="btnNext" Click="btnNext_Click"/>
-            <Button Content="Last" Margin="5" Name="btnLast" Click="btnLast_Click"/>
+            <Button Content="首页" Margin="5" Name="btnFirst" Click="btnFirst_Click"/>
+            <Button Content="上一页" Margin="5" Name="btnPrev" Click="btnPrev_Click"/>
+            <Button Content="下一页" Margin="5" Name="btnNext" Click="btnNext_Click"/>
+            <Button Content="尾页" Margin="5" Name="btnLast" Click="btnLast_Click"/>
 
             <TextBlock Text="第0页/共0页" Margin="5" VerticalAlignment="Center" Name="lblInfo"/>
             
             <xctk:IntegerUpDown Margin="5" Minimum="1" VerticalAlignment="Center" Name="iudPageIndex" Value="1"/>
             <Button Content="GO" Margin="5" Name="btnGo" Click="btnGo_Click"/>
 
-            <xctk:IntegerUpDown Margin="5 5 0 5" Minimum="1" Value="{Binding Path=RowsPerPage,RelativeSource={RelativeSource AncestorType=UserControl,Mode=FindAncestor}}"
+            <xctk:IntegerUpDown Margin="5 5 0 5" Minimum="1" Value="{Binding Path=RowsPerPage,RelativeSource={RelativeSource AncestorType=UserControl,Mode=FindAncestor},Mode=TwoWay}"
                                 VerticalAlignment="Center" Name="iudRowsPerCount"/>
             <TextBlock Text="行/页" Margin="0 5 5 5" VerticalAlignment="Center"/>
         </StackPanel>      

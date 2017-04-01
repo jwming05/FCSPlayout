@@ -19,14 +19,16 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid Background="Black">
+        <!--<Grid Background="Black">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <MediaElement Source="{Binding SourceUri}"/>
             <core:MAudioMeter  Grid.Column="1" MinWidth="40" x:Name="audioMeter"/>
-        </Grid>
+        </Grid>-->
+        <core:MLPreviewControl MObject="{Binding MObject,Mode=OneWay}"/>
+        
         <local:PlaySlider2  Grid.Row="1" x:Name="slider" IsEnabled="{Binding Seekable,Mode=OneWay}"
                           Position="{Binding Position,Mode=TwoWay}"
                           InPosition="{Binding InPosition,Mode=TwoWay}"
@@ -58,13 +60,14 @@
             <Button Content="播放" ToolTip="播放" Command="{Binding PlayCommand}" Margin="5"/>
             <Button Content="暂停" ToolTip="暂停" Command="{Binding PauseCommand}" Margin="5"/>
             <Button Content="停止" ToolTip="停止" Command="{Binding StopCommand}" Margin="5"/>
-            <Button Content="上一帧" ToolTip="上一帧" Command="{Binding NextFrameCommand}" Margin="5"/>
-            <Button Content="下一帧" ToolTip="下一帧" Command="{Binding PreviousFrameCommand}" Margin="5"/>
+            <Button Content="上一帧" ToolTip="上一帧" Command="{Binding PreviousFrameCommand}" Margin="5"/>
+            <Button Content="下一帧" ToolTip="下一帧" Command="{Binding NextFrameCommand}" Margin="5"/>
             <Slider Name="rateSlider" TickFrequency="1.0" IsSnapToTickEnabled="True" TickPlacement="BottomRight" 
-                    Minimum="1.0" MouseDoubleClick="rateSlider_MouseDoubleClick" Maximum="10" Value="{Binding PlayRate,Mode=TwoWay}" 
+                    Minimum="1.0" Maximum="10" Value="{Binding PlayRate,Mode=TwoWay}" 
                     VerticalAlignment="Center" MinWidth="100"/>
+            
             <TextBlock Foreground="#c9c9c9" Text="{Binding ElementName=rateSlider,Path=Value,StringFormat={}{0}}" VerticalAlignment="Center"/>
-
+            <Button Content="重置" Command="{Binding ResetRateCommand}" Margin="5"/>
             <TextBlock Text="音频增益(db)：" VerticalAlignment="Center"/>
             <xctk:IntegerUpDown Height="20" Minimum="-60" Maximum="60" Value="{Binding AudioGain,Mode=TwoWay}"/>
             <Button Margin="5" Content="应用" Command="{Binding ApplyCommand}"/>

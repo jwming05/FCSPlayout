@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FCSPlayout.MediaFileImporter"
-        xmlns:views="clr-namespace:FCSPlayout.WPFApp.Views"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:mi="http://schemas.microsoft.com/expression/2010/interactions"
         xmlns:prism="http://prismlibrary.com/" 
@@ -16,9 +15,6 @@
         Title="入库系统" Height="800" Width="1150">
     <Window.Resources>
         <core:TimeCodeConverter x:Key="TimeCodeConverter"/>
-        
-        <local:MediaFileCategoryConverter x:Key="MediaFileCategoryConverter"/>
-        <local:MediaFileChannelConverter x:Key="MediaFileChannelConverter"/>
         <LinearGradientBrush x:Key="LinearGradientBlueBackground" EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#3B3B3B" Offset="0" />
             <GradientStop Color="#404040" Offset="1" />
@@ -60,25 +56,19 @@
             <core:PopOpenFileDialogAction/>
         </prism:InteractionRequestTrigger>
 
-        <prism:InteractionRequestTrigger SourceObject="{Binding EditMediaItemInteractionRequest}">
+        <prism:InteractionRequestTrigger SourceObject="{Binding LoginInteractionRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
                 <prism:PopupWindowAction.WindowContent>
-                    <local:EditMediaItemView/>
+                    <core:LoginView/>
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
-
-        <prism:InteractionRequestTrigger x:Name="previewInteractionRequestTrigger" SourceObject="{Binding PreviewInteractionRequest}">
-        </prism:InteractionRequestTrigger>
-
         
         <i:EventTrigger EventName="Loaded" SourceName="mainWindow">
-            <!--<prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
-                
-            </prism:PopupWindowAction>-->
+            <prism:InvokeCommandAction Command="{Binding LoginCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    
+
     <Grid  Background="#404040">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.4*"/>
@@ -87,110 +77,18 @@
         </Grid.ColumnDefinitions>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid>
-                <!--<cores:PlayControl2 x:Name="playControl" />-->
-                <local:PlayControl2 x:Name="playControl" />
-            </Grid>
-            <Grid Grid.Row="1">
-                <TabControl>
-                    <TabItem Header="待入库" Foreground="#9D9D9D">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-
-                            <views:MediaItemListView x:Name="mediaItemListView" Grid.Row="3"
-                                 PreviewCommand="{Binding DataContext.PreviewCommand,RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}"
-                                 OpenFileInteractionRequest="{Binding DataContext.OpenFileInteractionRequest,RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}" 
-                                 SaveFileInteractionRequest="{Binding DataContext.SaveFileInteractionRequest,RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}"
-                                 EditMediaItemInteractionRequest="{Binding DataContext.EditMediaItemInteractionRequest,RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}"
-                                 >
-                            </views:MediaItemListView>
-                            <StackPanel  Orientation="Horizontal"  Background="#474747">
-                                <Button Margin="5" Style="{StaticResource MyWpfButton}"  Content="添加素材" Command="{Binding AddMediaItemCommand,ElementName=mediaItemListView}"/>
-                                <Button Margin="5"  Content="删除素材" Style="{StaticResource MyWpfButton}" Command="{Binding DeleteMediaItemCommand,ElementName=mediaItemListView}"/>
-                                <Button Margin="5"  Content="素材入库" Style="{StaticResource MyWpfButton}"  Command="{Binding SaveMediaItemsCommand,ElementName=mediaItemListView}"/>
-
-                            </StackPanel>
-                            <StackPanel Grid.Row="1"  Orientation="Horizontal">
-                                <TextBlock Margin="5" VerticalAlignment="Center"   Foreground="#c9c9c9" Text="素材标题:"/>
-                                <TextBox Margin="5" VerticalAlignment="Center"  BorderBrush="#303030" Background="Transparent" MinWidth="90" Text="{Binding ElementName=mediaItemListView,Path=SelectedMediaItem.Title,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                                <TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="节目类型:"/>
-                                <ComboBox Margin="5" MinWidth="90" x:Name="CbMediaFileCategoryId"    SelectedValue="{Binding ElementName=mediaItemListView,Path=SelectedMediaItem.MediaFileCategoryId,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  />
-                                <!--<TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="画面比例:"/>
-                                <ComboBox Margin="5" Name="CbRatio" MinWidth="90" Background="#868686" BorderBrush="Black" VerticalAlignment="Center" Text="{Binding ElementName=mediaItemListView,Path=SelectedMediaItem.AspectRatio,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  />-->
-                                <!--<TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="场类型:"/>
-                                <ComboBox Margin="5" Name="CbType" MinWidth="90" Background="#868686" BorderBrush="Black" VerticalAlignment="Center"  Text="{Binding ElementName=mediaItemListView,Path=SelectedMediaItem.MPFieldsType,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  />-->
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="2"  Orientation="Horizontal">
-                                <!--<TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="缩放模式："/>
-                                <ComboBox Margin="5" Name="CbMode" MinWidth="90" Background="#868686" VerticalAlignment="Center" Text="{Binding ElementName=mediaItemListView,Path=SelectedMediaItem.StretchMode,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  />-->
-                                <TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="音频增益："/>
-                                <ComboBox Margin="5" Name="CbAg" Background="#868686" MinWidth="90" VerticalAlignment="Center"  Text="{Binding ElementName=mediaItemListView,Path=SelectedMediaItem.AudioGain,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  />
-                                <TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="频道类型:"/>
-                                <!-- ItemsSource="{Binding MediaFileChannelId}" -->
-                                <ComboBox Margin="5" MinWidth="90" VerticalAlignment="Center" x:Name="cece" Background="#868686"  SelectedValue="{Binding ElementName=mediaItemListView,Path=SelectedMediaItem.MediaFileChannelId,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  />
-
-                                <StackPanel Name="pbPanel" Margin="5" VerticalAlignment="Center">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Foreground="#c9c9c9"  Text="主播：" />
-                                        <ProgressBar Name="pb1"  Background="Black" BorderBrush="Black" Grid.Column="1" Margin="3" VerticalAlignment="Center" Width="100" Height="10"/>
-                                        <TextBlock Grid.Column="1" FontSize="8" Text="{Binding ElementName=pb1,Path=Value,StringFormat={}{0}%}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
-                                        <TextBlock Foreground="#c9c9c9"  Grid.Row="1"  Text="备播："/>
-                                        <ProgressBar Name="pb2"  Background="Black" BorderBrush="Black" Grid.Row="1" Grid.Column="1" Margin="3" VerticalAlignment="Center" Width="100" Height="10"/>
-                                        <TextBlock Grid.Row="1" FontSize="8"  Grid.Column="1" Text="{Binding ElementName=pb2,Path=Value,StringFormat={}{0}%}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                    </Grid>
-                                </StackPanel>
-                            </StackPanel>
-                        </Grid>
-                    </TabItem>
-                </TabControl>
-            </Grid>
+            <ContentControl prism:RegionManager.RegionName="previewRegion"/>
+            <TabControl Grid.Row="1">
+                <TabItem Header="待入库" Foreground="#9D9D9D">
+                    <ContentControl prism:RegionManager.RegionName="mediaItemListRegion"/>
+                </TabItem>
+            </TabControl>
         </Grid>
-        
-        <GridSplitter Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" Width="1" Background="#303030" HorizontalAlignment="Center"/>
-        <Grid Grid.Column="2">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="5" VerticalAlignment="Center"   Foreground="#c9c9c9" Text="素材标题:"/>
-                    <TextBox Margin="5" VerticalAlignment="Center" x:Name="txtText"  BorderBrush="#303030" Background="Transparent" MinWidth="90" />
-                    <TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="节目类型:"/>
-                    <ComboBox Margin="5" MinWidth="90" x:Name="CbMediaFileCategoryText"     />
-                    <TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="频道类型:"/>
 
-                    <ComboBox Margin="5" MinWidth="90" VerticalAlignment="Center" x:Name="CbMediaFileChannelText" Background="#868686"/>
-                    <Button Content="搜索素材" Margin="5" Name="btnSearch" Click="btnSearch_Click"/>
-                    <Button Content="删除素材" Margin="5" Command="{Binding DeleteMediaItemCommand,ElementName=mediaItemListView2}"/>
-                </StackPanel>
-
-                <views:MediaItemListView2 x:Name="mediaItemListView2"  Grid.Row="1"></views:MediaItemListView2>
-                <core:PagingControl x:Name="pagingControl" Grid.Row="2" HorizontalAlignment="Center" RowsPerPage="34" RequestPagingItems="pagingControl_RequestPagingItems"/>
-              
-            </Grid>
-
-        </Grid>
+        <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" Width="1" Background="#303030" HorizontalAlignment="Center"/>
+        <ContentControl Grid.Column="2" prism:RegionManager.RegionName="mediaItemList2Region" />
     </Grid>
-    
 </Window>

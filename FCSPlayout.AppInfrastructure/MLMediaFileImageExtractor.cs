@@ -13,7 +13,7 @@ namespace FCSPlayout.AppInfrastructure
             _mfileObj = new MFileClass();
         }
 
-        protected override IntPtr GetHBitmap(string filePath, double position)
+        public override IntPtr GetHBitmap(string filePath, double position)
         {
             IntPtr result = IntPtr.Zero;
             if (_mfileObj != null)

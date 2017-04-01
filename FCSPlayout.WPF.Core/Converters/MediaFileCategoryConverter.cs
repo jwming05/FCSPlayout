@@ -7,16 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace FCSPlayout.MediaFileImporter
+namespace FCSPlayout.WPF.Core
 {
-    public class MediaFileChannelConverter : IValueConverter
+    public class MediaFileCategoryConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return value;
 
             var id = (Guid)value;
-            return PlayoutRepository.MediaFileChannels[id];
+            return PlayoutRepository.MediaFileCategories[id];
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

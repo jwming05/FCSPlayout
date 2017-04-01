@@ -1,0 +1,123 @@
+﻿<Window x:Class="FCSPlayout.PlaybillEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FCSPlayout.PlaybillEditor"
+        xmlns:core="clr-namespace:FCSPlayout.WPF.Core;assembly=FCSPlayout.WPF.Core"    
+        xmlns:prism="http://prismlibrary.com/"     
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:mi="http://schemas.microsoft.com/expression/2010/interactions"
+        mc:Ignorable="d" WindowState="Maximized"
+        Title="编单系统" Height="800" Width="1150">
+    <i:Interaction.Triggers>
+        <prism:InteractionRequestTrigger SourceObject="{Binding DisplayMessageInteractionRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True"></prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding EditMediaItemInteractionRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowContent>
+                    <core:EditMediaItemView/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding EditDateTimeInteractionRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowContent>
+                    <core:DateTimeControl/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding AddChannelMediaItemsInteractionRequest,ElementName=mediaItemListView}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowContent>
+                    <core:AddChannelMediaItemsView/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding EditCGItemsInteractionRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowContent>
+                    <core:CGImageItemView2/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding LoadPlaybillInteractionRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowContent>
+                    <core:LoadPlaybillView/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding LoginInteractionRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowContent>
+                    <core:LoginView/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+
+        <i:EventTrigger EventName="Loaded" SourceName="mainWindow">
+            <prism:InvokeCommandAction Command="{Binding LoginCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid Background="#404040">
+        <!--<Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>-->
+        <!--<core:PlayControl2 x:Name="playControl" />
+        <GroupBox Grid.Row="1" Header="编单表">
+            <Grid Background="#404040">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <local:PlaybillView Grid.Row="1" x:Name="playbillView" 
+                                EditCGItemsInteractionRequest="{Binding DataContext.EditCGItemsInteractionRequest, RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}"
+                                DisplayMessageInteractionRequest="{Binding DataContext.DisplayMessageInteractionRequest,RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}"
+                                PlayScheduleInfo="{Binding ElementName=playModeSelector,Path=PlayScheduleInfo,Mode=OneWay}"
+                                EditMediaItemInteractionRequest="{Binding DataContext.EditMediaItemInteractionRequest, RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}"
+                                EditDateTimeInteractionRequest="{Binding DataContext.EditDateTimeInteractionRequest, RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}"
+                                LoadPlaybillInteractionRequest="{Binding DataContext.LoadPlaybillInteractionRequest, RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}"
+                                SelectedMediaItem="{Binding ElementName=mediaItemListView,Path=SelectedMediaItem,Mode=OneWay}"/>
+                <StackPanel  Orientation="Horizontal">
+                    <Button Content="保存" Margin="5" Command="{Binding SavePlaybillCommand, ElementName=playbillView}"/>
+                    <Button Content="加载" Margin="5" Command="{Binding LoadPlaybillCommand, ElementName=playbillView}"/>
+                    <Button Content="删除" Margin="5" Command="{Binding DeletePlayItemCommand, ElementName=playbillView}"/>
+                    <Button Content="设置垫片" Margin="5" Command="{Binding SetPaddingSourceCommand, ElementName=playbillView}"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>-->
+        <!--<GroupBox Grid.Column="1" Grid.RowSpan="2" Header="资源库">
+            <Grid Background="#404040">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <local:MediaItemListView Grid.Row="1"  x:Name="mediaItemListView" 
+                                     EditMediaItemInteractionRequest="{Binding DataContext.EditMediaItemInteractionRequest,RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Margin="5" Content="添加空源" Command="{Binding AddNullMediaItemCommand,ElementName=mediaItemListView}"/>
+                    <Button Margin="5" Content="加载" Command="{Binding LoadMediaItemsCommand,ElementName=mediaItemListView}"/>
+                    <Button Margin="5" Content="添加直通通道" Command="{Binding AddChannelMediaItemsCommand,ElementName=mediaItemListView}"/>
+                    <Button Margin="5" Content="添加" Command="{Binding AddPlayItemCommand, ElementName=playbillView}"/>
+                    <core:PlayModeSelector x:Name="playModeSelector" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>-->
+
+        <TabControl Grid.Column="1" Grid.RowSpan="2" prism:RegionManager.RegionName="mediaItemRegion"></TabControl>
+    </Grid>
+</Window>

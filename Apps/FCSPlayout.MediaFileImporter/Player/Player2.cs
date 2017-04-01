@@ -1,4 +1,5 @@
 ﻿using FCSPlayout.Domain;
+using FCSPlayout.WPF.Core;
 using MPLATFORMLib;
 using System;
 using System.Diagnostics;
@@ -119,51 +120,6 @@ namespace FCSPlayout.MediaFileImporter
             }
         }
 
-
-
-        //public void Open(string fileName)
-        //{
-        //    this.Close();
-
-        //    if (_mplaylist == null)
-        //    {
-        //        _mplaylist = new MPlaylistClass();
-        //        if (_mplaylistSettings.VideoFormat != null)
-        //        {
-        //            SetVideoFormat(_mplaylist, _mplaylistSettings.VideoFormat);
-        //        }
-
-        //        if (_mplaylistSettings.AudioFormat != null)
-        //        {
-        //            SetAudioFormat(_mplaylist, _mplaylistSettings.AudioFormat);
-        //        }
-        //        _mplaylist.PropsSet("loop", "true");
-        //        _mplaylist.OnEvent += MFile_OnEvent;
-        //    }
-
-        //    _fileName = fileName;
-        //    int index = -1;
-
-        //    _mplaylist.PlaylistAdd(null, _fileName, "", ref index, out _mitem);
-        //    _mplaylist.ObjectStart(null);
-
-
-        //    double dblIn = 0.0, dblOut = 0.0, dblDuration = 0.0;
-        //    _mplaylist.FileInOutGet(out dblIn, out dblOut, out dblDuration);
-
-        //    //_mitem.FileInOutGet(out dblIn, out dblOut, out dblDuration);
-
-        //    this.Duration = dblDuration;
-
-        //    string name = null;
-        //    _mplaylist.ObjectNameGet(out name);
-        //    this.Name = name;
-
-        //    this.Status = PlayerStatus.Stopped;
-
-        //    OnOpened();
-        //}
-
         public void Open(IPlayableItem playableItem)
         {
             this.Close();
@@ -254,9 +210,7 @@ namespace FCSPlayout.MediaFileImporter
         {
             if (_mitem != null && this.Status != PlayerStatus.Closed && this.Status != PlayerStatus.Stopped)
             {
-                double dblPos = 0.0; // dblListPos=0.0;
-                                     //int index = 0, nextIndex = 0;
-
+                double dblPos = 0.0;
                 //_mplaylist.PlaylistPosGet(out index, out nextIndex, out dblPos, out dblListPos);
                 _mplaylist.FilePosGet(out dblPos);
                 return dblPos;

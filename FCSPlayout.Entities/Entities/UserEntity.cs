@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,5 +22,7 @@ namespace FCSPlayout.Entities
         public string Password { get; set; }
 
         public bool Locked { get; set; }
+
+        public List<Role> Roles { get; set; }
     }
 }

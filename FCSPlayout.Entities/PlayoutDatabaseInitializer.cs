@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using FCSPlayout.Domain;
+using System.Collections.Generic;
+using System.Data.Entity;
 
 namespace FCSPlayout.Entities
 {
@@ -18,7 +20,24 @@ namespace FCSPlayout.Entities
 
             //context.ChannelInfos.Add(new ChannelInfo { Title = PlayoutDbContext.DefaultName, Special = true });
 
-            context.Users.Add(new UserEntity { Name = "admin", Password = "admin", Locked = false });
+            Role adminRole = null;
+            foreach(var roleName in RoleNames.AllRoleNames)
+            {
+                var role = new Role { Name = roleName };
+                if (roleName == RoleNames.Admin)
+                {
+                    adminRole = role;
+                }
+                context.Roles.Add(role);
+            }
+            
+            context.Users.Add(new UserEntity
+            {
+                Name = "admin",
+                Password = "admin",
+                Locked = false,
+                Roles =new List<Role> { adminRole }
+            });
         }
     }
 }

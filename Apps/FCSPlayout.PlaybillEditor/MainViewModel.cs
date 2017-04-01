@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace FCSPlayout.PlaybillEditor
 {
-    public class MainViewModel : BindableBase
+    public class MainViewModel : ShellModelBase // BindableBase
     {
         private readonly InteractionRequest<EditMediaItemConfirmation> _editMediaItemInteractionRequest;
         private readonly InteractionRequest<EditDurationConfirmation> _editDurationInteractionRequest;
@@ -16,7 +16,7 @@ namespace FCSPlayout.PlaybillEditor
         private readonly InteractionRequest<OpenFileDialogConfirmation> _openFileInteractionRequest;
         private readonly InteractionRequest<Notification> _displayMessageInteractionRequest;
         private readonly InteractionRequest<SaveFileDialogConfirmation> _saveFileInteractionRequest;
-        private readonly ITimer _timer;
+        //private readonly ITimer _timer;
 
         private readonly InteractionRequest<EditDateTimeConfirmation> _editDateTimeInteractionRequest;
         private readonly InteractionRequest<EditCGItemsConfirmation> _editCGItemsInteractionRequest;
@@ -30,7 +30,7 @@ namespace FCSPlayout.PlaybillEditor
         private PeriodicalGarbageCollector _garbageCollector = new PeriodicalGarbageCollector();
 
         private readonly InteractionRequest<LoadPlaybillConfirmation> _loadPlaybillInteractionRequest;
-        public MainViewModel(ITimer timer)
+        public MainViewModel(/*ITimer timer*/IUserService userService):base(userService)
         {
 
             _openFileInteractionRequest = new InteractionRequest<OpenFileDialogConfirmation>();
@@ -38,7 +38,7 @@ namespace FCSPlayout.PlaybillEditor
 
             _saveFileInteractionRequest = new InteractionRequest<SaveFileDialogConfirmation>();
 
-            _timer = timer;
+            //_timer = timer;
 
             //_playItemCollection = new ObservableCollection<IPlayItem>();
             //_playItemsView = new CollectionView(_playItemCollection);
@@ -109,13 +109,13 @@ namespace FCSPlayout.PlaybillEditor
             }
         }
 
-        public ITimer Timer
-        {
-            get
-            {
-                return _timer;
-            }
-        }
+        //public ITimer Timer
+        //{
+        //    get
+        //    {
+        //        return _timer;
+        //    }
+        //}
 
         public ICommand CollectGarbageCommand
         {

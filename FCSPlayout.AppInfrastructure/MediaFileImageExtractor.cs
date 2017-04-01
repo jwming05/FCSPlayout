@@ -1,4 +1,8 @@
-﻿using System;
+﻿using FCSPlayout.WPF.Core;
+using System;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 
 namespace FCSPlayout.AppInfrastructure
 {
@@ -37,9 +41,9 @@ namespace FCSPlayout.AppInfrastructure
             this.Dispose();
         }
 
-        protected abstract IntPtr GetHBitmap(string filePath, double position);
+        public abstract IntPtr GetHBitmap(string filePath, double position);
 
-        public void GetHBitmap(MediaFileImageRequest request)
+        public void GetHBitmapAsync(MediaFileImageRequest request)
         {
             _actionExecuter.Add(() =>
             {
@@ -58,8 +62,6 @@ namespace FCSPlayout.AppInfrastructure
                 _actionExecuter.Dispose();
                 _actionExecuter = null;
             }
-        }
+        }        
     }
-
-    
 }
