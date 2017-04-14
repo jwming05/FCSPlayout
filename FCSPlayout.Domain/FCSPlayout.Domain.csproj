@@ -64,6 +64,11 @@
     <Compile Include="AutoPaddingMediaSource.cs" />
     <Compile Include="AutoPlayItemEditor.cs" />
     <Compile Include="Common\DefaultDateTimeService.cs" />
+    <Compile Include="Concrete\New\NewPlaylistEditor.cs" />
+    <Compile Include="Concrete\New\NewPlaylistEditor_2.cs" />
+    <Compile Include="Concrete\New\NewPlaylistBuildData.cs" />
+    <Compile Include="Concrete\New\NewPlaylistBuilder.cs" />
+    <Compile Include="Concrete\New\ScheduleItem.cs" />
     <Compile Include="Exceptions\InvalidPlayRangeException.cs" />
     <Compile Include="Abstract\IChannelSwitcher.cs" />
     <Compile Include="Common\IDateTimeService.cs" />
@@ -76,6 +81,7 @@
     <Compile Include="Abstract\IPlaylistEditor2.cs" />
     <Compile Include="Abstract\IPlayControlService.cs" />
     <Compile Include="Abstract\IPlayItemEditor.cs" />
+    <Compile Include="IItemWrapper.cs" />
     <Compile Include="IUser.cs" />
     <Compile Include="IUserService.cs" />
     <Compile Include="MediaItemSearchOptions.cs" />
@@ -131,6 +137,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoleNames.cs" />
     <Compile Include="StartTimeValidationEventArgs.cs" />
+    <Compile Include="Common\XmlSerializerExtensions.cs" />
     <Compile Include="TimeCodeUtils.cs" />
     <Compile Include="Exceptions\TimeConflictException.cs" />
   </ItemGroup>

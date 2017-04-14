@@ -15,7 +15,7 @@ namespace FCSPlayout.AppInfrastructure
         public ChannelMediaSource(ChannelInfo channel)
             : base(MediaSourceCategory.External, channel)
         {
-            this.Id = channel.Id;
+            //this.Id = channel.Id;
             this.Channel = channel;
         }
 
@@ -35,11 +35,18 @@ namespace FCSPlayout.AppInfrastructure
             return new PlayRange(TimeSpan.Zero, playRange.Duration);
         }
 
-        public override IMediaSource Clone()
+        //public override IMediaSource Clone()
+        //{
+        //    var result = new ChannelMediaSource(this.Channel);
+        //    result.Id = this.Id;
+        //    return result;
+        //}
+
+        public override bool Equals(IMediaSource other)
         {
-            var result = new ChannelMediaSource(this.Channel);
-            result.Id = this.Id;
-            return result;
+            ChannelMediaSource temp = other as ChannelMediaSource;
+
+            return temp != null && temp.Id == this.Id;
         }
     }
 }

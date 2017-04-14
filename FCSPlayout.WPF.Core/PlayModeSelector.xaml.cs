@@ -10,14 +10,25 @@ namespace FCSPlayout.WPF.Core
     /// </summary>
     public partial class PlayModeSelector : UserControl
     {
-        public static readonly DependencyProperty PlayScheduleInfoProperty =
-            DependencyProperty.Register("PlayScheduleInfo", typeof(PlayScheduleInfo), typeof(PlayModeSelector),
-                new FrameworkPropertyMetadata(null, OnPlayModePropertyChanged));
+        //public static readonly DependencyProperty PlayScheduleInfoProperty =
+        //    DependencyProperty.Register("PlayScheduleInfo", typeof(PlayScheduleInfo), typeof(PlayModeSelector),
+        //        new FrameworkPropertyMetadata(null, OnPlayScheduleInfoPropertyChanged));
 
-        private static void OnPlayModePropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
+        //private static void OnPlayScheduleInfoPropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
+        //{
+        //    ((PlayModeSelector)dpObj).OnPlayScheduleInfoChanged((PlayScheduleInfo)e.NewValue, (PlayScheduleInfo)e.OldValue);
+        //}
+
+        public static readonly DependencyProperty PlayScheduleInfoHostProperty =
+        DependencyProperty.Register("PlayScheduleInfoHost", typeof(IPlayScheduleInfoHost), typeof(PlayModeSelector),
+            new FrameworkPropertyMetadata(null, OnPlayScheduleInfoHostPropertyChanged));
+
+        private static void OnPlayScheduleInfoHostPropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
         {
-            ((PlayModeSelector)dpObj).OnPlayModeChanged((PlayScheduleInfo)e.NewValue, (PlayScheduleInfo)e.OldValue);
+            ((PlayModeSelector)dpObj).OnPlayScheduleInfoHostChanged((IPlayScheduleInfoHost)e.NewValue, (IPlayScheduleInfoHost)e.OldValue);
         }
+
+        
 
         private TimeSpan _time;
         private DateTime _date;
@@ -28,14 +39,22 @@ namespace FCSPlayout.WPF.Core
         {
             InitializeComponent();
             this.dtPicker.Value = DateTime.Now.Date;
+            this.radTiming.IsChecked = true;
         }
 
-        public PlayScheduleInfo PlayScheduleInfo
+        //public PlayScheduleInfo PlayScheduleInfo
+        //{
+        //    get { return (PlayScheduleInfo)this.GetValue(PlayScheduleInfoProperty); }
+        //    set { this.SetValue(PlayScheduleInfoProperty, value); }
+        //}
+
+        
+
+        public IPlayScheduleInfoHost PlayScheduleInfoHost
         {
-            get { return (PlayScheduleInfo)this.GetValue(PlayScheduleInfoProperty); }
-            set { this.SetValue(PlayScheduleInfoProperty, value); }
+            get { return (IPlayScheduleInfoHost)this.GetValue(PlayScheduleInfoHostProperty); }
+            set { this.SetValue(PlayScheduleInfoHostProperty, value); }
         }
-
         private PlayScheduleMode PlayScheduleMode
         {
             get
@@ -44,21 +63,23 @@ namespace FCSPlayout.WPF.Core
             }
             set
             {
-                if (_playScheduleMode != value || this.PlayScheduleInfo == null)
+                if (_playScheduleMode != value/* || this.PlayScheduleInfo == null*/)
                 {
                     _playScheduleMode = value;
-                    switch (_playScheduleMode)
-                    {
-                        case PlayScheduleMode.Auto:
-                            this.PlayScheduleInfo = PlayScheduleInfo.Ordered();
-                            break;
-                        case PlayScheduleMode.Timing:
-                            this.PlayScheduleInfo = PlayScheduleInfo.Timing(this.StartTime);
-                            break;
-                        case PlayScheduleMode.TimingBreak:
-                            this.PlayScheduleInfo = PlayScheduleInfo.TimingBreak(this.StartTime);
-                            break;
-                    }
+                    //switch (_playScheduleMode)
+                    //{
+                    //    case PlayScheduleMode.Auto:
+                    //        this.PlayScheduleInfo = PlayScheduleInfo.Ordered();
+                    //        break;
+                    //    case PlayScheduleMode.Timing:
+                    //        this.PlayScheduleInfo = PlayScheduleInfo.Timing(this.StartTime);
+                    //        break;
+                    //    case PlayScheduleMode.TimingBreak:
+                    //        this.PlayScheduleInfo = PlayScheduleInfo.TimingBreak(this.StartTime);
+                    //        break;
+                    //}
+
+                    CreatePlayScheduleInfo();
 
                     if (this.panelDateTime != null)
                     {
@@ -77,9 +98,15 @@ namespace FCSPlayout.WPF.Core
                 if (_startTime != value)
                 {
                     _startTime = value;
-                    if (this.PlayScheduleInfo != null && this.PlayScheduleInfo.Mode != PlayScheduleMode.Auto)
+                    //if (this.PlayScheduleInfo != null && this.PlayScheduleInfo.Mode != PlayScheduleMode.Auto)
+                    //{
+                    //    this.PlayScheduleInfo.StartTime = _startTime;
+                    //}
+
+                    if (this.PlayScheduleInfoHost != null && this.PlayScheduleInfoHost.PlayScheduleInfo!=null 
+                        && this.PlayScheduleInfoHost.PlayScheduleInfo.Mode != PlayScheduleMode.Auto)
                     {
-                        this.PlayScheduleInfo.StartTime = _startTime;
+                        this.PlayScheduleInfoHost.PlayScheduleInfo.StartTime = _startTime;
                     }
                 }
             }
@@ -116,7 +143,7 @@ namespace FCSPlayout.WPF.Core
             this.StartTime = this.Date.Add(this.Time);
         }
 
-        private void OnPlayModeChanged(PlayScheduleInfo newValue, PlayScheduleInfo oldValue)
+        private void OnPlayScheduleInfoChanged(PlayScheduleInfo newValue, PlayScheduleInfo oldValue)
         {
 
         }
@@ -131,6 +158,30 @@ namespace FCSPlayout.WPF.Core
             if (dtPicker.Value != null)
             {
                 this.Date = dtPicker.Value.Value.Date;
+            }
+        }
+
+        private void OnPlayScheduleInfoHostChanged(IPlayScheduleInfoHost newValue, IPlayScheduleInfoHost oldValue)
+        {
+            CreatePlayScheduleInfo();
+        }
+
+        private void CreatePlayScheduleInfo()
+        {
+            if (this.PlayScheduleInfoHost != null)
+            {
+                switch (_playScheduleMode)
+                {
+                    case PlayScheduleMode.Auto:
+                        this.PlayScheduleInfoHost.PlayScheduleInfo = PlayScheduleInfo.Ordered();
+                        break;
+                    case PlayScheduleMode.Timing:
+                        this.PlayScheduleInfoHost.PlayScheduleInfo = PlayScheduleInfo.Timing(this.StartTime);
+                        break;
+                    case PlayScheduleMode.TimingBreak:
+                        this.PlayScheduleInfoHost.PlayScheduleInfo = PlayScheduleInfo.TimingBreak(this.StartTime);
+                        break;
+                }
             }
         }
     }

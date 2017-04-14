@@ -18,7 +18,7 @@ namespace FCSPlayout.Domain
             get;private set;
         }
 
-        internal/*public*/ IPlaySource PlaySource
+        public IPlaySource PlaySource
         {
             get; private set;
         }
@@ -67,6 +67,10 @@ namespace FCSPlayout.Domain
             {
                 return this.PlaySource.CGItems;
             }
+            set
+            {
+                this.PlaySource.CGItems = value;
+            }
         }
 
         public static PlaybillItem Timing(MediaItem mediaItem, DateTime startTime)
@@ -97,6 +101,18 @@ namespace FCSPlayout.Domain
         public static PlaybillItem TimingBreak(IPlaySource playSource, DateTime startTime)
         {
             return new TimingPlaybillItem(playSource, startTime, true);
+        }
+
+        public abstract IPlaybillItem Clone(PlayRange newRange);
+
+        public virtual bool CanMerge(IPlaybillItem playbillItem)
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual IPlaybillItem Merge(IPlaybillItem playbillItem)
+        {
+            throw new NotSupportedException();
         }
     }
 }

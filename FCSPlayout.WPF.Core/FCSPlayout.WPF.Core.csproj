@@ -141,8 +141,8 @@
     <Compile Include="CG\CGImageItemView.xaml.cs">
       <DependentUpon>CGImageItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CG\CGImageItemView2.xaml.cs">
-      <DependentUpon>CGImageItemView2.xaml</DependentUpon>
+    <Compile Include="CG\CGItemsView.xaml.cs">
+      <DependentUpon>CGItemsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="CG\CGItemListViewModelBase.cs" />
     <Compile Include="CG\CGTextItemListView.xaml.cs">
@@ -182,6 +182,8 @@
     <Compile Include="FilePicker.xaml.cs">
       <DependentUpon>FilePicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IImageItem.cs" />
+    <Compile Include="IPlayScheduleInfoHost.cs" />
     <Compile Include="LoadPlaybillConfirmation.cs" />
     <Compile Include="LoadPlaybillView.xaml.cs">
       <DependentUpon>LoadPlaybillView.xaml</DependentUpon>
@@ -204,6 +206,9 @@
       <DependentUpon>MLPreviewControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="NewControls\BindableMediaFileItem.cs" />
+    <Compile Include="NewControls\EditDurationView.xaml.cs">
+      <DependentUpon>EditDurationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NewControls\IMediaFileImageRequester.cs" />
     <Compile Include="NewControls\IMediaFileImageResolver.cs" />
     <Compile Include="NewControls\IPlayableItem.cs" />
@@ -214,17 +219,27 @@
     <Compile Include="PagingControl.xaml.cs">
       <DependentUpon>PagingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlayControl2.xaml.cs">
+    <Compile Include="PlayControl1\PlayControl2.xaml.cs">
       <DependentUpon>PlayControl2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlayControlModel2.cs" />
+    <Compile Include="PlayControl1\PlayControlModel2.cs" />
     <Compile Include="PlayModeSelector.xaml.cs">
       <DependentUpon>PlayModeSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="PlayScheduleInfo.cs" />
     <Compile Include="PlayScheduleMode.cs" />
-    <Compile Include="PlaySlider2.xaml.cs">
+    <Compile Include="PlayControl1\PlaySlider2.xaml.cs">
       <DependentUpon>PlaySlider2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PreviewPlayer\CGManager.cs" />
+    <Compile Include="PreviewPlayer\PreviewPlayControl.xaml.cs">
+      <DependentUpon>PreviewPlayControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PreviewPlayer\PreviewPlayControlModel.cs" />
+    <Compile Include="PreviewPlayer\PreviewPlayer.cs" />
+    <Compile Include="PreviewPlayer\PreviewPlayerStatus.cs" />
+    <Compile Include="PreviewPlayer\PreviewPlaySlider.xaml.cs">
+      <DependentUpon>PreviewPlaySlider.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SecondsToTimeCode.cs" />
@@ -270,7 +285,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="CG\CGImageItemView2.xaml">
+    <Page Include="CG\CGItemsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -330,6 +345,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="NewControls\EditDurationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="NewControls\MediaFileImageControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -338,7 +357,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PlayControl2.xaml">
+    <Page Include="PlayControl1\PlayControl2.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -346,7 +365,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PlaySlider2.xaml">
+    <Page Include="PlayControl1\PlaySlider2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewPlayer\PreviewPlayControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PreviewPlayer\PreviewPlaySlider.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

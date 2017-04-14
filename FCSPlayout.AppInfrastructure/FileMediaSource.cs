@@ -7,14 +7,15 @@ namespace FCSPlayout.AppInfrastructure
     [Serializable]
     public class FileMediaSource : MediaSourceBase, IFileMediaSource
     {
-        public FileMediaSource(MediaFileEntity entity) : base(MediaSourceCategory.File, entity)
+        public FileMediaSource(MediaFileEntity entity) 
+            : base(MediaSourceCategory.File, entity)
         {
-            this.FileName = MediaFilePathResolver.Current.Resolve(entity.FileName);
-            this.Id = entity.Id;
+            this.FileName = entity.FileName; // resolvedFileName; // MediaFilePathResolver.Current.Resolve(entity.FileName);
+            //this.Id = entity.Id;
 
             if (string.IsNullOrEmpty(this.Title))
             {
-                this.Title = System.IO.Path.GetFileNameWithoutExtension(this.FileName);
+                this.Title = System.IO.Path.GetFileNameWithoutExtension(/*this.FileName*/entity.OriginalFileName);
             }
         }
 
@@ -48,11 +49,17 @@ namespace FCSPlayout.AppInfrastructure
             return playRange;
         }
 
-        public override IMediaSource Clone()
+        //public override IMediaSource Clone()
+        //{
+        //    var result = new FileMediaSource(this.FileEntity);
+        //    result.AudioGain = this.AudioGain;
+        //    return result;
+        //}
+
+        public override bool Equals(IMediaSource other)
         {
-            var result = new FileMediaSource(this.FileEntity);
-            result.AudioGain = this.AudioGain;
-            return result;
+            FileMediaSource temp = other as FileMediaSource;
+            return temp != null && temp.Id == this.Id;
         }
     }
 }

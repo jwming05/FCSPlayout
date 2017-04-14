@@ -100,6 +100,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FCSPlayout.CG\FCSPlayout.CG.csproj">
+      <Project>{1cfebc86-db01-4aa6-ab0d-d855da674d10}</Project>
+      <Name>FCSPlayout.CG</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FCSPlayout.Domain\FCSPlayout.Domain.csproj">
       <Project>{13e94826-defa-4246-ae86-0ab9c9606932}</Project>
       <Name>FCSPlayout.Domain</Name>

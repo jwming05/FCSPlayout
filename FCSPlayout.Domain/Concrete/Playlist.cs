@@ -72,7 +72,10 @@ namespace FCSPlayout.Domain
 
         protected virtual void OnEditorDisposed(long editId)
         {
-
+            if (EditCompleted != null)
+            {
+                EditCompleted(this, new EditCompletedEventArgs(editId));
+            }
         }
 
         public IList<IPlayItem> GetPlayItems(int beginIndex, int endIndex)
@@ -176,9 +179,9 @@ namespace FCSPlayout.Domain
             return this.Contains(playItem);
         }
 
-        public bool IsLocked(IPlayItem playItem)
+        public virtual bool IsLocked(IPlayItem playItem)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public bool EditLocked(IPlayItem playItem)
@@ -196,5 +199,11 @@ namespace FCSPlayout.Domain
         {
             return _playItems.GetStartTime();
         }
+
+        public virtual DateTime? GetStopTime()
+        {
+            return _playItems.GetStopTime();
+        }
+        public event EventHandler<EditCompletedEventArgs> EditCompleted;
     }
 }

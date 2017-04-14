@@ -188,8 +188,8 @@ namespace FCSPlayout.PlayEngine
                 {
                     this.CGItems = item.PlaybillItem.CGItems.Clone();
                 }
-                
-                this.MediaSource = item.PlaybillItem.MediaSource.Clone();
+
+                this.MediaSource = item.PlaybillItem.MediaSource; //.Clone();
             }
 
             public PlayItemWrapper(IPlayItem item, DateTime expectedPlayTime) : this(item)

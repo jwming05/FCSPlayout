@@ -73,7 +73,9 @@ namespace FCSPlayout.Domain
 
             var newAutoItem = new AutoPlayItem(PlaybillItem.Auto(playSource));
 
-            PlaylistBuildData data = new PlaylistBuildData(this.Id);
+            //PlaylistBuildData data = new PlaylistBuildData(this.Id);
+            PlaylistBuildData data = new PlaylistBuildData(this);
+
             data.StartTime = startTime;
             data.StopTime = stopTime;
             data.AddAuto((AutoPlayItem)playItem);

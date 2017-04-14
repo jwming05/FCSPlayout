@@ -111,16 +111,52 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=3.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BindableMediaItem.cs" />
+    <Compile Include="AddPlayItemPayload.cs" />
+    <Compile Include="New\IPlayItemEditor.cs" />
+    <Compile Include="New\IPlayItemEditorFactory.cs" />
+    <Compile Include="New\IMediaItemSelector.cs" />
+    <Compile Include="New\InteractionRequests.cs" />
+    <Compile Include="New\MediaItemView.xaml.cs">
+      <DependentUpon>MediaItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="New\BindableFileMediaItem.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="New\ChannelItemListViewModel.cs" />
+    <Compile Include="New\ChannelItemListView.xaml.cs">
+      <DependentUpon>ChannelItemListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="datagridHepler.cs" />
-    <Compile Include="MainViewModel.cs" />
+    <Compile Include="New\MainViewModel.cs" />
     <Compile Include="MediaItemModule.cs" />
     <Compile Include="New\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -129,22 +165,25 @@
       <DependentUpon>MediaItemListView2.xaml</DependentUpon>
     </Compile>
     <Compile Include="New\MediaItemListViewModel2.cs" />
+    <Compile Include="New\MediaItemViewModel.cs" />
+    <Compile Include="New\PlaybillViewModel_2.cs" />
+    <Compile Include="New\PlayItemXmlRepository.cs" />
+    <Compile Include="PlaybillModule.cs" />
     <Compile Include="PlayItemCollection.cs" />
-    <Compile Include="PlayItemList.cs" />
-    <Compile Include="BindablePlayItem.cs" />
-    <Compile Include="MediaItemListView.xaml.cs">
-      <DependentUpon>MediaItemListView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MediaItemListViewModel.cs" />
-    <Compile Include="PlaybillView.xaml.cs">
+    <Compile Include="New\BindablePlayItem.cs" />
+    <Compile Include="New\PlaybillView.xaml.cs">
       <DependentUpon>PlaybillView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlaybillViewModel.cs" />
+    <Compile Include="New\PlaybillViewModel.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MediaItemListView.xaml">
+    <Page Include="New\MediaItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="New\ChannelItemListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -156,7 +195,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PlaybillView.xaml">
+    <Page Include="New\PlaybillView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -196,6 +235,10 @@
       <Project>{9fd320fe-7b85-4ce6-b6e2-cb979e3410be}</Project>
       <Name>FCSPlayout.AppInfrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\FCSPlayout.CG\FCSPlayout.CG.csproj">
+      <Project>{1cfebc86-db01-4aa6-ab0d-d855da674d10}</Project>
+      <Name>FCSPlayout.CG</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\FCSPlayout.Domain\FCSPlayout.Domain.csproj">
       <Project>{13e94826-defa-4246-ae86-0ab9c9606932}</Project>
       <Name>FCSPlayout.Domain</Name>
@@ -213,9 +256,7 @@
       <Name>MLLicenseLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Temp\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

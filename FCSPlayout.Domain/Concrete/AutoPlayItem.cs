@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FCSPlayout.CG;
+﻿using FCSPlayout.CG;
+using System;
 
 namespace FCSPlayout.Domain
 {
@@ -19,32 +15,41 @@ namespace FCSPlayout.Domain
             return playItem;
         }
 
-        internal static bool CanMerge(AutoPlayItem item1, AutoPlayItem item2)
+        internal static bool CanMerge(/*Auto*/IPlayItem item1, /*Auto*/IPlayItem item2)
         {
-            if (item1.PlaybillItem != item2.PlaybillItem ||
-                item1.PlayRange == item1.PlaybillItem.PlayRange ||
-                item2.PlayRange == item2.PlaybillItem.PlayRange)
+            if(item1.ScheduleMode != PlayScheduleMode.Auto || item2.ScheduleMode != PlayScheduleMode.Auto)
             {
                 return false;
             }
 
-            return FCSPlayout.Domain.PlayRange.CanMerge(item1.PlayRange, item2.PlayRange);
+            //if (item1.PlaybillItem != item2.PlaybillItem ||
+            //    item1.PlayRange == item1.PlaybillItem.PlayRange ||
+            //    item2.PlayRange == item2.PlaybillItem.PlayRange)
+            //{
+            //    return false;
+            //}
+
+            //return FCSPlayout.Domain.PlayRange.CanMerge(item1.PlayRange, item2.PlayRange);
+
+            return item1.PlaybillItem.CanMerge(item2.PlaybillItem);
         }
 
-        internal static AutoPlayItem Merge(AutoPlayItem item1, AutoPlayItem item2)
+        internal static AutoPlayItem Merge(/*Auto*/IPlayItem item1, /*Auto*/IPlayItem item2)
         {
             if (!CanMerge(item1, item2)) throw new InvalidOperationException();
 
-            var range = FCSPlayout.Domain.PlayRange.Merge(item1.PlayRange, item2.PlayRange);
+            return new AutoPlayItem(item1.PlaybillItem.Merge(item2.PlaybillItem));
 
-            if (range == item1.PlaybillItem.PlayRange)
-            {
-                return new AutoPlayItem(item1.PlaybillItem);
-            }
-            else
-            {
-                return new AutoPlayItem(item1.PlaybillItem, range);
-            }
+            //var range = FCSPlayout.Domain.PlayRange.Merge(item1.PlayRange, item2.PlayRange);
+
+            //if (range == item1.PlaybillItem.PlayRange)
+            //{
+            //    return new AutoPlayItem(item1.PlaybillItem);
+            //}
+            //else
+            //{
+            //    return new AutoPlayItem(item1.PlaybillItem, range);
+            //}
         }
         #endregion Static Members
 
@@ -139,14 +144,22 @@ namespace FCSPlayout.Domain
         {
             get; set;
         }
-        public bool IsAutoPadding { get{ return ((AutoPlaybillItem)this.PlaybillItem).IsAutoPadding; } }
+        internal bool IsAutoPadding { get{ return ((AutoPlaybillItem)this.PlaybillItem).IsAutoPadding; } }
+
+        //[NonSerialized]
+        //private long? _editId;
+        //public long? EditId
+        //{
+        //    get { return _editId; }
+        //    set { _editId = value; }
+        //}
 
         [NonSerialized]
-        private long? _editId;
-        public long? EditId
+        private IPlaylistEditor _editor;
+        public IPlaylistEditor Editor
         {
-            get { return _editId; }
-            set { _editId = value; }
+            get { return _editor; }
+            set { _editor = value; }
         }
 
         public PlayScheduleMode ScheduleMode
@@ -179,16 +192,21 @@ namespace FCSPlayout.Domain
             {
                 return this.PlaybillItem.CGItems;
             }
+
+            set
+            {
+                this.PlaybillItem.CGItems = value;
+            }
         }
 
-        internal void Split(TimeSpan duration,out AutoPlayItem first,out AutoPlayItem second)
+        public void Split(TimeSpan duration,out IPlayItem first,out IPlayItem second)
         {
             PlayRange firstRange, secondRange;
 
             FCSPlayout.Domain.PlayRange.Split(this.PlayRange, duration, out firstRange, out secondRange);
 
-            first = new AutoPlayItem(this.PlaybillItem, firstRange);
-            second = new AutoPlayItem(this.PlaybillItem, secondRange);
+            first = new AutoPlayItem(this.PlaybillItem.Clone(firstRange), firstRange);
+            second = new AutoPlayItem(this.PlaybillItem.Clone(secondRange), secondRange);
         }
 
         //public IPlayItem Clone()

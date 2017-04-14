@@ -27,7 +27,7 @@ namespace FCSPlayout.MediaFileImporter
             base.InitializeModules();
 
             var viewRegistry = this.Container.Resolve<IRegionViewRegistry>();
-            viewRegistry.RegisterViewWithRegion("previewRegion", typeof(PlayControl2));
+            viewRegistry.RegisterViewWithRegion("previewRegion", typeof(PreviewPlayControl));
             viewRegistry.RegisterViewWithRegion("mediaItemListRegion", typeof(MediaItemListView));
             viewRegistry.RegisterViewWithRegion("mediaItemList2Region", typeof(MediaItemListView2));
         }

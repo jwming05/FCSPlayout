@@ -39,6 +39,7 @@ namespace FCSPlayout.AppInfrastructure
             }
             
             this.Entity = entity;
+            this.Id = entity.Id;
         }
 
         public string Title
@@ -63,7 +64,7 @@ namespace FCSPlayout.AppInfrastructure
 
         public Guid Id
         {
-            get;set;
+            get; private set;
         }
 
         public virtual PlayRange? Adjust(PlayRange playRange)
@@ -71,6 +72,7 @@ namespace FCSPlayout.AppInfrastructure
             return playRange;
         }
 
-        public abstract IMediaSource Clone();
+        //public abstract IMediaSource Clone();
+        public abstract bool Equals(IMediaSource other);
     }
 }

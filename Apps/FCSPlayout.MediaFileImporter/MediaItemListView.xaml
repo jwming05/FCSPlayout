@@ -12,7 +12,7 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              x:Name="mediaItemListView"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="500">
     <core:ViewBase.Resources>
         <core:TimeCodeConverter x:Key="TimeCodeConverter"/>
     </core:ViewBase.Resources>
@@ -25,7 +25,10 @@
             <Button Margin="5" Content="添加素材" Command="{Binding AddMediaItemCommand}"/>
             <Button Margin="5" Content="删除素材" Command="{Binding DeleteMediaItemCommand}"/>
             <Button Margin="5" Content="素材入库" Command="{Binding SaveMediaItemsCommand}"/>
-
+            <Button Margin="5" Content="保存" Command="{Binding SaveXmlCommand}"/>
+            <Button Margin="5" Content="打开" Command="{Binding OpenXmlCommand}"/>
+            <Button Margin="5" Content="清空" Command="{Binding ClearCommand}"/>
+            
             <StackPanel Orientation="Horizontal">
                 <StackPanel Name="pbPanel" Margin="5" VerticalAlignment="Center">
                     <Grid>

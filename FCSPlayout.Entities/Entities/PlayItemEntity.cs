@@ -8,6 +8,26 @@ namespace FCSPlayout.Entities
     [Table("PlayItems")]
     public class PlayItemEntity : IGuidIdentifier, IModificationTimestamp, IRangeMarkable
     {
+        #region Constructors
+        public PlayItemEntity()
+        {
+
+        }
+
+        public PlayItemEntity(IPlayItem playItem, IMediaSourceConverter mediaSourceConverter)
+        {
+            this.Id = playItem.Id;
+
+            this.StartTime = playItem.StartTime;
+            this.PlayDuration = playItem.CalculatedPlayDuration.TotalSeconds;
+            this.MarkerIn = playItem.PlayRange.StartPosition.TotalSeconds;
+            this.MarkerDuration = playItem.PlayRange.Duration.TotalSeconds;
+
+            this.PlaybillItemId = playItem.PlaybillItem.Id;
+            this.PlaybillItem = new PlaybillItemEntity(playItem.PlaybillItem, mediaSourceConverter);
+        }
+        #endregion Constructors
+
         [Key]
         public Guid Id { get; set; }
 
@@ -40,6 +60,7 @@ namespace FCSPlayout.Entities
         //}
 
         [NotMapped]
+        [System.Xml.Serialization.XmlIgnore]
         public DateTime StopTime
         {
             get

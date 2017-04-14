@@ -25,7 +25,7 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 this.Item.Text = value;
-                OnPropertyChanged(() => this.Text);
+                RaisePropertyChanged(nameof(this.Text));
             }
         }
 
@@ -35,7 +35,7 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 this.Item.FontHeight = value;
-                OnPropertyChanged(() => this.FontHeight);
+                RaisePropertyChanged(nameof(this.FontHeight));
             }
         }
     }

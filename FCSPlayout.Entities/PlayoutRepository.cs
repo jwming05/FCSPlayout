@@ -203,6 +203,8 @@ namespace FCSPlayout.Entities
             using (var context = new PlayoutDbContext())
             {
                 entity.CreatorId = userId;
+                entity.OriginalFileName = System.IO.Path.GetFileName(entity.OriginalFileName);
+
                 context.MediaFiles.Add(entity);
                 var action = new UserAction();
 

@@ -8,6 +8,7 @@ namespace FCSPlayout.Domain
         {
             this.Title = title;
             this.Duration = duration;
+            this.Id = Guid.NewGuid();
         }
 
         public MediaSourceCategory Category
@@ -25,7 +26,7 @@ namespace FCSPlayout.Domain
 
         public Guid Id
         {
-            get;set;
+            get; private set;
         }
 
         public string Title
@@ -38,13 +39,21 @@ namespace FCSPlayout.Domain
             throw new NotSupportedException();
         }
 
-        public IMediaSource Clone()
+        public bool Equals(IMediaSource other)
         {
-            var source = this;
-            return new NullMediaSource(source.Title,source.Duration.Value)
-            {
-                Id = source.Id,
-            };
+            var temp = other as NullMediaSource;
+            return temp != null && temp.Id == this.Id;
         }
+
+        //public IMediaSource Clone()
+        //{
+        //    var source = this;
+        //    return new NullMediaSource(source.Title,source.Duration.Value)
+        //    {
+        //        Id = source.Id,
+        //    };
+        //}
+
+
     }
 }

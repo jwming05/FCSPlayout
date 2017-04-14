@@ -26,7 +26,7 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 this.Item.File = value;
-                OnPropertyChanged(() => this.File);
+                this.RaisePropertyChanged(nameof(this.File));
             }
         }
     }

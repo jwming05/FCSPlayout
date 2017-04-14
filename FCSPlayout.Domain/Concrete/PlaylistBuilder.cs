@@ -11,9 +11,10 @@ namespace FCSPlayout.Domain
     {
         public IList<IPlayItem> Build(PlaylistBuildData data)
         {
-            AutoPlayItem autoItem =null;
+            /*AutoPlayItem*/IPlayItem autoItem =null;
             IPlayItem timingItem = null;
-            AutoPlayItem segmentItem = null;
+            /*AutoPlayItem*/
+            IPlayItem partialAutoItem = null;
             bool isSegment = false;
 
             DateTime startTime = data.StartTime;
@@ -24,10 +25,10 @@ namespace FCSPlayout.Domain
             {
                 if(autoItem==null)
                 {
-                    if (segmentItem != null)
+                    if (partialAutoItem != null)
                     {
-                        autoItem = segmentItem;
-                        segmentItem = null;
+                        autoItem = partialAutoItem;
+                        partialAutoItem = null;
                         isSegment = true;
                     }
                     else if (data.HasAutoPlaybillItem)
@@ -74,14 +75,17 @@ namespace FCSPlayout.Domain
                                 {
                                     // 分片。
 
-                                    AutoPlayItem first = null;
-                                    AutoPlayItem second = null;
+                                    /*Auto*/IPlayItem first = null;
+                                    /*Auto*/IPlayItem second = null;
                                     autoItem.Split(maxDuration, out first, out second);
+                                    first.Editor = autoItem.Editor;
+                                    second.Editor = autoItem.Editor;
+
                                     first.StartTime = startTime;
                                     data.AddResult(first);
                                     startTime = first.CalculatedStopTime;
 
-                                    segmentItem = second;
+                                    partialAutoItem = second;
                                     
                                     //autoItem = second;
                                 }
@@ -94,6 +98,7 @@ namespace FCSPlayout.Domain
                             // 插入自动垫片。
                             IPlayItem autoPadding = CreateAutoPadding(startTime, maxDuration);
                             data.AddResult(autoPadding);
+                            startTime = autoPadding.CalculatedStopTime;
                         }
                         #endregion 1.1
                     }

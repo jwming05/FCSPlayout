@@ -170,7 +170,7 @@ namespace FCSPlayout.Domain
                     return;
                 }
 
-                var playSource = new PlaySource(playItem.MediaSource.Clone(), playItem.PlayRange, playItem.CGItems);
+                var playSource = new PlaySource(playItem.MediaSource/*.Clone()*/, playItem.PlayRange, playItem.CGItems);
                 var newAutoItem = new AutoPlayItem(PlaybillItem.Auto(playSource));
 
                 var nextTuple = this.FindFirstTiming(index+1, (i) => true);
@@ -235,7 +235,7 @@ namespace FCSPlayout.Domain
             if (_playlist.IsLocked(newPrevItem)) throw new PlayItemLockedException();
             if (_playlist.IsLocked(reorderItem)) throw new PlayItemLockedException();
 
-            var mediaSource = reorderItem.MediaSource.Clone();
+            var mediaSource = reorderItem.MediaSource; //.Clone();
             var playSource = new PlaySource(mediaSource, reorderItem.PlayRange, reorderItem.CGItems);
 
             var newAutoItem = new AutoPlayItem(PlaybillItem.Auto(playSource));
@@ -361,7 +361,7 @@ namespace FCSPlayout.Domain
 
             if (mediaSource == null)
             {
-                mediaSource = playItem.MediaSource.Clone();
+                mediaSource = playItem.MediaSource; //.Clone();
             }
 
             var newPlaySource = new PlaySource(mediaSource, playRange, playItem.CGItems);
@@ -410,7 +410,7 @@ namespace FCSPlayout.Domain
             _playlist.ValidateTimeRange(newStartTime, playRange.Duration, playItem);
 
             // NOTE: 对于顺播PlayRange可能需要改变，因此不能简单的克隆PlaySource。
-            var playSource = new PlaySource(playItem.MediaSource.Clone(), playRange, playItem.CGItems);
+            var playSource = new PlaySource(playItem.MediaSource/*.Clone()*/, playRange, playItem.CGItems);
             
             var newItem = newScheduleMode == PlayScheduleMode.Timing ?
                 PlaybillItem.Timing(playSource, newStartTime) :
@@ -471,8 +471,10 @@ namespace FCSPlayout.Domain
             {
                 itemsAction(playItems);
             }
-            
-            PlaylistBuildData data = new PlaylistBuildData(this.Id);
+
+            //PlaylistBuildData data = new PlaylistBuildData(this.Id);
+            PlaylistBuildData data = new PlaylistBuildData(this);
+
             data.StartTime = startTime;
             data.StopTime = stopTime;
 

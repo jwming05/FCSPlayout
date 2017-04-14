@@ -18,8 +18,12 @@ namespace FCSPlayout.Domain
 
         string Title { get; }
 
-        CGItemCollection CGItems { get; /*set;*/ }
+        CGItemCollection CGItems { get; set; }
 
         IPlaySource Clone();
+
+        IPlaySource Clone(PlayRange newRange);
+        bool CanMerge(IPlaySource playSource);
+        IPlaySource Merge(IPlaySource playSource);
     }
 }

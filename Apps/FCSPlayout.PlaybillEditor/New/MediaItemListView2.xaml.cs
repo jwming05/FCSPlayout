@@ -1,4 +1,7 @@
-﻿namespace FCSPlayout.PlaybillEditor
+﻿using System;
+using Prism.Regions;
+
+namespace FCSPlayout.PlaybillEditor
 {
     /// <summary>
     /// MediaItemListView.xaml 的交互逻辑
@@ -14,6 +17,11 @@
             :this()
         {
             this.DataContext = viewModel;
+        }
+
+        public string Title
+        {
+            get { return "文件库"; }
         }
     }  
 }

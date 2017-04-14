@@ -16,7 +16,9 @@ namespace FCSPlayout.Domain
         string Title { get; }
         Guid Id { get; }
 
-        IMediaSource Clone();
+        //IMediaSource Clone();
+
+        bool Equals(IMediaSource other);
     }
 
     

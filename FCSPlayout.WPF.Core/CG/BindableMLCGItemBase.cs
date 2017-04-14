@@ -26,7 +26,7 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 _item.X = value;
-                OnPropertyChanged(() => this.X);
+                this.RaisePropertyChanged(nameof(this.X));
             }
         }
 
@@ -36,7 +36,7 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 _item.Y = value;
-                OnPropertyChanged(() => this.Y);
+                RaisePropertyChanged(nameof(this.Y));
             }
         }
 
@@ -46,7 +46,7 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 _item.IsRelative = value;
-                OnPropertyChanged(() => this.IsRelative);
+                RaisePropertyChanged(nameof(this.IsRelative));
             }
         }
 
@@ -56,7 +56,7 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 _item.ItemName = value;
-                OnPropertyChanged(() => this.Name);
+                RaisePropertyChanged(nameof(this.Name));
             }
         }
 

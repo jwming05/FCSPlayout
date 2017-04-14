@@ -33,5 +33,17 @@ namespace FCSPlayout.Domain
 
         bool EditLocked(IPlayItem playItem);
         DateTime? GetStartTime();
+        DateTime? GetStopTime();
+
+        event EventHandler<EditCompletedEventArgs> EditCompleted;
+    }
+
+    public class EditCompletedEventArgs:EventArgs
+    {
+        public EditCompletedEventArgs(long editId)
+        {
+            this.EditId = editId;
+        }
+        public long EditId { get; private set; }
     }
 }

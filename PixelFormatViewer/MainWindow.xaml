@@ -1,0 +1,51 @@
+﻿<Window x:Class="PixelFormatViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PixelFormatViewer"
+        mc:Ignorable="d"
+        Title="PixelFormat Viewer" Height="350" Width="600">
+    <Window.Resources>
+        <local:PixelFormatChannelMaskConverter x:Key="PixelFormatChannelMaskConverter"/>
+        <local:MaskConverter x:Key="MaskConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Margin="5" Text="PixelFormat: "/>
+        <ComboBox Margin="5" Grid.Column="1" ItemsSource="{Binding PixelFormats,Mode=OneWay}"
+                  SelectedItem="{Binding SelectedFormat,Mode=TwoWay}"/>
+
+        <TextBlock Margin="5" Grid.Row="1" Text="BitsPerPixel: "/>
+        <TextBlock Margin="5" Grid.Row="1" Grid.Column="1" Text="{Binding SelectedFormat.BitsPerPixel}"/>
+
+        <TextBlock Margin="5" VerticalAlignment="Center" Grid.Row="2" Text="Masks: "/>
+        <ListBox Name="lstMasks" Margin="5" MinHeight="50" Grid.Row="2" Grid.Column="1" 
+                 ItemsSource="{Binding ChannelMaskView}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource PixelFormatChannelMaskConverter}}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock Margin="5" VerticalAlignment="Center" Grid.Row="3" Text="Mask: "/>
+        <ListBox Margin="5" Grid.Row="3" Grid.Column="1" 
+                 ItemsSource="{Binding MaskView}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource MaskConverter}}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>

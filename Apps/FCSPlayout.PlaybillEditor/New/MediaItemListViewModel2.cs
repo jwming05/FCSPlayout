@@ -6,17 +6,18 @@ using Prism.Events;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Prism.Regions;
 
 namespace FCSPlayout.PlaybillEditor
 {
-    public class MediaItemListViewModel2 : ViewModelBase
+    public class MediaItemListViewModel2 : ViewModelBase, Prism.IActiveAware
     {
-        private readonly ObservableCollection<BindableMediaFileItem> _mediaItemCollection;
+        //private readonly ObservableCollection<BindableMediaFileItem> _mediaItemCollection;
+        private readonly ObservableCollection<BindableFileMediaItem> _mediaItemCollection;
 
-        private BindableMediaFileItem _selectedMediaItem;
-        private readonly DelegateCommand _deleteMediaItemCommand;
+        private BindableFileMediaItem _selectedMediaItem;
+        //private readonly DelegateCommand _deleteMediaItemCommand;
         private readonly DelegateCommand<object> _editMediaItemCommand;
-        //private readonly DelegateCommand _saveMediaItemsCommand;
         private readonly DelegateCommand<IPlayableItem> _previewCommand;
         private readonly DelegateCommand<RequestPagingItemsEventArgs> _searchCommand;
         
@@ -24,18 +25,19 @@ namespace FCSPlayout.PlaybillEditor
         private int _pageSize = 30;
 
         public MediaItemListViewModel2(IEventAggregator eventAggregator, IMediaFilePathResolver filePathResolver, 
-            IMediaFileImageResolver imageResolver)
+            IMediaFileImageResolver imageResolver,IRegionManager regionManager)
         {
             this.EventAggregator = eventAggregator;
             this.FilePathResolver = filePathResolver;
             this.ImageResolver = imageResolver;
 
-            _mediaItemCollection = new ObservableCollection<BindableMediaFileItem>();
+            _regionManager = regionManager;
 
-            _deleteMediaItemCommand = new DelegateCommand(DeleteMediaItem, CanDeleteMediaItem);
+            //_mediaItemCollection = new ObservableCollection<BindableMediaFileItem>();
+            _mediaItemCollection = new ObservableCollection<BindableFileMediaItem>();
+
+            //_deleteMediaItemCommand = new DelegateCommand(DeleteMediaItem, CanDeleteMediaItem);
             _editMediaItemCommand = new DelegateCommand<object>(EditMediaItem, CanEditMediaItem);
-
-            //_saveMediaItemsCommand = new DelegateCommand(SaveMediaItems, CanSaveMediaItems);
 
             _searchCommand = new DelegateCommand<RequestPagingItemsEventArgs>(SearchMediaItems);
 
@@ -71,64 +73,45 @@ namespace FCSPlayout.PlaybillEditor
 
             foreach (var item in result.Items)
             {
-                _mediaItemCollection.Add(new BindableMediaFileItem(item,this.ResolvePath(item.FileName)));
+                _mediaItemCollection.Add(new BindableFileMediaItem(item,this.ResolvePath(item.FileName)));
             }
 
             e.Result = result;
         }
 
-        //private static string ResolvePath(string fileName)
-        //{
-        //    return MediaFilePathResolver.Current.Resolve(fileName, BindableMediaFileItem.MediaFileStorage);
-        //}
-
         private string ResolvePath(string fileName)
         {
-            return this.FilePathResolver.Resolve(fileName/*, BindableMediaFileItem.MediaFileStorage*/);
+            return this.FilePathResolver.Resolve(fileName);
         }
 
-        private bool CanDeleteMediaItem()
-        {
-            return this.SelectedMediaItem != null && 
-                (UserService.CurrentUser.IsAdmin() || this.SelectedMediaItem.CreatorId==UserService.CurrentUser.Id);
-        }
-
-        private void DeleteMediaItem()
-        {
-            if (CanDeleteMediaItem())
-            {
-                var item = this.SelectedMediaItem;
-                this.SelectedMediaItem = null;
-
-                if (item == _currentPreviewItem)
-                {
-                    _currentPreviewItem.ClosePreview();
-                    _currentPreviewItem = null;
-                }
-
-                MediaFileService.DeleteMediaFile(item.Entity, App.Current.Name);
-                _mediaItemCollection.Remove(item);
-                //_saveMediaItemsCommand.RaiseCanExecuteChanged();
-            }
-        }
-
-        //private bool CanSaveMediaItems()
+        //private bool CanDeleteMediaItem()
         //{
-        //    return _mediaItemCollection.Count > 0;
+        //    return this.SelectedMediaItem != null && 
+        //        (UserService.CurrentUser.IsAdmin() || this.SelectedMediaItem.CreatorId==UserService.CurrentUser.Id);
         //}
 
-        //private void SaveMediaItems()
+        //private void DeleteMediaItem()
         //{
-        //    if (CanSaveMediaItems())
+        //    if (CanDeleteMediaItem())
         //    {
-        //        if (_mediaItemCollection.Count > 0)
+        //        var item = this.SelectedMediaItem;
+        //        this.SelectedMediaItem = null;
+
+        //        if (item == _currentPreviewItem)
         //        {
-        //            var item = _mediaItemCollection[0];
+        //            _currentPreviewItem.ClosePreview();
+        //            _currentPreviewItem = null;
         //        }
+
+        //        MediaFileService.DeleteMediaFile(item.Entity, App.Current.Name);
+        //        _mediaItemCollection.Remove(item);
+        //        //_saveMediaItemsCommand.RaiseCanExecuteChanged();
         //    }
         //}
 
-        public ObservableCollection<BindableMediaFileItem> MediaItemView
+        
+
+        public ObservableCollection<BindableFileMediaItem> MediaItemView
         {
             get
             {
@@ -136,28 +119,24 @@ namespace FCSPlayout.PlaybillEditor
             }
         }
 
-        public BindableMediaFileItem SelectedMediaItem
+        public BindableFileMediaItem SelectedMediaItem
         {
             get { return _selectedMediaItem; }
             set
             {
                 _selectedMediaItem = value;
                 _editMediaItemCommand.RaiseCanExecuteChanged();
-                _deleteMediaItemCommand.RaiseCanExecuteChanged();
+                //_deleteMediaItemCommand.RaiseCanExecuteChanged();
 
-                //OnSelectedMediaItemChanged();
+                if (_isActive && this.MediaItemSelector != null)
+                {
+                    this.MediaItemSelector.SelectedMediaItem = 
+                        this.SelectedMediaItem == null ? (MediaItem?)null : new MediaItem(this.SelectedMediaItem.MediaSource, this.SelectedMediaItem.PlayRange);
+                }
+
                 this.RaisePropertyChanged(nameof(this.SelectedMediaItem));
             }
         }
-
-        //public event EventHandler SelectedMediaItemChanged;
-        //private void OnSelectedMediaItemChanged()
-        //{
-        //    if (SelectedMediaItemChanged != null)
-        //    {
-        //        SelectedMediaItemChanged(this, EventArgs.Empty);
-        //    }
-        //}
 
         public ICommand EditMediaItemCommand
         {
@@ -167,19 +146,11 @@ namespace FCSPlayout.PlaybillEditor
             }
         }
 
-        public ICommand DeleteMediaItemCommand
-        {
-            get
-            {
-                return _deleteMediaItemCommand;
-            }
-        }
-
-        //public ICommand SaveMediaItemsCommand
+        //public ICommand DeleteMediaItemCommand
         //{
         //    get
         //    {
-        //        return _saveMediaItemsCommand;
+        //        return _deleteMediaItemCommand;
         //    }
         //}
 
@@ -220,6 +191,28 @@ namespace FCSPlayout.PlaybillEditor
             if (CanEditMediaItem(cmdParameter))
             {
             }
+        }
+
+        public event EventHandler IsActiveChanged;
+        private bool _isActive;
+        private IRegionManager _regionManager;
+
+        public bool IsActive
+        {
+            get { return _isActive; }
+            set
+            {
+                _isActive = value;
+                if (_isActive && this.MediaItemSelector!=null)
+                {
+                    this.MediaItemSelector.SelectedMediaItem = this.SelectedMediaItem == null ? (MediaItem?)null : new MediaItem(this.SelectedMediaItem.MediaSource,this.SelectedMediaItem.PlayRange);
+                }
+            }
+        }
+
+        public IMediaItemSelector MediaItemSelector
+        {
+            get { return _regionManager.Regions["mediaItemRegion"].Context as IMediaItemSelector; }
         }
     }
 }

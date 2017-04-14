@@ -22,6 +22,29 @@ namespace FCSPlayout.Domain
         {
         }
 
+        public override IPlaybillItem Clone(PlayRange newRange)
+        {
+            var result = new AutoPlaybillItem(this.PlaySource.Clone(newRange));
+            result.IsAutoPadding = this.IsAutoPadding; // ?
+            result.Id = Guid.NewGuid();
+            return result;
+        }
+
+        public override bool CanMerge(IPlaybillItem playbillItem)
+        {
+            return this.PlaySource.CanMerge(playbillItem.PlaySource);
+        }
+
+        public override IPlaybillItem Merge(IPlaybillItem playbillItem)
+        {
+            if (!CanMerge(playbillItem))
+            {
+                throw new InvalidOperationException();
+            }
+
+            return new AutoPlaybillItem(this.PlaySource.Merge(playbillItem.PlaySource));
+        }
+
         //protected override PlaybillItem Clone()
         //{
         //    var result = new AutoPlaybillItem(this.PlaySource.Clone());

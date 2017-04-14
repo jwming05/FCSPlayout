@@ -8,7 +8,13 @@ namespace FCSPlayout.WPF.Core
         int AudioGain { get; set; }
         string FilePath { get; }
         PlayRange PlayRange { get; set; }
+
         void ClosePreview();
         event EventHandler PreviewClosing;
+    }
+
+    public interface IPlayableItemWithCG:IPlayableItem
+    {
+        CG.CGItemCollection CGItems { get; }
     }
 }

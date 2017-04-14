@@ -9,15 +9,7 @@ namespace FCSPlayout.WPF.Core
     /// </summary>
     public partial class CGImageItemListView : UserControl
     {
-        
-
-        //private static readonly DependencyPropertyKey CGItemsListKey =
-        //    DependencyProperty.RegisterReadOnly("CGItemsList", typeof(ObservableCollection<ViewModels.BindableCGImageItem>), typeof(CGImageItemListView), 
-        //        new FrameworkPropertyMetadata(null));
-
-        //public static readonly DependencyProperty CGItemsListProperty =CGItemsListKey.DependencyProperty;
-
-        
+                
         public static readonly DependencyProperty CGItemsProperty =
             DependencyProperty.Register("CGItems", typeof(CG.CGItemCollection), typeof(CGImageItemListView), 
                 new FrameworkPropertyMetadata(null, OnCGItemsPropertyChanged));
@@ -33,13 +25,7 @@ namespace FCSPlayout.WPF.Core
             InitializeComponent();
             _viewModel = new CGImageItemListViewModel();
             this.DataContext = _viewModel;
-            //this.SetValue(CGItemsListKey, new ObservableCollection<ViewModels.BindableCGImageItem>());
         }
-
-        //public ObservableCollection<ViewModels.BindableCGImageItem> CGItemsList
-        //{
-        //    get { return (ObservableCollection<ViewModels.BindableCGImageItem>)GetValue(CGItemsListProperty); }
-        //}
 
         public CG.CGItemCollection CGItems
         {

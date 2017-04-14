@@ -25,7 +25,7 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 this.Item.Text = value;
-                OnPropertyChanged(() => this.Text);
+                RaisePropertyChanged(nameof(this.Text));
             }
         }
 
@@ -35,7 +35,7 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 this.Item.Height = value;
-                OnPropertyChanged(() => this.Height);
+                RaisePropertyChanged(nameof(this.Height));
             }
         }
         public double Width
@@ -44,7 +44,7 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 this.Item.Width = value;
-                OnPropertyChanged(() => this.Width);
+                RaisePropertyChanged(nameof(this.Width));
             }
         }
 

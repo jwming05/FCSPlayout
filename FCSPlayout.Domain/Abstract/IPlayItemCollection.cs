@@ -22,5 +22,6 @@ namespace FCSPlayout.Domain
         void ValidateTimeRange(DateTime startTime, TimeSpan duration, IPlayItem excludeItem);
         bool CanClear();
         DateTime? GetStartTime();
+        DateTime? GetStopTime();
     }
 }

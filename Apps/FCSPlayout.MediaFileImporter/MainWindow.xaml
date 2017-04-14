@@ -11,7 +11,6 @@
         xmlns:code="clr-namespace:FCSPlayout.MediaFileImporter.Properties"
         xmlns:cores="clr-namespace:FCSPlayout.WPF.Core;assembly=FCSPlayout.WPF.Core"
         mc:Ignorable="d" WindowState="Maximized"
-        Name="mainWindow"
         Title="入库系统" Height="800" Width="1150">
     <Window.Resources>
         <core:TimeCodeConverter x:Key="TimeCodeConverter"/>
@@ -56,6 +55,10 @@
             <core:PopOpenFileDialogAction/>
         </prism:InteractionRequestTrigger>
 
+        <prism:InteractionRequestTrigger SourceObject="{Binding SaveFileInteractionRequest}">
+            <core:PopSaveFileDialogAction/>
+        </prism:InteractionRequestTrigger>
+        
         <prism:InteractionRequestTrigger SourceObject="{Binding LoginInteractionRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
                 <prism:PopupWindowAction.WindowContent>
@@ -64,7 +67,7 @@
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
         
-        <i:EventTrigger EventName="Loaded" SourceName="mainWindow">
+        <i:EventTrigger EventName="Loaded">
             <prism:InvokeCommandAction Command="{Binding LoginCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
@@ -80,7 +83,10 @@
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <ContentControl prism:RegionManager.RegionName="previewRegion"/>
+            <GroupBox Padding="5">
+                <ContentControl Margin="5" prism:RegionManager.RegionName="previewRegion"/>
+            </GroupBox>
+            
             <TabControl Grid.Row="1">
                 <TabItem Header="待入库" Foreground="#9D9D9D">
                     <ContentControl prism:RegionManager.RegionName="mediaItemListRegion"/>

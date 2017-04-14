@@ -35,9 +35,13 @@ namespace FCSPlayout.Domain
 
         string Title { get; }
 
-        CGItemCollection CGItems { get;}
+        CGItemCollection CGItems { get; set; }
 
+        IPlaybillItem Clone(PlayRange newRange);
+        bool CanMerge(IPlaybillItem playbillItem);
+        IPlaybillItem Merge(IPlaybillItem playbillItem);
 
+        IPlaySource PlaySource { get; }
         //IPlaybillItem Clone();
     }
 

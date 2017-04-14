@@ -8,6 +8,11 @@ namespace FCSPlayout.Domain
 {
     class AutoPaddingMediaSource : IMediaSource
     {
+        public AutoPaddingMediaSource()
+        {
+            this.Id = Guid.NewGuid();
+        }
+
         public MediaSourceCategory Category
         {
             get
@@ -26,7 +31,7 @@ namespace FCSPlayout.Domain
 
         public Guid Id
         {
-            get;set;
+            get; private set;
         }
 
         public string Title
@@ -42,10 +47,16 @@ namespace FCSPlayout.Domain
             return new PlayRange(playRange.Duration);
         }
 
-        public IMediaSource Clone()
+        //public IMediaSource Clone()
+        //{
+        //    var source = this;
+        //    return new AutoPaddingMediaSource() { Id = source.Id };
+        //}
+
+        public bool Equals(IMediaSource other)
         {
-            var source = this;
-            return new AutoPaddingMediaSource() { Id = source.Id };
+            var temp= other as AutoPaddingMediaSource;
+            return temp != null && temp.Id == this.Id;
         }
     }
 }

@@ -1,15 +1,23 @@
 ﻿using FCSPlayout.Domain;
-using FCSPlayout.WPFApp.Models;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace FCSPlayout.PlaybillEditor
 {
     public class PlayItemCollection : ObservableCollection<BindablePlayItem>, IPlayItemCollection
     {
+        private IMediaFilePathResolver _filePathResolver;
+        private IPlayItemEditorFactory _itemEditFactory;
+
+        public PlayItemCollection(IMediaFilePathResolver filePathResolver,IPlayItemEditorFactory itemEditFactory)
+        {
+            _filePathResolver = filePathResolver;
+            _itemEditFactory = itemEditFactory;
+        }
+
         IPlayItem IPlayItemCollection.this[int index]
         {
             get
@@ -26,11 +34,21 @@ namespace FCSPlayout.PlaybillEditor
             }
         }
 
+        internal BindablePlayItem CreateBindablePlayItem(IPlayItem playItem)
+        {
+            string filePath = null;
+            if (playItem.MediaSource.Category == MediaSourceCategory.File)
+            {
+                filePath=_filePathResolver.Resolve(((AppInfrastructure.FileMediaSource)playItem.MediaSource).FileName);
+            }
+            return new BindablePlayItem(playItem,filePath,_itemEditFactory);
+        }
+
         public void Append(IList<IPlayItem> playItems)
         {
             for(int i = 0; i < playItems.Count; i++)
             {
-                this.Add(new BindablePlayItem(playItems[i]));
+                this.Add(CreateBindablePlayItem(playItems[i]));
             }
         }
 
@@ -41,7 +59,7 @@ namespace FCSPlayout.PlaybillEditor
 
         void IPlayItemCollection.Insert(int index, IPlayItem playItem)
         {
-            this.Insert(index, new BindablePlayItem(playItem));
+            this.Insert(index, CreateBindablePlayItem(playItem));
         }
 
         void IPlayItemCollection.RemoveAt(int index)
@@ -123,7 +141,26 @@ namespace FCSPlayout.PlaybillEditor
 
         public DateTime? GetStartTime()
         {
-            return null;
+            if (this.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return this[0].StartTime;
+            }
+        }
+
+        public DateTime? GetStopTime()
+        {
+            if (this.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return this[this.Count-1].StopTime;
+            }
         }
 
         public bool IsDirty

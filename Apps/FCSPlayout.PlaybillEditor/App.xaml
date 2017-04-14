@@ -128,9 +128,12 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridCell">
-                        <TextBlock TextAlignment="Center" Margin="3" VerticalAlignment="Center">
-                           <ContentPresenter />
-                        </TextBlock>
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ContentPresenter/>
+                        </Grid>
+                        
+                        <!--<TextBlock TextAlignment="Center" Margin="3" VerticalAlignment="Center">          
+                        </TextBlock>-->
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -146,7 +149,6 @@
                     <Setter Property="Foreground" Value="#c9c9c9"/>
                     <Setter Property="Background" Value="#EE4000"/>
                     <Setter Property="BorderBrush" Value="#EE4000"/>
-
                 </Trigger>
             </Style.Triggers>
         </Style>

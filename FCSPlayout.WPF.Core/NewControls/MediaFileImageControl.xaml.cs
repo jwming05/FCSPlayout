@@ -17,7 +17,7 @@ namespace FCSPlayout.WPF.Core
 
 
         public static readonly DependencyProperty MediaFileItemProperty =
-            DependencyProperty.Register("MediaFileItem", typeof(BindableMediaFileItem),
+            DependencyProperty.Register("MediaFileItem", typeof(IImageItem),
                 typeof(MediaFileImageControl), new FrameworkPropertyMetadata(null, OnMediaFileItemPropertyChanged));
 
 
@@ -27,7 +27,6 @@ namespace FCSPlayout.WPF.Core
             set { SetValue(MediaFileImageResolverProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MediaFileImageResolverProperty =
             DependencyProperty.Register("MediaFileImageResolver", typeof(IMediaFileImageResolver), typeof(MediaFileImageControl), 
                 new FrameworkPropertyMetadata(null, OnMediaFileImageResolverPropertyChanged));
@@ -44,7 +43,7 @@ namespace FCSPlayout.WPF.Core
 
         private static void OnMediaFileItemPropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
         {
-            ((MediaFileImageControl)dpObj).OnMediaFileItemChanged((BindableMediaFileItem)e.OldValue, (BindableMediaFileItem)e.NewValue);
+            ((MediaFileImageControl)dpObj).OnMediaFileItemChanged((IImageItem)e.OldValue, (IImageItem)e.NewValue);
         }
 
         private static void OnImagePropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
@@ -59,9 +58,9 @@ namespace FCSPlayout.WPF.Core
             InitializeComponent();
         }
 
-        public BindableMediaFileItem MediaFileItem
+        public IImageItem MediaFileItem
         {
-            get { return (BindableMediaFileItem)GetValue(MediaFileItemProperty); }
+            get { return (IImageItem)GetValue(MediaFileItemProperty); }
             set { SetValue(MediaFileItemProperty, value); }
         }
 
@@ -138,7 +137,7 @@ namespace FCSPlayout.WPF.Core
             }            
         }
 
-        private void OnMediaFileItemChanged(BindableMediaFileItem oldValue, BindableMediaFileItem newValue)
+        private void OnMediaFileItemChanged(IImageItem oldValue, IImageItem newValue)
         {
             if (this.MediaFileItem != null)
             {

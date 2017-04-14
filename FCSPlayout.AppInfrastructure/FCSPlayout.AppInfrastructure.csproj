@@ -79,6 +79,7 @@
     <Compile Include="MediaFileService.cs" />
     <Compile Include="MediaItemUtils.cs" />
     <Compile Include="MediaSourceBase.cs" />
+    <Compile Include="MediaSourceExtensions.cs" />
     <Compile Include="MLMediaFileDurationGetter.cs" />
     <Compile Include="MLMediaFileImageExtractor.cs" />
     <Compile Include="NativeMethods.cs" />

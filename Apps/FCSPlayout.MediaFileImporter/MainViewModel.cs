@@ -15,73 +15,66 @@ using System.Windows.Threading;
 
 namespace FCSPlayout.MediaFileImporter
 {
-    public class MainViewModel : BindableBase
+    public class MainViewModel :ShellModelBase //  BindableBase
     {
-        private readonly InteractionRequest<OpenFileDialogConfirmation> _openFileInteractionRequest;
-        private readonly InteractionRequest<Notification> _displayMessageInteractionRequest;
-
         //private readonly DelegateCommand _collectGarbageCommand;
         //private PeriodicalGarbageCollector _garbageCollector = new PeriodicalGarbageCollector();
+        //private readonly InteractionRequest<LoginConfirmation> _loginInteractionRequest;
+        //private readonly DelegateCommand _loginCommand;
 
-        private readonly InteractionRequest<LoginConfirmation> _loginInteractionRequest;
-
-        private readonly DelegateCommand _loginCommand;
-
-
-        public MainViewModel(InteractionRequests requests)
+        public MainViewModel(IUserService userService, InteractionRequests requests)
+            :base(userService)
         {
+            this.OpenFileInteractionRequest = requests.OpenFileInteractionRequest;
+            this.DisplayMessageInteractionRequest = requests.DisplayMessageInteractionRequest;
+            this.SaveFileInteractionRequest=requests.SaveFileInteractionRequest;
 
-            _openFileInteractionRequest = requests.OpenFileInteractionRequest;
-            _displayMessageInteractionRequest = requests.DisplayMessageInteractionRequest;
-
-            _loginInteractionRequest = requests.LoginInteractionRequest;
-
+            //_loginInteractionRequest = requests.LoginInteractionRequest;
             //_collectGarbageCommand = new DelegateCommand(ExecuteCollectGarbage);
-            _loginCommand = new DelegateCommand(Login);
+            //_loginCommand = new DelegateCommand(Login);
         }
 
-        private void Login()
-        {
-            this.LoginInteractionRequest.Raise(new LoginConfirmation()
-            {
-                Title="用户登录",
-                LoginAction=(name,pwd)=> UserService.Login(name, pwd, App.Current.Name)
-            }, 
-            (c) => 
-            {
-                if (!c.Confirmed)
-                {
-                    App.Current.MainWindow.Close();
-                    App.Current.Shutdown();
-                }
-            });
-        }
+        //private void Login()
+        //{
+        //    this.LoginInteractionRequest.Raise(new LoginConfirmation()
+        //    {
+        //        Title="用户登录",
+        //        LoginAction=(name,pwd)=> UserService.Login(name, pwd, App.Current.Name)
+        //    }, 
+        //    (c) => 
+        //    {
+        //        if (!c.Confirmed)
+        //        {
+        //            App.Current.MainWindow.Close();
+        //            App.Current.Shutdown();
+        //        }
+        //    });
+        //}
 
         //private void ExecuteCollectGarbage()
         //{
         //    _garbageCollector.OnTimer();
         //}
 
-        private void RaiseDisplayMessageInteractionRequest(string title, string message)
-        {
-            _displayMessageInteractionRequest.Raise(new Notification { Title = title, Content = message });
-        }
+        //private void RaiseDisplayMessageInteractionRequest(string title, string message)
+        //{
+        //    DisplayMessageInteractionRequest.Raise(new Notification { Title = title, Content = message });
+        //}
 
 
         public IInteractionRequest OpenFileInteractionRequest
         {
-            get
-            {
-                return _openFileInteractionRequest;
-            }
+            get;private set;
         }
 
         public IInteractionRequest DisplayMessageInteractionRequest
         {
-            get
-            {
-                return _displayMessageInteractionRequest;
-            }
+            get;private set;
+        }
+
+        public IInteractionRequest SaveFileInteractionRequest
+        {
+            get; private set;
         }
 
         //public ICommand CollectGarbageCommand
@@ -92,20 +85,20 @@ namespace FCSPlayout.MediaFileImporter
         //    }
         //}
 
-        public InteractionRequest<LoginConfirmation> LoginInteractionRequest
-        {
-            get
-            {
-                return _loginInteractionRequest;
-            }
-        }
+        //public InteractionRequest<LoginConfirmation> LoginInteractionRequest
+        //{
+        //    get
+        //    {
+        //        return _loginInteractionRequest;
+        //    }
+        //}
 
-        public DelegateCommand LoginCommand
-        {
-            get
-            {
-                return _loginCommand;
-            }
-        }
+        //public DelegateCommand LoginCommand
+        //{
+        //    get
+        //    {
+        //        return _loginCommand;
+        //    }
+        //}
     }
 }

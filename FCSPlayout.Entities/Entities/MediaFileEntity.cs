@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Serialization;
 
 namespace FCSPlayout.Entities
 {
@@ -27,17 +28,20 @@ namespace FCSPlayout.Entities
         public Guid? MediaFileCategoryId { get; set; }
 
         [ForeignKey("MediaFileCategoryId")]
+        [XmlIgnore]
         public MediaFileCategory MediaFileCategory { get; set; }
 
         public Guid? MediaFileChannelId { get; set; }
 
         [ForeignKey("MediaFileChannelId")]
+        [XmlIgnore]
         public MediaFileChannel MediaFileChannel { get; set; }
 
         public bool Deleted { get; set; }
 
         public DateTime? DeleteTime { get; set; }
 
+        [XmlIgnore]
         public UserEntity Creator
         {
             get;set;
@@ -61,6 +65,7 @@ namespace FCSPlayout.Entities
 
         public string MediaInformation { get; set; }
 
+        [XmlIgnore]
         public MediaFileEntity MediaFile { get; set; }
     }
 }

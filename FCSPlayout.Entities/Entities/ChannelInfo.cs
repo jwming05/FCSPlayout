@@ -7,6 +7,7 @@ namespace FCSPlayout.Entities
     [Serializable]
     public class ChannelInfo : MediaSourceEntity, IEquatable<ChannelInfo>
     {
+        [System.Xml.Serialization.XmlIgnore]
         public bool Special { get; set; }
 
         public bool IsNew()

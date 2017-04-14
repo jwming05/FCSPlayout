@@ -89,8 +89,9 @@ namespace FCSPlayout.WPF.Core
             set
             {
                 _selectedItem = value;
-                OnPropertyChanged(() => this.SelectedItem);
-                OnPropertyChanged(() => this.HasSelectedItem);
+                this.RaisePropertyChanged(nameof(this.SelectedItem));
+                this.RaisePropertyChanged(nameof(this.HasSelectedItem));
+
                 _removeItemCommand.RaiseCanExecuteChanged();
             }
         }

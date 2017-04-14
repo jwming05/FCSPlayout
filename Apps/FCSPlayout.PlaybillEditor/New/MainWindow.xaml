@@ -10,18 +10,40 @@
         xmlns:mi="http://schemas.microsoft.com/expression/2010/interactions"
         mc:Ignorable="d" WindowState="Maximized"
         Title="编单系统" Height="800" Width="1150">
+    
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding DisplayMessageInteractionRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True"></prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
 
-        <prism:InteractionRequestTrigger SourceObject="{Binding EditMediaItemInteractionRequest}">
+        <prism:InteractionRequestTrigger SourceObject="{Binding ConfirmationInteractionRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding EditDurationInteractionRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowContent>
+                    <core:EditDurationView/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding SaveFileInteractionRequest}">
+            <core:PopSaveFileDialogAction/>
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding OpenFileInteractionRequest}">
+            <core:PopOpenFileDialogAction/>
+        </prism:InteractionRequestTrigger>
+        
+        <!--<prism:InteractionRequestTrigger SourceObject="{Binding EditMediaItemInteractionRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
                 <prism:PopupWindowAction.WindowContent>
                     <core:EditMediaItemView/>
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
+        </prism:InteractionRequestTrigger>-->
 
         <prism:InteractionRequestTrigger SourceObject="{Binding EditDateTimeInteractionRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
@@ -31,18 +53,18 @@
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
 
-        <prism:InteractionRequestTrigger SourceObject="{Binding AddChannelMediaItemsInteractionRequest,ElementName=mediaItemListView}">
+        <!--<prism:InteractionRequestTrigger SourceObject="{Binding AddChannelMediaItemsInteractionRequest,ElementName=mediaItemListView}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
                 <prism:PopupWindowAction.WindowContent>
                     <core:AddChannelMediaItemsView/>
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
+        </prism:InteractionRequestTrigger>-->
 
         <prism:InteractionRequestTrigger SourceObject="{Binding EditCGItemsInteractionRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
                 <prism:PopupWindowAction.WindowContent>
-                    <core:CGImageItemView2/>
+                    <core:CGItemsView/>
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
@@ -63,19 +85,20 @@
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
 
-        <i:EventTrigger EventName="Loaded" SourceName="mainWindow">
+        <i:EventTrigger EventName="Loaded">
             <prism:InvokeCommandAction Command="{Binding LoginCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid Background="#404040">
-        <!--<Grid.RowDefinitions>
+        <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
-        </Grid.ColumnDefinitions>-->
+        </Grid.ColumnDefinitions>
         <!--<core:PlayControl2 x:Name="playControl" />
         <GroupBox Grid.Row="1" Header="编单表">
             <Grid Background="#404040">
@@ -118,6 +141,14 @@
             </Grid>
         </GroupBox>-->
 
-        <TabControl Grid.Column="1" Grid.RowSpan="2" prism:RegionManager.RegionName="mediaItemRegion"></TabControl>
+        <GroupBox Grid.Column="0" Grid.Row="0" Padding="5">
+            <ContentControl Margin="5" prism:RegionManager.RegionName="previewRegion"/>
+        </GroupBox>
+        
+        <ContentControl Grid.Column="0" Grid.Row="1" prism:RegionManager.RegionName="mainLeftRegion"/>
+
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="8"/>
+
+        <ContentControl Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" prism:RegionManager.RegionName="mainRightRegion"/>
     </Grid>
 </Window>

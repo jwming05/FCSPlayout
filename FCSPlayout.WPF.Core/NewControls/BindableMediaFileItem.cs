@@ -8,53 +8,33 @@ using System.Windows.Media.Imaging;
 
 namespace FCSPlayout.WPF.Core
 {
-    public class BindableMediaFileItem : BindableBase,IPlayableItem
+    public class BindableMediaFileItem : BindableBase,IPlayableItem,IImageItem
     {
-        private static MediaFileStorage _mediaFileStorage = MediaFileStorage.Primary;
-
-        //private SynchronizationContext _syncContext = SynchronizationContext.Current;
         private BitmapSource _image;
+        private PlayRange _playRange;
 
         public event EventHandler PreviewClosing;
-
-        //public BindableMediaFileItem(MediaFileEntity entity)
-        //{
-        //    this.Entity = entity;
-        //    this.FilePath = ResolvePath(this.FileName);
-        //}
 
         public BindableMediaFileItem(MediaFileEntity entity, string filePath)
         {
             this.Entity = entity;
-            this.FilePath = filePath; // ResolvePath(this.FileName);
+            this.PlayRange = new PlayRange(TimeSpan.FromSeconds(this.Entity.MarkerIn), TimeSpan.FromSeconds(this.Entity.MarkerDuration));
+            this.FilePath = filePath;
         }
-
-        //public BindableMediaFileItem(string filePath)
-        //{
-        //    this.Entity = new MediaFileEntity { CreatorId = UserService.CurrentUser.Id, CreationTime = DateTime.Now };
-        //    this.FilePath = filePath;
-
-        //    this.OriginalFileName = Path.GetFileName(filePath);
-        //    this.FileName = GetNewFileName(filePath);
-        //    this.Title = Path.GetFileNameWithoutExtension(filePath);
-        //    this.Duration = GetDuration(filePath);
-
-        //    this.StartPosition = TimeSpan.Zero;
-        //    this.PlayDuration = this.Duration;
-        //}
 
         public BindableMediaFileItem(string filePath, Guid creatorId)
         {
-            this.Entity = new MediaFileEntity { CreatorId = creatorId/*UserService.CurrentUser.Id*/, CreationTime = DateTime.Now };
+            this.Entity = new MediaFileEntity { CreatorId = creatorId, CreationTime = DateTime.Now };
             this.FilePath = filePath;
 
-            this.OriginalFileName = Path.GetFileName(filePath);
+            this.OriginalFileName = filePath; // Path.GetFileName(filePath);
             this.FileName = GetNewFileName(filePath);
             this.Title = Path.GetFileNameWithoutExtension(filePath);
             this.Duration = GetDuration(filePath);
 
-            this.StartPosition = TimeSpan.Zero;
-            this.PlayDuration = this.Duration;
+            this.PlayRange = new PlayRange(this.Duration);
+            //this.StartPosition = TimeSpan.Zero;
+            //this.PlayDuration = this.Duration;
         }
 
         public void ClosePreview()
@@ -114,10 +94,10 @@ namespace FCSPlayout.WPF.Core
 
         public TimeSpan StartPosition
         {
-            get { return TimeSpan.FromSeconds(this.Entity.MarkerIn); }
-            private set
+            get
             {
-                this.Entity.MarkerIn = value.TotalSeconds;
+                return this.PlayRange.StartPosition;
+                //return TimeSpan.FromSeconds(this.Entity.MarkerIn);
             }
         }
 
@@ -125,7 +105,7 @@ namespace FCSPlayout.WPF.Core
         {
             get
             {
-                return this.StartPosition + this.PlayDuration;
+                return this.PlayRange.StopPosition;
             }
         }
 
@@ -133,12 +113,8 @@ namespace FCSPlayout.WPF.Core
         {
             get
             {
-                return TimeSpan.FromSeconds(this.Entity.MarkerDuration);
-            }
-
-            private set
-            {
-                this.Entity.MarkerDuration = value.TotalSeconds;
+                return this.PlayRange.Duration;
+                //return TimeSpan.FromSeconds(this.Entity.MarkerDuration);
             }
         }
 
@@ -146,22 +122,19 @@ namespace FCSPlayout.WPF.Core
         {
             get
             {
-                return new PlayRange(this.StartPosition, this.PlayDuration);
+                return _playRange;
             }
 
             set
             {
-                this.StartPosition = value.StartPosition;
-                this.PlayDuration = value.Duration;
+                _playRange = value;
+                this.Entity.MarkerIn = value.StartPosition.TotalSeconds;
+                this.Entity.MarkerDuration = value.Duration.TotalSeconds;
+
                 this.RaisePropertyChanged(nameof(this.PlayRange));
                 this.RaisePropertyChanged(nameof(this.StartPosition));
                 this.RaisePropertyChanged(nameof(this.StopPosition));
                 this.RaisePropertyChanged(nameof(this.PlayDuration));
-
-                //if (_image != null)
-                //{
-                //    this.Image = null;
-                //}
             }
         }
 
@@ -224,7 +197,7 @@ namespace FCSPlayout.WPF.Core
             }
         }
 
-        internal byte[] ImageBytes
+        public byte[] ImageBytes
         {
             get
             {
@@ -239,7 +212,7 @@ namespace FCSPlayout.WPF.Core
                 return _image;
             }
 
-            internal set
+            set
             {
                 if (_image != value)
                 {
@@ -251,28 +224,9 @@ namespace FCSPlayout.WPF.Core
 
         public MediaFileEntity Entity { get; private set; }
 
-        //internal static MediaFileStorage MediaFileStorage
-        //{
-        //    get { return _mediaFileStorage; }
-        //    set
-        //    {
-        //        _mediaFileStorage = value;
-        //    }
-        //}
-
-        //private static string ResolvePath(string fileName)
-        //{
-        //    return MediaFilePathResolver.Current.Resolve(fileName, BindableMediaFileItem.MediaFileStorage);
-        //}
-
         private static TimeSpan GetDuration(string filePath)
         {
             return MediaFileDurationGetter.Current.GetDuration(filePath);
         }
-
-        //internal BitmapSource ResolveImage()
-        //{
-        //    return MediaFileImageResolver.Instance.Resolve(this.FilePath, this.Duration.TotalMilliseconds / 2.0);
-        //}
     }
 }

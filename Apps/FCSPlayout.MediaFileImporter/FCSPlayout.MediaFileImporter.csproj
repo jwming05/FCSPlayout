@@ -154,13 +154,7 @@
       <DependentUpon>MediaItemListView2.xaml</DependentUpon>
     </Compile>
     <Compile Include="MediaItemListViewModel2.cs" />
-    <Compile Include="Player\PlayControlModel2.cs" />
-    <Compile Include="Player\PlayControl2.xaml.cs">
-      <DependentUpon>PlayControl2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Player\PlaySlider2.xaml.cs">
-      <DependentUpon>PlaySlider2.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="XmlRepository.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -182,14 +176,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Player\PlayControl2.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Player\PlaySlider2.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MediaFileImportService.cs" />
@@ -197,8 +183,6 @@
       <DependentUpon>MediaItemListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MediaItemListViewModel.cs" />
-    <Compile Include="Player\PlayerStatus.cs" />
-    <Compile Include="Player\Player2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

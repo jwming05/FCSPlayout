@@ -19,9 +19,9 @@ namespace FCSPlayout.WPF.Core
             DependencyProperty.Register("EditMediaItemInteractionRequest", typeof(InteractionRequest<EditMediaItemConfirmation>),
                 typeof(ViewBase), new FrameworkPropertyMetadata(null, OnEditMediaItemInteractionRequestPropertyChanged));
 
-        public static readonly DependencyProperty EditDurationInteractionRequestProperty =
-            DependencyProperty.Register("EditDurationInteractionRequest", typeof(InteractionRequest<EditDurationConfirmation>),
-                typeof(ViewBase), new FrameworkPropertyMetadata(null, OnEditDurationInteractionRequestPropertyChanged));
+        //public static readonly DependencyProperty EditDurationInteractionRequestProperty =
+        //    DependencyProperty.Register("EditDurationInteractionRequest", typeof(InteractionRequest<EditDurationConfirmation>),
+        //        typeof(ViewBase), new FrameworkPropertyMetadata(null, OnEditDurationInteractionRequestPropertyChanged));
 
         private static void OnOpenFileInteractionRequestPropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
         {
@@ -38,10 +38,10 @@ namespace FCSPlayout.WPF.Core
             ((ViewBase)dpObj).OnEditMediaItemInteractionRequestChanged((InteractionRequest<EditMediaItemConfirmation>)e.OldValue, (InteractionRequest<EditMediaItemConfirmation>)e.NewValue);
         }
 
-        private static void OnEditDurationInteractionRequestPropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
-        {
-            ((ViewBase)dpObj).OnEditDurationInteractionRequestChanged((InteractionRequest<EditDurationConfirmation>)e.OldValue, (InteractionRequest<EditDurationConfirmation>)e.NewValue);
-        }
+        //private static void OnEditDurationInteractionRequestPropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
+        //{
+        //    ((ViewBase)dpObj).OnEditDurationInteractionRequestChanged((InteractionRequest<EditDurationConfirmation>)e.OldValue, (InteractionRequest<EditDurationConfirmation>)e.NewValue);
+        //}
 
         public InteractionRequest<EditMediaItemConfirmation> EditMediaItemInteractionRequest
         {
@@ -49,11 +49,11 @@ namespace FCSPlayout.WPF.Core
             set { SetValue(EditMediaItemInteractionRequestProperty, value); }
         }
 
-        public InteractionRequest<EditDurationConfirmation> EditDurationInteractionRequest
-        {
-            get { return (InteractionRequest<EditDurationConfirmation>)GetValue(EditDurationInteractionRequestProperty); }
-            set { SetValue(EditDurationInteractionRequestProperty, value); }
-        }
+        //public InteractionRequest<EditDurationConfirmation> EditDurationInteractionRequest
+        //{
+        //    get { return (InteractionRequest<EditDurationConfirmation>)GetValue(EditDurationInteractionRequestProperty); }
+        //    set { SetValue(EditDurationInteractionRequestProperty, value); }
+        //}
 
         public InteractionRequest<SaveFileDialogConfirmation> SaveFileInteractionRequest
         {
@@ -83,13 +83,13 @@ namespace FCSPlayout.WPF.Core
             }
         }
 
-        private void OnEditDurationInteractionRequestChanged(InteractionRequest<EditDurationConfirmation> oldValue, InteractionRequest<EditDurationConfirmation> newValue)
-        {
-            if (this.ViewModel != null)
-            {
-                ViewModel.EditDurationInteractionRequest = this.EditDurationInteractionRequest;
-            }
-        }
+        //private void OnEditDurationInteractionRequestChanged(InteractionRequest<EditDurationConfirmation> oldValue, InteractionRequest<EditDurationConfirmation> newValue)
+        //{
+        //    if (this.ViewModel != null)
+        //    {
+        //        ViewModel.EditDurationInteractionRequest = this.EditDurationInteractionRequest;
+        //    }
+        //}
 
         protected virtual void OnOpenFileInteractionRequestChanged(InteractionRequest<OpenFileDialogConfirmation> oldValue, InteractionRequest<OpenFileDialogConfirmation> newValue)
         {

@@ -9,19 +9,19 @@ namespace FCSPlayout.Domain
         /// <summary>
         /// 获取播放项的开始时间。
         /// </summary>
-        DateTime StartTime { get; }
+        DateTime StartTime { get; set; }
 
         /// <summary>
         /// 获取播放项的播放时长。
         /// </summary>
-        TimeSpan CalculatedPlayDuration { get; }
+        TimeSpan CalculatedPlayDuration { get; set; }
 
         /// <summary>
         /// 获取播放项对应的编单项。
         /// </summary>
         IPlaybillItem PlaybillItem { get; }
 
-        long? EditId { get; set; }
+        //long? EditId { get; set; }
 
         /// <summary>
         /// 获取播放项的播放范围。
@@ -48,16 +48,21 @@ namespace FCSPlayout.Domain
 
         string Title { get; }
 
-        CGItemCollection CGItems { get; }
+        CGItemCollection CGItems { get; set; }
+        IPlaylistEditor Editor { get; set; }
 
         //IPlayItem Clone();
+
+        void Split(TimeSpan duration, out IPlayItem first, out IPlayItem second);
     }
 
-    //public static class PlayItemExtensions
-    //{
-    //    public static DateTime GetStopTime(this IPlayItem playItem)
-    //    {
-    //        return playItem.StartTime.Add(playItem.CalculatedPlayDuration);
-    //    }
-    //}
+    public static class PlayItemExtensions
+    {
+        public static bool IsAutoPadding(this IPlayItem playItem)
+        {
+            var autoItem = playItem as AutoPlayItem;
+            if (autoItem != null) return autoItem.IsAutoPadding;
+            return false;
+        }
+    }
 }

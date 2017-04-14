@@ -12,7 +12,7 @@ namespace FCSPlayout.Domain
         //void AddAutoAfter(IPlayItem prevItem, AutoPlaybillItem newItem);
         //void InsertTiming(IPlayItem playItem);
         void ClearAll();
-        void Append(IList<IPlayItem> playItems);
+        //void Append(IList<IPlayItem> playItems);
         void Delete(IPlayItem playItem);
 
         event EventHandler Disposed;

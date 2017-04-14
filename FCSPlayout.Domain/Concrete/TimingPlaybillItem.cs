@@ -34,7 +34,11 @@ namespace FCSPlayout.Domain
         {
             get
             {
-                return base.PlayRange.Duration; //.GetDuration();
+                return this.PlayRange.Duration; //.GetDuration();
+            }
+            set
+            {
+                throw new InvalidOperationException("不能修改定时播或定时插播的播放时长。");
             }
         }
 
@@ -44,21 +48,38 @@ namespace FCSPlayout.Domain
             {
                 return base.StartTime.Value;
             }
+            set
+            {
+                throw new InvalidOperationException("不能修改定时播或定时插播的开始时间。");
+            }
         }
 
-        [NonSerialized]
-        private long? _editId;
-        public long? EditId
+        public void Split(TimeSpan duration, out IPlayItem first, out IPlayItem second)
         {
-            get { return _editId; }
-            set { _editId = value; }
+            throw new InvalidOperationException("不能对定时播或定时插播进行分割。");
+        }
+
+        //[NonSerialized]
+        //private long? _editId;
+        //public long? EditId
+        //{
+        //    get { return _editId; }
+        //    set { _editId = value; }
+        //}
+
+        [NonSerialized]
+        private IPlaylistEditor _editor;
+        public IPlaylistEditor Editor
+        {
+            get { return _editor; }
+            set { _editor = value; }
         }
 
         public PlayRange CalculatedPlayRange
         {
             get
             {
-                throw new NotImplementedException();
+                return this.PlayRange;
             }
         }
 
@@ -66,7 +87,7 @@ namespace FCSPlayout.Domain
         {
             get
             {
-                throw new NotImplementedException();
+                return this.StartTime.Value.Add(this.PlayRange.Duration);
             }
         }
 
@@ -82,5 +103,10 @@ namespace FCSPlayout.Domain
         //    result.Id = this.Id;
         //    return result;
         //}
+
+        public override IPlaybillItem Clone(PlayRange newRange)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

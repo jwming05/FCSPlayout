@@ -9,7 +9,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-            <RadioButton Name="radTiming" Content="定时播" Margin="5" Tag="{x:Static local:PlayModeCategoryDescription.Timing}" IsChecked="True" Checked="RadioButton_Checked"/>
+            <RadioButton Name="radTiming" Content="定时播" Margin="5" Tag="{x:Static local:PlayModeCategoryDescription.Timing}" Checked="RadioButton_Checked" />
             <RadioButton Name="radTimingBreak" Content="定时插播" Margin="5" Tag="{x:Static local:PlayModeCategoryDescription.TimingBreak}" Checked="RadioButton_Checked"/>
             <RadioButton Name="radOrdered" Content="顺播" Margin="5" Tag="{x:Static local:PlayModeCategoryDescription.Auto}" Checked="RadioButton_Checked"/>
             <!--<RadioButton Content="插播" Margin="5" Tag="Break"/>-->

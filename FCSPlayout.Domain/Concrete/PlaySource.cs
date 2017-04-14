@@ -83,18 +83,66 @@ namespace FCSPlayout.Domain
 
         public CGItemCollection CGItems
         {
-            get; private set;
+            get; set;
         }
 
         public IPlaySource Clone()
         {
-            var result = new PlaySource(this.MediaSource.Clone(), this.PlayRange);
+            var result = new PlaySource(this.MediaSource/*.Clone()*/, this.PlayRange);
             if (this.CGItems != null)
             {
                 result.CGItems = this.CGItems.Clone();
             }
 
             return result;
+        }
+
+        public IPlaySource Clone(PlayRange newRange)
+        {
+            var result = new PlaySource(this.MediaSource/*.Clone()*/, newRange);
+            if (this.CGItems != null)
+            {
+                result.CGItems = this.CGItems.Clone();
+            }
+
+            return result;
+        }
+
+        public bool CanMerge(IPlaySource playSource)
+        {
+            if (!this.MediaSource.Equals(playSource.MediaSource))
+            {
+                return false;
+            }
+
+            if (!Equals(this.CGItems, playSource.CGItems))
+            {
+                return false;
+            }
+
+            return FCSPlayout.Domain.PlayRange.CanMerge(this.PlayRange, playSource.PlayRange);
+        }
+
+        public IPlaySource Merge(IPlaySource playSource)
+        {
+            if (!CanMerge(playSource))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var range = FCSPlayout.Domain.PlayRange.Merge(this.PlayRange, playSource.PlayRange);
+
+            return this.Clone(range);
+        }
+
+        private bool Equals(CGItemCollection item1,CGItemCollection item2)
+        {
+            if (item1 == null || item1.Count==0)
+            {
+                return item2 == null || item2.Count == 0;
+            }
+
+            return false;
         }
     }
 }

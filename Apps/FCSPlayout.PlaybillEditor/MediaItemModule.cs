@@ -24,8 +24,14 @@ namespace FCSPlayout.PlaybillEditor
         }
         public void Initialize()
         {
+            _regionManager.AddToRegion("mainLeftRegion", this._container.Resolve<MediaItemView>());
+
+            _regionManager.RegisterViewWithRegion("mediaItemRegion",typeof(MediaItemListView2));
+            _regionManager.RegisterViewWithRegion("mediaItemRegion", typeof(ChannelItemListView));
+
             //_regionManager.AddToRegion("mediaItemRegion", this._container.Resolve<MediaItemListView2>());
-            _viewRegistry.RegisterViewWithRegion("mediaItemRegion", typeof(MediaItemListView2));
+            //_regionManager.AddToRegion("mediaItemRegion", this._container.Resolve<ChannelItemListView>());
+            //_viewRegistry.RegisterViewWithRegion("mediaItemRegion", typeof(MediaItemListView2));
         }
     }
 }
