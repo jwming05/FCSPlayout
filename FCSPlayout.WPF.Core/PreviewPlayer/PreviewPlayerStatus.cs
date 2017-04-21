@@ -1,6 +1,6 @@
 ﻿namespace FCSPlayout.WPF.Core
 {
-    internal enum PreviewPlayerStatus
+    public enum PreviewPlayerStatus
     {
         Closed,
         Stopped,

@@ -1,4 +1,5 @@
-﻿using FCSPlayout.Domain;
+﻿using FCSPlayout.AppInfrastructure;
+using FCSPlayout.Domain;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -8,9 +8,18 @@ namespace FCSPlayout.Domain
 {
     class AutoPaddingMediaSource : IMediaSource
     {
-        public AutoPaddingMediaSource()
+        private static readonly AutoPaddingMediaSource _instance =new AutoPaddingMediaSource();
+        private AutoPaddingMediaSource()
         {
             this.Id = Guid.NewGuid();
+        }
+
+        internal static AutoPaddingMediaSource Instance
+        {
+            get
+            {
+                return _instance;
+            }
         }
 
         public MediaSourceCategory Category

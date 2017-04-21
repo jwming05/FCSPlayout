@@ -5,6 +5,7 @@ using FCSPlayout.WPF.Core;
 using Prism.Commands;
 using System.Windows.Input;
 using Prism.Events;
+using FCSPlayout.AppInfrastructure;
 
 namespace FCSPlayout.PlaybillEditor
 {

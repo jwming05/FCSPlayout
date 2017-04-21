@@ -41,12 +41,14 @@ namespace FCSPlayout.PlaybillEditor
         
         
 
-        private readonly DelegateCommand _savePlaybillCommand;
-        private readonly DelegateCommand _loadPlaybillCommand;
+        
+        
         private readonly DelegateCommand _createPlaybillCommand;
 
-        private Playbill _playbill;
-        private IMediaSourceConverter _mediaSourceConverter;
+        
+
+
+        //private IMediaSourceConverter _mediaSourceConverter;
 
 
 
@@ -55,13 +57,14 @@ namespace FCSPlayout.PlaybillEditor
         //private PlayItemList _playItems;
         public PlaybillViewModel(IEventAggregator eventAggregator, 
             IMediaFileImageResolver imageResolver,IMediaFilePathResolver filePathResolver, InteractionRequests interactionRequests,
-            IMediaSourceConverter mediaSourceConverter)
+            IPlayoutConfiguration playoutConfig,IUserService userService)
         {
+            _playoutConfig = playoutConfig;
             _interactionRequests = interactionRequests;
+            _userService = userService;
             _playItemCollection = new PlayItemCollection(filePathResolver,this);
             
             this.ImageResolver = imageResolver;
-            _mediaSourceConverter = mediaSourceConverter;
 
             //_playItemsView = new CollectionView(temp);
 
@@ -104,7 +107,8 @@ namespace FCSPlayout.PlaybillEditor
             //
             _saveXmlCommand = new DelegateCommand(SaveXml, CanSaveXml);
             _openXmlCommand = new DelegateCommand(OpenXml);
-            
+
+            _clearCommand = new DelegateCommand(Clear,CanClear);
             _editCGItemsCommand= new DelegateCommand(EditCGItems, CanEditCGItems);
 
             _previewCommand = new DelegateCommand<IPlayableItem>(Preview);
@@ -114,6 +118,8 @@ namespace FCSPlayout.PlaybillEditor
         }
 
         
+
+
 
 
 
@@ -205,13 +211,7 @@ namespace FCSPlayout.PlaybillEditor
 
         
 
-        public ICommand LoadPlaybillCommand
-        {
-            get
-            {
-                return _loadPlaybillCommand;
-            }
-        }
+        
 
         //public InteractionRequest<LoadPlaybillConfirmation> LoadPlaybillInteractionRequest
         //{ get; internal set; }
@@ -406,13 +406,7 @@ namespace FCSPlayout.PlaybillEditor
             }
         }
         #region
-        public ICommand SavePlaybillCommand
-        {
-            get
-            {
-                return _savePlaybillCommand;
-            }
-        }
+        
 
         public DelegateCommand CreatePlaybillCommand
         {
@@ -436,28 +430,7 @@ namespace FCSPlayout.PlaybillEditor
         //    }
         //}
 
-        private bool CanSavePlaybill()
-        {
-            return true; // this.Playbill.CanSave();
-            //return _playItemCollection.Count > 0;
-        }
 
-        private void SavePlaybill()
-        {
-            if (_playItemCollection.Count == 0)
-            {
-                MessageBox.Show("不能保存空表。");
-                return;
-            }
-
-            if (_playbill == null)
-            {
-                _playbill = new Playbill();
-            }
-
-            _playbill.PlayItemCollection = _playItemCollection;
-            _playbill.Save();
-        }
 
         //private PlaybillEntity GetFirstOrDefault()
         //{
@@ -478,68 +451,8 @@ namespace FCSPlayout.PlaybillEditor
         //}
 
 
-
-        private bool CanLoadPlaybill()
-        {
-            return true;
-        }
-
-        private void LoadPlaybill()
-        {
-            if (CanLoadPlaybill())
-            {
-                this.LoadPlaybillInteractionRequest.Raise(new LoadPlaybillConfirmation { Title = "选择节目单", Playbills = LoadPlaybills() },
-                    c =>
-                    {
-                        if (c.Confirmed)
-                        {
-                            BindablePlaybill bill = c.SelectedPlaybill;
-
-                            if (_playbill != null)
-                            {
-
-                            }
-
-                            List<IPlayItem> playItems = new List<IPlayItem>();
-                            _playbill=Playbill.Load(bill.Id, playItems);
-
-                            //using(var editor = this.Playlist.Edit())
-                            //{
-                            //    editor.ClearAll();
-                            //    editor.Append(playItems);
-                            //}
-
-                            //_playItems.Clear();
-                            //this.Playbill = FCSPlayout.Playbill.Load(bill.Id, _playItems); // new Playbill(_playItems, billEntity);
-
-
-                            //FCSPlayout.Playbill.Load()
-                        }
-                    });
-
-                //this.Playbill.Load();
-
-            }
-        }
-
-        public InteractionRequest<LoadPlaybillConfirmation> LoadPlaybillInteractionRequest
-        { get; internal set; }
-
-        private IEnumerable<BindablePlaybill> LoadPlaybills()
-        {
-            List<BindablePlaybill> result = new List<BindablePlaybill>();
-            using (var ctx = new PlayoutDbContext())
-            {
-                var temp = ctx.Playbills.ToList();
-                foreach (var item in temp)
-                {
-                    result.Add(new BindablePlaybill(item));
-                }
-            }
-            return result;
-        }
+        #endregion
 
         
-        #endregion
     }
 }

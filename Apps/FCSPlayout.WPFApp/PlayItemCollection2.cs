@@ -348,6 +348,18 @@ namespace FCSPlayout.WPFApp
             }
         }
 
+        public DateTime? GetStopTime()
+        {
+            if (_listView == null)
+            {
+                return null;
+            }
+            else
+            {
+                return _listView.GetStopTime();
+            }
+        }
+
         class ListView
         {
             private IList<BindablePlayItem> _playItemList;
@@ -541,6 +553,11 @@ namespace FCSPlayout.WPFApp
             }
 
             internal DateTime? GetStartTime()
+            {
+                throw new NotImplementedException();
+            }
+
+            internal DateTime? GetStopTime()
             {
                 throw new NotImplementedException();
             }

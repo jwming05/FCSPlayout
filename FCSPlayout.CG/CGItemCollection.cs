@@ -55,7 +55,7 @@ namespace FCSPlayout.CG
                 try
                 {
                     CGItem item = (CGItem)Activator.CreateInstance(temp);
-                    item.Init(element);
+                    item.Init(child/*element*/);
                     items.Add(item);
                 }
                 catch

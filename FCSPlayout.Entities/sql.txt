@@ -1,0 +1,56 @@
+﻿create trigger check_time
+on [Playbills]
+    for insert --插入触发
+as
+    --定义变量
+    declare @startTime datetime, @stopTime datetime,@temp uniqueidentifier;
+    
+    --在inserted表中查询已经插入记录信息
+    select @temp=[Id], @startTime = [StartTime], @stopTime = dateadd(SECOND,[Duration],[StartTime]) from inserted;
+    
+    if(exists (select Id from  [Playbills] 
+    where NOT(StartTime>=@stopTime OR dateadd(SECOND,[Duration],[StartTime])<=@startTime) and Id<>@temp))
+    BEGIN
+    raisError('节目单时间有冲突。', 16, 10)
+    END    
+go
+
+
+create trigger check_time_and_locked
+on [Playbills]
+    for update --更新触发
+as
+    --定义变量
+    declare @startTime datetime, @stopTime datetime,@temp uniqueidentifier,@locked bit;
+    
+	select @locked = Locked from deleted;
+	if(@locked=1)
+	BEGIN
+	raisError('节目单已经被锁定。', 16, 10)
+	END
+	else
+	BEGIN
+    --在inserted表中查询已经插入记录信息
+    select @temp=[Id], @startTime = [StartTime], @stopTime = dateadd(SECOND,[Duration],[StartTime]) from inserted;
+    
+    if(exists (select Id from  [Playbills] 
+    where NOT(StartTime>=@stopTime OR dateadd(SECOND,[Duration],[StartTime])<=@startTime) and Id<>@temp))
+    BEGIN
+    raisError('节目单时间有冲突。', 16, 10)
+    END
+	END  
+go
+
+create trigger check_locked
+on [Playbills]
+    for delete --删除触发
+as
+    --定义变量
+    declare @locked bit;
+    
+	select @locked = Locked from deleted;
+	if(@locked=1)
+	BEGIN
+	raisError('节目单已经被锁定。', 16, 10)
+	END
+go

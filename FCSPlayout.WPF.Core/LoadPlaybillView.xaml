@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FCSPlayout.WPF.Core"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="500" d:DesignWidth="600">
     <UserControl.Resources>
         <local:TimeCodeConverter x:Key="TimeCodeConverter"/>
     </UserControl.Resources>
@@ -15,13 +15,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <DataGrid Name="dgPlaybill" AutoGenerateColumns="False" ItemsSource="{Binding Playbills}" SelectedItem="{Binding SelectedPlaybill,Mode=TwoWay}" SelectionMode="Single"
+        <DataGrid Name="dgPlaybill" AutoGenerateColumns="False" ItemsSource="{Binding Playbills}" 
+                  SelectedItem="{Binding SelectedPlaybill,Mode=TwoWay}" SelectionMode="Single"
                   SelectionChanged="DataGrid_SelectionChanged">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Id}" Header="ID"/>
-                <DataGridTextColumn Binding="{Binding StartTime, Converter={StaticResource TimeCodeConverter}}" Header="StartTime"/>
-                <DataGridTextColumn Binding="{Binding StopTime, Converter={StaticResource TimeCodeConverter}}" Header="StopTime"/>
-                <DataGridTextColumn Binding="{Binding Duration, Converter={StaticResource TimeCodeConverter}}" Header="Duration"/>
+                <!--<DataGridTextColumn Binding="{Binding Id}" Header="ID"/>-->
+                <DataGridTextColumn Binding="{Binding StartTime, Converter={StaticResource TimeCodeConverter}}" Header="开始时间"/>
+                <DataGridTextColumn Binding="{Binding StopTime, Converter={StaticResource TimeCodeConverter}}" Header="结束时间"/>
+                <DataGridTextColumn Binding="{Binding Duration, Converter={StaticResource TimeCodeConverter}}" Header="时长"/>
+
+                <DataGridTextColumn Binding="{Binding CreatorId}" Header="创建者"/>
+                <DataGridTextColumn Binding="{Binding LastEditorId}" Header="最近修改者"/>
+                <DataGridTextColumn Binding="{Binding CreationTime,StringFormat=yyyy\-MM\-dd HH\:mm\:ss}" Header="创建时间"/>
+                <DataGridTextColumn Binding="{Binding ModificationTime,StringFormat=yyyy\-MM\-dd HH\:mm\:ss}" Header="最近修改时间"/>
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">

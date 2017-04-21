@@ -23,18 +23,18 @@ namespace FCSPlayout.WPFApp.ViewModels
         private Uri _sourceUri;
         private ITimer _timer;
         private DispatcherTimer timer;
-        private ProcessCount processCount;
+        //private ProcessCount processCount;
         //private double _playlistDuration;
         private double _playlistPosition;
         private DateTime? _playlistStartTime;
         private DateTime? _playlistStopTime;
         private readonly DelegateCommand _startDelayCommand;
         private readonly DelegateCommand _stopDelayCommand;
-        private readonly DelegateCommand<object> _forcePlayCommand;
+        //private readonly DelegateCommand<object> _forcePlayCommand;
 
-        public PlayoutViewModel()
+        public PlayoutViewModel(IPlaylist3 playlist)
         {
-            _playout = new BindablePlayout(this/*, this*/);
+            _playout = new BindablePlayout(this, playlist);
             _playout.StateChanged += OnPlayout_StateChanged;
             _startPlayoutCommand = new DelegateCommand(StartPlayout, CanStartPlayout);
             _stopPlayoutCommand = new DelegateCommand(StopPlayout, CanStopPlayout);
@@ -42,7 +42,7 @@ namespace FCSPlayout.WPFApp.ViewModels
             _startDelayCommand = new DelegateCommand(StartDelay, CanStartDelay);
             _stopDelayCommand = new DelegateCommand(StopDelay, CanStopDelay);
 
-            _forcePlayCommand = new DelegateCommand<object>(ForcePlay,CanForcePlay);
+            //_forcePlayCommand = new DelegateCommand<object>(ForcePlay,CanForcePlay);
         }
 
         private void OnPlayout_StateChanged(object sender, EventArgs e)
@@ -53,60 +53,60 @@ namespace FCSPlayout.WPFApp.ViewModels
             _startDelayCommand.RaiseCanExecuteChanged();
             _stopDelayCommand.RaiseCanExecuteChanged();
 
-            _forcePlayCommand.RaiseCanExecuteChanged();
+            //_forcePlayCommand.RaiseCanExecuteChanged();
         }
 
-        private bool CanForcePlay(object obj)
-        {
-            return this.SelectedPlayItem != null && _playout.CanForcePlay(this.SelectedPlayItem);
+        //private bool CanForcePlay(object obj)
+        //{
+        //    return this.SelectedPlayItem != null && _playout.CanForcePlay(this.SelectedPlayItem);
 
-            //var eventArgs = obj as Prism.Interactivity.InteractionRequest.InteractionRequestedEventArgs;
-            //if (eventArgs != null)
-            //{
-            //    var playItem = eventArgs.Context.Content as BindablePlayItem;
-            //    if (playItem != null)
-            //    {
-            //        return _playout.CanForcePlay(playItem);
-            //    }
-            //}
+        //    //var eventArgs = obj as Prism.Interactivity.InteractionRequest.InteractionRequestedEventArgs;
+        //    //if (eventArgs != null)
+        //    //{
+        //    //    var playItem = eventArgs.Context.Content as BindablePlayItem;
+        //    //    if (playItem != null)
+        //    //    {
+        //    //        return _playout.CanForcePlay(playItem);
+        //    //    }
+        //    //}
 
-            //return false;
-        }
+        //    //return false;
+        //}
 
-        private void ForcePlay(object obj)
-        {
-            if (CanForcePlay(obj))
-            {
-                _playout.ForcePlay(this.SelectedPlayItem);
-                //_playout.ForcePlay(this.SelectedPlayItem, (curItem,range,forcedItem) => 
-                //{
-                //    var eventArgs = new ForcePlayEventArgs();
-                //    eventArgs.CurrentPlayItem = curItem;
-                //    eventArgs.CurrentRemainRange = range;
-                //    eventArgs.ForcePlayItem = forcedItem;
-                //    OnForcePlayed(eventArgs);
-                //    // 删除forcedItem
-                //    // 根据curItem和range产生一个新的项并插入到curItem之后（修改curItem的时长）
-                //    //curItem.PlayRange.Offset(TimeSpan.Zero, range.StartPosition - curItem.PlayRange.StartPosition);
-                //});
-            }
+        //private void ForcePlay(object obj)
+        //{
+        //    if (CanForcePlay(obj))
+        //    {
+        //        _playout.ForcePlay(this.SelectedPlayItem);
+        //        //_playout.ForcePlay(this.SelectedPlayItem, (curItem,range,forcedItem) => 
+        //        //{
+        //        //    var eventArgs = new ForcePlayEventArgs();
+        //        //    eventArgs.CurrentPlayItem = curItem;
+        //        //    eventArgs.CurrentRemainRange = range;
+        //        //    eventArgs.ForcePlayItem = forcedItem;
+        //        //    OnForcePlayed(eventArgs);
+        //        //    // 删除forcedItem
+        //        //    // 根据curItem和range产生一个新的项并插入到curItem之后（修改curItem的时长）
+        //        //    //curItem.PlayRange.Offset(TimeSpan.Zero, range.StartPosition - curItem.PlayRange.StartPosition);
+        //        //});
+        //    }
 
-            //var playItem = obj as BindablePlayItem;
-            //if (playItem != null)
-            //{
-            //    _playout.ForcePlay(playItem, () => { });
-            //}
+        //    //var playItem = obj as BindablePlayItem;
+        //    //if (playItem != null)
+        //    //{
+        //    //    _playout.ForcePlay(playItem, () => { });
+        //    //}
 
-            //var eventArgs = obj as Prism.Interactivity.InteractionRequest.InteractionRequestedEventArgs;
-            //if (eventArgs != null)
-            //{
-            //    var playItem = eventArgs.Context.Content as BindablePlayItem;
-            //    if (playItem != null)
-            //    {
-            //        _playout.ForcePlay(playItem, () => { });
-            //    }
-            //}
-        }
+        //    //var eventArgs = obj as Prism.Interactivity.InteractionRequest.InteractionRequestedEventArgs;
+        //    //if (eventArgs != null)
+        //    //{
+        //    //    var playItem = eventArgs.Context.Content as BindablePlayItem;
+        //    //    if (playItem != null)
+        //    //    {
+        //    //        _playout.ForcePlay(playItem, () => { });
+        //    //    }
+        //    //}
+        //}
 
         private void OnForcePlayed(ForcePlayEventArgs eventArgs)
         {
@@ -150,7 +150,7 @@ namespace FCSPlayout.WPFApp.ViewModels
             set
             {
                 _sourceUri = value;
-                OnPropertyChanged<Uri>(() => this.SourceUri);
+                this.RaisePropertyChanged(nameof(this.SourceUri));
             }
         }
 
@@ -174,28 +174,28 @@ namespace FCSPlayout.WPFApp.ViewModels
             get { return _stopDelayCommand; }
         }
 
-        public IPlaylist2 Playlist
-        {
-            get { return _playout.Playlist; }
-            internal set
-            {
-                if (_playout.Playlist != null)
-                {
-                    //_playout.Playlist.CollectionChanged -= Playlist_CollectionChanged;
-                }
-                _playout.Playlist = value;
+        //public IPlaylist2 Playlist
+        //{
+        //    get { return _playout.Playlist; }
+        //    internal set
+        //    {
+        //        if (_playout.Playlist != null)
+        //        {
+        //            //_playout.Playlist.CollectionChanged -= Playlist_CollectionChanged;
+        //        }
+        //        _playout.Playlist = value;
 
-                if (_playout.Playlist != null)
-                {
-                    //_playout.Playlist.CollectionChanged += Playlist_CollectionChanged;
-                }
-                _startPlayoutCommand.RaiseCanExecuteChanged();
-                _stopPlayoutCommand.RaiseCanExecuteChanged();
+        //        if (_playout.Playlist != null)
+        //        {
+        //            //_playout.Playlist.CollectionChanged += Playlist_CollectionChanged;
+        //        }
+        //        _startPlayoutCommand.RaiseCanExecuteChanged();
+        //        _stopPlayoutCommand.RaiseCanExecuteChanged();
 
-                //_startDelayCommand.RaiseCanExecuteChanged();
-                //_stopDelayCommand.RaiseCanExecuteChanged();s
-            }
-        }
+        //        //_startDelayCommand.RaiseCanExecuteChanged();
+        //        //_stopDelayCommand.RaiseCanExecuteChanged();s
+        //    }
+        //}
 
         private void Playlist_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -245,7 +245,7 @@ namespace FCSPlayout.WPFApp.ViewModels
             {
 
 
-                PlayoutView.Pv.djs.Text = processCount.GetHour() + ":" + processCount.GetMinute() + ":" + processCount.GetSecond();
+                //PlayoutView.Pv.djs.Text = processCount.GetHour() + ":" + processCount.GetMinute() + ":" + processCount.GetSecond();
                 //HourArea.Text = processCount.GetHour();
                 //MinuteArea.Text = processCount.GetMinute();
                 //SecondArea.Text = processCount.GetSecond();
@@ -254,7 +254,7 @@ namespace FCSPlayout.WPFApp.ViewModels
             else
             {
                 timer.Stop();
-                PlayoutView.Pv.djs.Text = "00:00:00";
+                //PlayoutView.Pv.djs.Text = "00:00:00";
             }
         }
 
@@ -289,7 +289,7 @@ namespace FCSPlayout.WPFApp.ViewModels
             {
                 _playout.Stop();
                 timer.Stop();
-                PlayoutView.Pv.djs.Text = "00:00:00";
+                //PlayoutView.Pv.djs.Text = "00:00:00";
             }
         }
 
@@ -332,7 +332,8 @@ namespace FCSPlayout.WPFApp.ViewModels
             {
                 _playlistStartTime = value;
 
-                OnPropertyChanged(() => this.PlaylistStartTime);
+                this.RaisePropertyChanged(nameof(this.PlaylistStartTime));
+
                 if (_playlistStartTime != null)
                 {
                     this.PlaylistStopTime = _playlistStartTime.Value.Add(_playout.Playlist.Duration);
@@ -350,8 +351,8 @@ namespace FCSPlayout.WPFApp.ViewModels
             set
             {
                 _playlistStopTime = value;
-                OnPropertyChanged(() => this.PlaylistStopTime);
-                OnPropertyChanged(() => this.PlaylistDuration);
+                this.RaisePropertyChanged(nameof(this.PlaylistStopTime));
+                this.RaisePropertyChanged(nameof(this.PlaylistDuration));
             }
         }
 
@@ -363,7 +364,7 @@ namespace FCSPlayout.WPFApp.ViewModels
                 if (_playlistPosition != value)
                 {
                     _playlistPosition = value;
-                    OnPropertyChanged(() => this.PlaylistPosition);
+                    this.RaisePropertyChanged(nameof(this.PlaylistPosition));
                 }
 
             }
@@ -412,13 +413,13 @@ namespace FCSPlayout.WPFApp.ViewModels
             }
         }
 
-        public ICommand ForcePlayCommand
-        {
-            get
-            {
-                return _forcePlayCommand;
-            }
-        }
+        //public ICommand ForcePlayCommand
+        //{
+        //    get
+        //    {
+        //        return _forcePlayCommand;
+        //    }
+        //}
 
         private IPlayerItem _currentPlayItem;
         public IPlayerItem CurrentPlayItem
@@ -461,7 +462,7 @@ namespace FCSPlayout.WPFApp.ViewModels
                 //        }
                 //    }
                 //}
-                OnPropertyChanged(() => this.CurrentPlayItem);
+                this.RaisePropertyChanged(nameof(this.CurrentPlayItem));
             }
         }
 
@@ -501,7 +502,7 @@ namespace FCSPlayout.WPFApp.ViewModels
             set
             {
                 _currentPlayItemPosition = value;
-                OnPropertyChanged(() => this.CurrentPlayItemPosition);
+                this.RaisePropertyChanged(nameof(this.CurrentPlayItemPosition));
             }
         }
 
@@ -511,7 +512,7 @@ namespace FCSPlayout.WPFApp.ViewModels
             set
             {
                 _selectedPlayItem = value;
-                _forcePlayCommand.RaiseCanExecuteChanged();
+                //_forcePlayCommand.RaiseCanExecuteChanged();
             }
         }
 

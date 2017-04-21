@@ -1,6 +1,6 @@
 ﻿using FCSPlayout.Domain;
 
-namespace FCSPlayout.PlaybillEditor
+namespace FCSPlayout.AppInfrastructure
 {
     public interface IMediaItemSelector
     {

@@ -26,13 +26,20 @@ namespace FCSPlayout.PlaybillEditor
 
         private readonly DelegateCommand _saveXmlCommand;
         private readonly DelegateCommand _openXmlCommand;
+        private readonly DelegateCommand _clearCommand;
 
+        private readonly DelegateCommand _savePlaybillCommand;
+        private readonly DelegateCommand _loadPlaybillCommand;
 
         private IEventAggregator _eventAggregator;
         private InteractionRequests _interactionRequests;
         private IPlayableItem _currentPreviewItem;
 
         private WrappedItemListAdapter<BindablePlayItem, IPlayItem> _listAdapter;
+
+        private IPlayoutConfiguration _playoutConfig;
+        private Playbill _playbill;
+        private IUserService _userService;
 
         public BindablePlayItem SelectedPlayItem
         {
@@ -134,6 +141,23 @@ namespace FCSPlayout.PlaybillEditor
                 return _openXmlCommand;
             }
         }
+
+        public ICommand SavePlaybillCommand
+        {
+            get
+            {
+                return _savePlaybillCommand;
+            }
+        }
+
+        public ICommand LoadPlaybillCommand
+        {
+            get
+            {
+                return _loadPlaybillCommand;
+            }
+        }
+
         #endregion Commands
 
         #region Command Methods
@@ -393,14 +417,6 @@ namespace FCSPlayout.PlaybillEditor
                     if (n.Confirmed)
                     {
                         LoadFromXml(n.FileName);
-                        //foreach (var item in LoadFromXml(n.FileName))
-                        //{
-                        //    if (!string.IsNullOrEmpty(item.FilePath) && System.IO.File.Exists(item.FilePath))
-                        //    {
-                        //        _mediaItemCollection.Add(item);
-                        //    }
-
-                        //}
                     }
                 });
         }
@@ -430,14 +446,120 @@ namespace FCSPlayout.PlaybillEditor
 
         private void SaveToXml(string fileName, IEnumerable<IPlayItem> playItems)
         {
-            PlayItemXmlRepository.SaveToXml(fileName, playItems, _mediaSourceConverter);
+            PlayItemXmlRepository.SaveToXml(fileName, playItems);
         }
 
         private void LoadFromXml(string fileName)
         {
-            throw new NotImplementedException();
+            this.Clear();
+            var newItems = PlayItemXmlRepository.LoadFromXml(fileName);
+            for (int i = 0; i < newItems.Count; i++)
+            {
+                _playItemCollection.Add(_playItemCollection.CreateBindablePlayItem(newItems[i]));
+            }
         }
 
+        private bool CanSavePlaybill()
+        {
+            return _playItemCollection.Count>0; // this.Playbill.CanSave();
+        }
+
+        private void SavePlaybill()
+        {
+            if (CanSavePlaybill())
+            {
+                // TODO: 更新数据库之前提示？
+                if (ValidateBeforeSave())
+                {
+                    if (_playbill == null)
+                    {
+                        _playbill = new Playbill();
+                    }
+
+                    _playbill.PlayItemCollection = _playItemCollection;
+                    try
+                    {
+                        _playbill.Save(_playoutConfig.AutoPaddingMediaSource,_userService.CurrentUser);
+                    }
+                    catch(Exception ex)
+                    {
+                        OnError(ex);
+                    }
+                }
+            }
+        }
+
+        private bool ValidateBeforeSave()
+        {
+            if (_playItemCollection.GetStopTime().Value < DateTime.Now.AddMinutes(5))
+            {
+                this.RaiseDisplayMessageInteractionRequest(
+                        "错误",
+                        "不能保存时间已经过期或即将过期的节目单。");
+                return false;
+            }
+
+            for(int i = 0; i < _playItemCollection.Count; i++)
+            {
+                BindablePlayItem item = _playItemCollection[i];
+                if(!item.Skipped() && item.PlayDuration < _playoutConfig.MinPlayDuration)
+                {
+                    this.RaiseDisplayMessageInteractionRequest(
+                        "错误", 
+                        string.Format("播放项{0}的时长太短，最低时长不能小于{1}，请修复错误后再保存。", item.Title, _playoutConfig.MinPlayDuration));
+                    return false;
+                }
+            }
+
+            //TODO: 是否需要一些其他提示？
+            return true;
+        }
+
+        private bool CanLoadPlaybill()
+        {
+            return true;
+        }
+
+        private void LoadPlaybill()
+        {
+            if (CanLoadPlaybill())
+            {
+                // TODO: 提示保存
+
+                this.LoadPlaybillInteractionRequest.Raise(new LoadPlaybillConfirmation { Title = "选择节目单", Playbills =LoadPlaybills() },
+                    c =>
+                    {
+                        if (c.Confirmed)
+                        {
+                            BindablePlaybill bill = c.SelectedPlaybill;
+
+                            if (bill != null)
+                            {
+                                List<IPlayItem> playItems = new List<IPlayItem>();
+                                var playbill = Playbill.Load(bill.Id, playItems);
+
+                                if (playItems.Count > 0)
+                                {
+                                    this.Clear();
+
+                                    _playbill = playbill;
+
+                                    foreach(var item in playItems)
+                                    {
+                                        _playItemCollection.Add(_playItemCollection.CreateBindablePlayItem(item));
+                                    }
+                                }
+                            }
+                        }
+                    });
+            }
+        }
+
+        private IEnumerable<BindablePlaybill> LoadPlaybills()
+        {
+            DateTime minStopTime = DateTime.Now.AddMinutes(5);
+            return Playbill.LoadPlaybills(minStopTime).Select(i=> new BindablePlaybill(i)).ToArray();
+        }
         #endregion Command Methods
 
         private NewPlaylistEditor Edit()
@@ -480,6 +602,12 @@ namespace FCSPlayout.PlaybillEditor
         {
             get { return _interactionRequests.SaveFileInteractionRequest; }
         }
+
+        public InteractionRequest<LoadPlaybillConfirmation> LoadPlaybillInteractionRequest
+        {
+            get { return _interactionRequests.LoadPlaybillInteractionRequest; }
+        }
+
         #endregion Interaction Requests
 
         private DateTime? _startTime;
@@ -518,7 +646,13 @@ namespace FCSPlayout.PlaybillEditor
 
         public IMediaFileImageResolver ImageResolver { get; private set; }
 
-        
+        public DelegateCommand ClearCommand
+        {
+            get
+            {
+                return _clearCommand;
+            }
+        }
 
         private void RaiseDisplayMessageInteractionRequest(string title, string message)
         {
@@ -621,6 +755,8 @@ namespace FCSPlayout.PlaybillEditor
             this.RaisePropertyChanged(nameof(this.Duration));
 
             _saveXmlCommand.RaiseCanExecuteChanged();
+            _savePlaybillCommand.RaiseCanExecuteChanged();
+            _clearCommand.RaiseCanExecuteChanged();
         }
         private void ChangeStartTime(IPlayItem playItem, DateTime time)
         {
@@ -640,7 +776,19 @@ namespace FCSPlayout.PlaybillEditor
             
         }
 
-        IPlayItemEditor IPlayItemEditorFactory.CreateEditor()
+        private bool CanClear()
+        {
+            return _playItemCollection.Count > 0;
+        }
+
+        private void Clear()
+        {
+            // TODO: 提示保存。
+            _playbill = null;
+            _playItemCollection.Clear();
+        }
+
+        FCSPlayout.AppInfrastructure.IPlayItemEditor IPlayItemEditorFactory.CreateEditor()
         {
             return new PlayItemEditor(this.Edit(), OnError);
         }
@@ -649,7 +797,7 @@ namespace FCSPlayout.PlaybillEditor
         {
             RaiseDisplayMessageInteractionRequest("错误", ex.Message);
         }
-        class PlayItemEditor : IPlayItemEditor
+        class PlayItemEditor : FCSPlayout.AppInfrastructure.IPlayItemEditor
         {
             private Action<Exception> _onError;
             private IPlaylistEditor _playlistEditor;

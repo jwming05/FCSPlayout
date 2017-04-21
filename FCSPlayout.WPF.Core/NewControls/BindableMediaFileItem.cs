@@ -66,7 +66,7 @@ namespace FCSPlayout.WPF.Core
             }
         }
 
-        public Guid CreatorId
+        public Guid? CreatorId
         {
             get
             {

@@ -170,43 +170,76 @@
     <Compile Include="ChannelSwitchPanel.xaml.cs">
       <DependentUpon>ChannelSwitchPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LeftBottomView\BindablePlayItem.cs" />
+    <Compile Include="LeftBottomView\InteractionRequests.cs" />
+    <Compile Include="LeftBottomView\BindableFileMediaItem.cs" />
+    <Compile Include="LeftBottomView\ChannelItemListView.xaml.cs">
+      <DependentUpon>ChannelItemListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LeftBottomView\ChannelItemListViewModel.cs" />
+    <Compile Include="LeftBottomView\MediaItemListView2.xaml.cs">
+      <DependentUpon>MediaItemListView2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LeftBottomView\MediaItemListViewModel2.cs" />
+    <Compile Include="LeftBottomView\MediaItemModule.cs" />
+    <Compile Include="LeftBottomView\MediaItemView.xaml.cs">
+      <DependentUpon>MediaItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LeftBottomView\MediaItemViewModel.cs" />
+    <Compile Include="LeftBottomView\PlaybillView.xaml.cs">
+      <DependentUpon>PlaybillView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LeftBottomView\PlaybillViewModel.cs" />
+    <Compile Include="LeftBottomView\PlaybillViewModel_2.cs" />
+    <Compile Include="LeftBottomView\PlayItemCollection.cs" />
     <Compile Include="LocalSettings.cs" />
-    <Compile Include="MainViewModel.cs" />
     <Compile Include="Models\BindableMediaItem.cs" />
     <Compile Include="Models\BindablePlayItem.cs" />
     <Compile Include="Models\BindablePlayout.cs" />
     <Compile Include="Models\ProcessCount.cs" />
-    <Compile Include="NewFolder1\MediaItemListView.xaml.cs">
+    <Compile Include="New\MainViewModel.cs" />
+    <Compile Include="New\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="New\MediaItemListView.xaml.cs">
       <DependentUpon>MediaItemListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NewFolder1\MediaItemListViewModel.cs" />
-    <Compile Include="PlayItemCollection2.cs" />
+    <Compile Include="New\MediaItemListViewModel.cs" />
+    <Compile Include="LeftBottomView\PreviewPlayControl.xaml.cs">
+      <DependentUpon>PreviewPlayControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LeftBottomView\PreviewPlayControlModel2.cs" />
+    <Compile Include="PlaybillModule.cs" />
+    <Compile Include="LeftBottomView\PreviewControlWrapper.xaml.cs">
+      <DependentUpon>PreviewControlWrapper.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PlayoutModule.cs" />
+    <Compile Include="PreviewRequestConfirmation.cs" />
     <Compile Include="SettingsManager.cs" />
     <Compile Include="ChannelSwitcher.cs" />
-    <Compile Include="Temp\AudioFormatComboBox.cs" />
-    <Compile Include="Temp\CascadeableComboBox.cs" />
-    <Compile Include="Temp\CascadeableObject.cs" />
-    <Compile Include="Temp\DeviceComboBoxBase.cs" />
-    <Compile Include="Temp\FormatComboBoxBase.cs" />
-    <Compile Include="Temp\FormatWindow.xaml.cs">
+    <Compile Include="Controls\AudioFormatComboBox.cs" />
+    <Compile Include="Controls\CascadeableComboBox.cs" />
+    <Compile Include="Controls\CascadeableObject.cs" />
+    <Compile Include="Controls\DeviceComboBoxBase.cs" />
+    <Compile Include="Controls\FormatComboBoxBase.cs" />
+    <Compile Include="Controls\FormatWindow.xaml.cs">
       <DependentUpon>FormatWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Temp\ICascadeable.cs" />
-    <Compile Include="Temp\LiveDeviceComboBox.cs" />
-    <Compile Include="Temp\LiveWindow.xaml.cs">
+    <Compile Include="Controls\ICascadeable.cs" />
+    <Compile Include="Controls\LiveDeviceComboBox.cs" />
+    <Compile Include="Controls\LiveWindow.xaml.cs">
       <DependentUpon>LiveWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Temp\RendererDeviceComboBox.cs" />
-    <Compile Include="Temp\RendererWindow.xaml.cs">
+    <Compile Include="Controls\RendererDeviceComboBox.cs" />
+    <Compile Include="Controls\RendererWindow.xaml.cs">
       <DependentUpon>RendererWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Temp\VideoFormatComboBox.cs" />
+    <Compile Include="Controls\VideoFormatComboBox.cs" />
     <Compile Include="TestBehavior.cs" />
     <Compile Include="ViewModels\ChannelSelectionViewModel.cs" />
     <Compile Include="ViewModels\ChannelSettingsViewModel.cs" />
     <Compile Include="ViewModels\BMDSwitcherSettingsViewModel.cs" />
     <Compile Include="ViewModels\ForcePlayEventArgs.cs" />
-    <Compile Include="ViewModels\PlaybillViewModel.cs" />
     <Compile Include="ViewModels\PlayoutViewModel.cs" />
     <Compile Include="ViewModels\SwitcherChannelSettingsViewModel.cs" />
     <Compile Include="Views\AddNullMediaItemView.xaml.cs">
@@ -227,9 +260,6 @@
     <Compile Include="Views\EditMediaItemView.xaml.cs">
       <DependentUpon>EditMediaItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PlaybillView.xaml.cs">
-      <DependentUpon>PlaybillView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PlayoutView.xaml.cs">
       <DependentUpon>PlayoutView.xaml</DependentUpon>
     </Compile>
@@ -243,33 +273,53 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="NewFolder1\MediaItemListView.xaml">
+    <Page Include="LeftBottomView\ChannelItemListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Temp\FormatWindow.xaml">
+    <Page Include="LeftBottomView\MediaItemListView2.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Temp\LiveWindow.xaml">
+    <Page Include="LeftBottomView\MediaItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Temp\RendererWindow.xaml">
+    <Page Include="LeftBottomView\PlaybillView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="New\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="New\MediaItemListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\FormatWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\LiveWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\RendererWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LeftBottomView\PreviewPlayControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LeftBottomView\PreviewControlWrapper.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AddNullMediaItemView.xaml">
       <SubType>Designer</SubType>
@@ -292,10 +342,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\EditMediaItemView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PlaybillView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

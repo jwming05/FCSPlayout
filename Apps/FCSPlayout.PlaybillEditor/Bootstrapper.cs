@@ -1,5 +1,6 @@
 ﻿using FCSPlayout.AppInfrastructure;
 using FCSPlayout.Domain;
+using FCSPlayout.Entities;
 using FCSPlayout.WPF.Core;
 using Microsoft.Practices.Unity;
 using Prism.Regions;
@@ -24,8 +25,9 @@ namespace FCSPlayout.PlaybillEditor
             this.Container.RegisterInstance<IUserService>(new UserServiceAdapter());
             this.Container.RegisterInstance<IMediaFileImageResolver>(new MediaFileImageResolver());
             this.Container.RegisterInstance<IMediaFilePathResolver>(new MediaFilePathResolver(MediaFileStorage.Primary));
+            this.Container.RegisterInstance<IPlayoutConfiguration>(PlayoutConfiguration.Current);
 
-            this.Container.RegisterInstance<IMediaSourceConverter>(new MediaSourceConverter());
+            this.Container.RegisterInstance(PlayoutRepository.GetMPlaylistSettings());
         }
 
         protected override void InitializeModules()

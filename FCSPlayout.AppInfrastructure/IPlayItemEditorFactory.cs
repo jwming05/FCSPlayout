@@ -1,4 +1,4 @@
-﻿namespace FCSPlayout.PlaybillEditor
+﻿namespace FCSPlayout.AppInfrastructure
 {
     public interface IPlayItemEditorFactory
     {

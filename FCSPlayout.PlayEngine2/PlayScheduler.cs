@@ -8,7 +8,7 @@ namespace FCSPlayout.PlayEngine
     public class PlayScheduler
     {
         private IDateTimeService _dateTimeService;
-        private IPlaylist2 _playlist;
+        private IPlaylist3 _playlist;
         private IPlayer _player;
 
         private PlayItemWrapper _nextPlayItem;
@@ -18,7 +18,7 @@ namespace FCSPlayout.PlayEngine
         public event EventHandler CurrentPlayItemChanged;
         public event EventHandler NextPlayItemChanged;
 
-        public PlayScheduler(IPlayer player, IPlaylist2 playlist, IDateTimeService dateTimeService, IChannelSwitcher switcher)
+        public PlayScheduler(IPlayer player, IPlaylist3 playlist, IDateTimeService dateTimeService, IChannelSwitcher switcher)
         {
             _player = player;
             _player.ItemLoaded += Player_ItemLoaded;

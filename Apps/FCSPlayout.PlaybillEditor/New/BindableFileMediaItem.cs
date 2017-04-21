@@ -60,7 +60,7 @@ namespace FCSPlayout.PlaybillEditor
             }
         }
 
-        public Guid CreatorId
+        public Guid? CreatorId
         {
             get
             {

@@ -100,16 +100,15 @@ namespace FCSPlayout.WPFApp.Models
                     var mediaSource = this.Source as FileMediaSource;
                     if (mediaSource != null)
                     {
-                        //var pos = this.PlayRange.StartPosition.TotalSeconds;
-                        var pos = this.PlayRange.StartPosition.TotalSeconds+(this.PlayRange.StopPosition.TotalSeconds- this.PlayRange.StartPosition.TotalSeconds) /2;
+                        //var pos = this.PlayRange.StartPosition.TotalSeconds+(this.PlayRange.StopPosition.TotalSeconds- this.PlayRange.StartPosition.TotalSeconds) /2;
 
-                        _startImage = sBmpSourceCache.Get(mediaSource.FileName, this.PlayRange.StartPosition.TotalSeconds, this.PlayRange.StopPosition.TotalSeconds);
+                        //_startImage = sBmpSourceCache.Get(mediaSource.FileName, this.PlayRange.StartPosition.TotalSeconds, this.PlayRange.StopPosition.TotalSeconds);
 
-                        if (_startImage == null && _startImageRequest == null)
-                        {
-                            StartRetrieveStartImage(mediaSource.FileName, pos);
-                            return null;
-                        }
+                        //if (_startImage == null && _startImageRequest == null)
+                        //{
+                        //    StartRetrieveStartImage(mediaSource.FileName, pos);
+                        //    return null;
+                        //}
                     }
                 }
                 return _startImage;
@@ -242,44 +241,45 @@ namespace FCSPlayout.WPFApp.Models
             }
         }
 
-        private MediaFileImageRequest _startImageRequest;
+        //private MediaFileImageRequest _startImageRequest;
+
         //private PlayItemStatus _status;
 
         //private MediaFileImageRequest _stopImageRequest;
         public event EventHandler StatusChanged;
-        private void SetStartImageInternal(object value)
-        {
-            var tuple = (Tuple<IntPtr, string, double>)value;
-            var ptr = tuple.Item1;
-            if (ptr != IntPtr.Zero)
-            {
-                BitmapSource bmpSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ptr, IntPtr.Zero,
-                System.Windows.Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+        //private void SetStartImageInternal(object value)
+        //{
+        //    var tuple = (Tuple<IntPtr, string, double>)value;
+        //    var ptr = tuple.Item1;
+        //    if (ptr != IntPtr.Zero)
+        //    {
+        //        BitmapSource bmpSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ptr, IntPtr.Zero,
+        //        System.Windows.Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
 
-                NativeMethods.DeleteObject(ptr);
-                //Infrastructure.BitmapSourceCache.Instance.Add(tuple.Item1, tuple.Item2, bmpSource);
-                this.StartImage = bmpSource;
-                sBmpSourceCache.Add(tuple.Item2, tuple.Item3, bmpSource);
-            }
-            _startImageRequest = null;
-        }
+        //        NativeMethods.DeleteObject(ptr);
+        //        //Infrastructure.BitmapSourceCache.Instance.Add(tuple.Item1, tuple.Item2, bmpSource);
+        //        this.StartImage = bmpSource;
+        //        sBmpSourceCache.Add(tuple.Item2, tuple.Item3, bmpSource);
+        //    }
+        //    _startImageRequest = null;
+        //}
         
-        private void StartRetrieveStartImage(string file, double pos)
-        {
-            if (_startImageRequest != null) return;
+        //private void StartRetrieveStartImage(string file, double pos)
+        //{
+        //    if (_startImageRequest != null) return;
 
-            _startImageRequest = new MediaFileImageRequest
-            {
-                Path = file,
-                Position = pos,
-                Complete = (ptr) =>
-                {
-                    _syncContext.Post(new System.Threading.SendOrPostCallback(SetStartImageInternal), Tuple.Create(ptr, file, pos));
-                }
-            };
+        //    _startImageRequest = new MediaFileImageRequest
+        //    {
+        //        Path = file,
+        //        Position = pos,
+        //        Complete = (ptr) =>
+        //        {
+        //            _syncContext.Post(new System.Threading.SendOrPostCallback(SetStartImageInternal), Tuple.Create(ptr, file, pos));
+        //        }
+        //    };
 
-            MediaFileImageExtractor.Current.GetHBitmapAsync(_startImageRequest);
-        }
+        //    MediaFileImageExtractor.Current.GetHBitmapAsync(_startImageRequest);
+        //}
 
         //public void SetMaxPlayTime(DateTime maxPlayTime)
         //{

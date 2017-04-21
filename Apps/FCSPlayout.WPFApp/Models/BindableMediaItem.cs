@@ -104,12 +104,11 @@ namespace FCSPlayout.WPFApp.Models
                     {
                         var pos = (this.PlayRange.StartPosition.TotalSeconds + this.PlayRange.StopPosition.TotalSeconds) / 2;
 
-                        //_image = Infrastructure.BitmapSourceCache.Instance.TryGet(mediaSource.Path, pos);
-                        if (_image == null && _request == null)
-                        {
-                            StartRetrieveImage(mediaSource.FileName/*.Path*/, pos);
-                            return null;
-                        }
+                        //if (_image == null && _request == null)
+                        //{
+                        //    StartRetrieveImage(mediaSource.FileName, pos);
+                        //    return null;
+                        //}
                     }
                 }
                 return _image;
@@ -125,30 +124,30 @@ namespace FCSPlayout.WPFApp.Models
             }
         }
 
-        private void SetImageInternal(object value)
-        {
-            var ptr = (IntPtr)value;
-            if (ptr != IntPtr.Zero)
-            {
-                BitmapSource bmpSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ptr, IntPtr.Zero,
-                System.Windows.Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+        //private void SetImageInternal(object value)
+        //{
+        //    var ptr = (IntPtr)value;
+        //    if (ptr != IntPtr.Zero)
+        //    {
+        //        BitmapSource bmpSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ptr, IntPtr.Zero,
+        //        System.Windows.Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
 
-                NativeMethods.DeleteObject(ptr);
-                this.Image = bmpSource;
-            }
-            _request = null;
-        }
+        //        NativeMethods.DeleteObject(ptr);
+        //        this.Image = bmpSource;
+        //    }
+        //    _request = null;
+        //}
 
-        private MediaFileImageRequest _request;
+        //private MediaFileImageRequest _request;
 
-        private void StartRetrieveImage(string file, double pos)
-        {
-            _request = new MediaFileImageRequest { Path = file, Position = pos, Complete = (ptr) => 
-            {
-                _syncContext.Post(new System.Threading.SendOrPostCallback(SetImageInternal), ptr);
-            } };
+        //private void StartRetrieveImage(string file, double pos)
+        //{
+        //    _request = new MediaFileImageRequest { Path = file, Position = pos, Complete = (ptr) => 
+        //    {
+        //        _syncContext.Post(new System.Threading.SendOrPostCallback(SetImageInternal), ptr);
+        //    } };
 
-            MediaFileImageExtractor.Current.GetHBitmapAsync(_request);
-        }
+        //    MediaFileImageExtractor.Current.GetHBitmapAsync(_request);
+        //}
     }
 }

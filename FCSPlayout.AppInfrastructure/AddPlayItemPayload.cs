@@ -1,7 +1,7 @@
 ﻿using FCSPlayout.Domain;
 using System;
 
-namespace FCSPlayout.PlaybillEditor
+namespace FCSPlayout.AppInfrastructure
 {
     public struct AddPlayItemPayload
     {

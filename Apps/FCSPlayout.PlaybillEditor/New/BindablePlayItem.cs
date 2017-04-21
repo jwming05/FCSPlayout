@@ -41,7 +41,11 @@ namespace FCSPlayout.PlaybillEditor
             }
             else
             {
-                this.ImageBytes = ((Entities.MediaFileEntity)((FileMediaSource)_playItem.MediaSource).Entity).Metadata.Icon;
+                var metadata = ((Entities.MediaFileEntity)((FileMediaSource)_playItem.MediaSource).Entity).Metadata;
+                if (metadata != null)
+                {
+                    this.ImageBytes = metadata.Icon;
+                }
             }
         }
 
@@ -291,6 +295,11 @@ namespace FCSPlayout.PlaybillEditor
         public CG.CGItemCollection CGItems
         {
             get { return _playItem.CGItems; }
+        }
+
+        internal bool Skipped()
+        {
+            return this.PlayDuration == TimeSpan.Zero;
         }
 
         //添加新属性

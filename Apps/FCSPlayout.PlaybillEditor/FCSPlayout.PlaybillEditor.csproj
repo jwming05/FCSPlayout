@@ -141,10 +141,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AddPlayItemPayload.cs" />
-    <Compile Include="New\IPlayItemEditor.cs" />
-    <Compile Include="New\IPlayItemEditorFactory.cs" />
-    <Compile Include="New\IMediaItemSelector.cs" />
     <Compile Include="New\InteractionRequests.cs" />
     <Compile Include="New\MediaItemView.xaml.cs">
       <DependentUpon>MediaItemView.xaml</DependentUpon>
@@ -167,7 +163,6 @@
     <Compile Include="New\MediaItemListViewModel2.cs" />
     <Compile Include="New\MediaItemViewModel.cs" />
     <Compile Include="New\PlaybillViewModel_2.cs" />
-    <Compile Include="New\PlayItemXmlRepository.cs" />
     <Compile Include="PlaybillModule.cs" />
     <Compile Include="PlayItemCollection.cs" />
     <Compile Include="New\BindablePlayItem.cs" />

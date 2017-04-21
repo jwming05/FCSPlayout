@@ -1,0 +1,34 @@
+﻿<Window x:Class="FileComparator.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileComparator"
+        mc:Ignorable="d"
+        Title="Window1" Height="600" Width="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <local:PlotControl x:Name="plotControl"></local:PlotControl>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBlock Text="Origin X:" VerticalAlignment="Center"/>
+            <Slider Width="100" Minimum="-100" Maximum="100" 
+                    Value="{Binding OriginX,ElementName=plotControl,Mode=TwoWay}"/>
+
+            <TextBlock Text="Origin Y:" VerticalAlignment="Center"/>
+            <Slider Width="100" Minimum="-100" Maximum="100" 
+                    Value="{Binding OriginY,ElementName=plotControl,Mode=TwoWay}"/>
+
+            <TextBlock Text="Scale X:" VerticalAlignment="Center"/>
+            <Slider Width="100" Minimum="-100" Maximum="100" 
+                    Value="{Binding ScaleX,ElementName=plotControl,Mode=TwoWay}"/>
+
+            <TextBlock Text="Scale Y:" VerticalAlignment="Center"/>
+            <Slider Width="100" Minimum="-100" Maximum="100" 
+                    Value="{Binding ScaleY,ElementName=plotControl,Mode=TwoWay}"/>
+        </StackPanel>
+    </Grid>
+</Window>

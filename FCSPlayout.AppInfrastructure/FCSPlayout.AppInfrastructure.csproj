@@ -63,12 +63,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddPlayItemPayload.cs" />
     <Compile Include="AsyncActionExecuter.cs" />
     <Compile Include="BitmapSourceCache.cs" />
     <Compile Include="ChannelMediaSource.cs" />
     <Compile Include="DefaultPlayoutRecordService.cs" />
     <Compile Include="FileMediaSource.cs" />
     <Compile Include="IChannelMediaSource.cs" />
+    <Compile Include="IMediaItemSelector.cs" />
+    <Compile Include="IPlayItemEditor.cs" />
+    <Compile Include="IPlayItemEditorFactory.cs" />
     <Compile Include="LocalMachineIdManager.cs" />
     <Compile Include="LocalSettingsBase.cs" />
     <Compile Include="MediaFileImageExtractor.cs" />
@@ -79,13 +83,15 @@
     <Compile Include="MediaFileService.cs" />
     <Compile Include="MediaItemUtils.cs" />
     <Compile Include="MediaSourceBase.cs" />
-    <Compile Include="MediaSourceExtensions.cs" />
+    <Compile Include="Extensions\MediaSourceExtensions.cs" />
     <Compile Include="MLMediaFileDurationGetter.cs" />
     <Compile Include="MLMediaFileImageExtractor.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="PeriodicalGarbageCollector.cs" />
     <Compile Include="Playbill.cs" />
     <Compile Include="PlayControlService\PlayControlService.cs" />
+    <Compile Include="Extensions\PlayItemExtensions.cs" />
+    <Compile Include="PlayItemXmlRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserService.cs" />

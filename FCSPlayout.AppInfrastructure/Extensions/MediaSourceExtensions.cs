@@ -6,7 +6,7 @@ namespace FCSPlayout.AppInfrastructure
 {
     public static class MediaSourceExtensions
     {
-        public static IMediaSource FromEntity(MediaSourceEntity entity)
+        public static IMediaSource ToMediaSource(this MediaSourceEntity entity)
         {
             MediaFileEntity fileEntity = entity as MediaFileEntity;
             if (fileEntity != null)
@@ -25,6 +25,32 @@ namespace FCSPlayout.AppInfrastructure
                     throw new ArgumentException();
                 }
             }
+        }
+
+        public static IMediaSource ToMediaSource(this MediaSourceEntity entity, PlaybillItemEntity billItemEntity)
+        {
+            IMediaSource result = null;
+            MediaFileEntity fileEntity = entity as MediaFileEntity;
+            if (fileEntity != null)
+            {
+                var fileSource = new FileMediaSource(fileEntity);
+                fileSource.AudioGain = billItemEntity.AudioGain;
+                result = fileSource;
+            }
+            else
+            {
+                ChannelInfo ci = entity as ChannelInfo;
+                if (ci != null)
+                {
+                    var channelSource = new ChannelMediaSource(ci);
+                    result = channelSource;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
+            }
+            return result;
         }
 
         public static MediaSourceEntity ToEntity(this IMediaSource mediaSource)

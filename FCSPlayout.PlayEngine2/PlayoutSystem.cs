@@ -8,7 +8,7 @@ namespace FCSPlayout.PlayEngine
         private PlayScheduler _scheduler;
         private IPlayerItem _nextItem;
         private IPlayerItem _currentItem;
-        private IPlaylist2 _playlist;
+        private IPlaylist3 _playlist;
         private LoopPlayToken _loopPlayToken;
         private bool _isRunning=false;
         private bool _forcePlayRequest = false;
@@ -16,7 +16,7 @@ namespace FCSPlayout.PlayEngine
         public event EventHandler<PlayerItemEventArgs> CurrentPlayItemChanged;
         public event EventHandler<PlayerItemEventArgs> NextPlayItemChanged;
 
-        public PlayoutSystem(IPlayPreview preview, IPlaylist2 playlist,
+        public PlayoutSystem(IPlayPreview preview, IPlaylist3 playlist,
             PlayoutSettings settings, ILog log,IChannelSwitcher switcher)
         {
             _playlist = playlist;
@@ -109,10 +109,11 @@ namespace FCSPlayout.PlayEngine
             return _isRunning && !_forcePlayRequest && _loopPlayToken == null && _nextItem == null && _currentItem != null && _currentItem.MediaSource.Category == MediaSourceCategory.External;
         }
 
-        public bool CanForcePlay(IPlayItem playItem)
-        {
-            return _isRunning && !_forcePlayRequest && _loopPlayToken == null && _nextItem == null && _currentItem != null && _currentItem.PlayItem != playItem && _playlist.CanForcePlay(playItem);
-        }
+        //public bool CanForcePlay(IPlayItem playItem)
+        //{
+        //    return _isRunning && !_forcePlayRequest && _loopPlayToken == null && 
+        //        _nextItem == null && _currentItem != null && _currentItem.PlayItem != playItem && _playlist.CanForcePlay(playItem);
+        //}
 
         public bool StartDelay(out ILoopPlayToken token)
         {
@@ -150,29 +151,29 @@ namespace FCSPlayout.PlayEngine
             
         }
 
-        public bool ForcePlay(IPlayItem playItem)
-        {
-            bool result = false;
-            if (CanForcePlay(playItem))
-            {
-                DateTime now = DefaultDateTimeService.Instance.GetLocalNow();
-                var remainDuration = _currentItem.LoadRange.Duration - now.Subtract(_currentItem.StartTime);
-                if (remainDuration >= TimeSpan.FromSeconds(2.0))
-                {
-                    using (var editor = (IPlaylistEditor2)_playlist.Edit())
-                    {
-                        result= editor.ForcePlay(playItem, now.AddSeconds(1.0));
-                    }
+        //public bool ForcePlay(IPlayItem playItem)
+        //{
+        //    bool result = false;
+        //    if (CanForcePlay(playItem))
+        //    {
+        //        DateTime now = DefaultDateTimeService.Instance.GetLocalNow();
+        //        var remainDuration = _currentItem.LoadRange.Duration - now.Subtract(_currentItem.StartTime);
+        //        if (remainDuration >= TimeSpan.FromSeconds(2.0))
+        //        {
+        //            using (var editor = (IPlaylistEditor2)_playlist.Edit())
+        //            {
+        //                result= editor.ForcePlay(playItem, now.AddSeconds(1.0));
+        //            }
 
-                    if (result)
-                    {
-                        _forcePlayRequest = true;
-                        //this.OnTimer();
-                    }
-                }
-            }
-            return result;
-        }
+        //            if (result)
+        //            {
+        //                _forcePlayRequest = true;
+        //                //this.OnTimer();
+        //            }
+        //        }
+        //    }
+        //    return result;
+        //}
         #endregion
 
         class LoopPlayToken : ILoopPlayToken

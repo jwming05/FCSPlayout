@@ -225,8 +225,9 @@ namespace FCSPlayout.Entities
             }
         }
 
-        public static void SavePlaybill(PlaybillEntity billEntity, IList<PlayItemEntity> playItemEntities)
+        public static void SavePlaybill(PlaybillEntity billEntity, IList<PlayItemEntity> playItemEntities,IUser currentUser)
         {
+            // NOTE:节目单时间冲突验证是通过数据库触发器来实现的。
             using (var context = new PlayoutDbContext())
             {
                 if (billEntity.PlaybillItems != null)
@@ -248,13 +249,16 @@ namespace FCSPlayout.Entities
                     entity.PlaybillItems = new List<PlaybillItemEntity>();
                     entity.StartTime = billEntity.StartTime;
                     entity.Duration = billEntity.Duration;
+
+                    entity.LastEditorId = currentUser.Id;
                 }
                 else
                 {
+                    entity.CreatorId = currentUser.Id;
+                    entity.LastEditorId = currentUser.Id;
+
                     context.Playbills.Add(entity);
                 }
-
-                //List<PlaybillItemEntity> billItemEntities = new List<PlaybillItemEntity>();
                 
                 for (int i = 0; i < playItemEntities.Count; i++)
                 {
@@ -263,16 +267,26 @@ namespace FCSPlayout.Entities
                     {
                         playItemEntity.PlaybillItem.Playbill = entity;
                         entity.PlaybillItems.Add(playItemEntity.PlaybillItem);
-                        //context.PlaybillItems.Add(playItemEntity.PlaybillItem);
                     }
                     context.PlayItems.Add(playItemEntity);
                 }
 
+                // TODO: add action
                 context.SaveChanges();
                 if (billEntity.Id == Guid.Empty)
                 {
                     billEntity.Id = entity.Id;
                 }
+            }
+        }
+
+        public static List<PlaybillEntity> LoadPlaybills(DateTime minStopTime)
+        {
+            using (var ctx = new PlayoutDbContext())
+            {
+                return ctx.Database.SqlQuery<PlaybillEntity>(
+                    "select * from [Playbills] where dateadd(SECOND,[Duration],[StartTime]) >= @p0 and Locked=0 order by [StartTime]", 
+                    minStopTime).ToList();
             }
         }
 

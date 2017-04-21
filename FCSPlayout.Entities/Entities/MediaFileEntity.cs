@@ -48,7 +48,7 @@ namespace FCSPlayout.Entities
         }
 
         [ForeignKey("Creator")]
-        public Guid CreatorId { get; set; }
+        public Guid? CreatorId { get; set; }
 
         public MediaFileMetadata Metadata { get; set; }
     }

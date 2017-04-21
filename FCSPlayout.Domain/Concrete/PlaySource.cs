@@ -8,7 +8,8 @@ namespace FCSPlayout.Domain
     {
         internal static PlaySource CreateAutoPadding(TimeSpan duration)
         {
-            return new PlaySource(PlayoutConfiguration.Current.AutoPaddingMediaSource, new Domain.PlayRange(duration));
+            return new PlaySource(
+                AutoPaddingMediaSource.Instance/*PlayoutConfiguration.Current.AutoPaddingMediaSource*/, new Domain.PlayRange(duration));
         }
 
         private PlayRange _playRange;

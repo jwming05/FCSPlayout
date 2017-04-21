@@ -44,13 +44,13 @@ namespace FCSPlayout.WPFApp
             MLLicenseLib.MLLicenseManager.Instance.Timer();
             FCSPlayout.PlayEngine.PlayoutRecordService.Current = DefaultPlayoutRecordService.Instance;
 
-            CheckMediaLooks();
+            CheckMedialooks();
 
             //FCSPlayout.Common.AppSettings.Instance.MediaFileDirectory = ConfigurationManager.AppSettings["MediaFileDirectory"];
 
-            MediaFilePathResolver.Current.CurrentStorage = 
-                (MediaFileStorage)Enum.Parse(typeof(MediaFileStorage), ConfigurationManager.AppSettings["storageType"], true);
-            MediaFileDurationGetter.Current = new MLMediaFileDurationGetter();
+            //MediaFilePathResolver.Current.CurrentStorage = 
+            //    (MediaFileStorage)Enum.Parse(typeof(MediaFileStorage), ConfigurationManager.AppSettings["storageType"], true);
+            //MediaFileDurationGetter.Current = new MLMediaFileDurationGetter();
             LocalSettings.Instance.Initialize();
         }
 
@@ -58,59 +58,6 @@ namespace FCSPlayout.WPFApp
         {
             base.OnExit(e);
             //Common.GlobalEventAggregator.Instance.RaiseApplicationExit();
-        }
-
-        //private static void CheckMediaLooks()
-        //{
-        //    using (RegistryKey root = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\MediaPlayer\Player\Schemes\mplatform"))
-        //    {
-        //        if (root == null)
-        //        {
-        //            using (var root2 = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\MediaPlayer\Player\Schemes\mplatform"))
-        //            {
-        //                //root2 = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\MediaPlayer\Player\Schemes\mplatform", true);
-        //                if (root2 != null)
-        //                {
-        //                    root2.SetValue("Runtime", 1, RegistryValueKind.DWord);
-        //                    root2.Flush();
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
-        private static void CheckMediaLooks()
-        {
-            RegistryKey root = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\MediaPlayer\Player\Schemes\mplatform");
-            if (root == null)
-            {
-                root = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\MediaPlayer\Player\Schemes\mplatform");
-            }
-
-            if (root != null)
-            {
-                using (root)
-                {
-                    var valueNames = root.GetValueNames();
-                    string name = "Runtime";
-                    if (valueNames.Any(n => string.Equals(n, name, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        var value = root.GetValue(name);
-                        //var t = value.GetType();
-
-                        if (value == null || !object.Equals(value, 1))
-                        {
-                            root.SetValue(name, 1, RegistryValueKind.DWord);
-                            root.Flush();
-                        }
-                    }
-                    else
-                    {
-                        root.SetValue(name, 1, RegistryValueKind.DWord);
-                        root.Flush();
-                    }
-                }
-            }
         }
     }
 }

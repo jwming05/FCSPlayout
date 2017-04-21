@@ -70,17 +70,22 @@ namespace FCSPlayout.WPFApp.Views
         public PlayoutView()
         {
             InitializeComponent();
-            
 
-            _viewModel = new PlayoutViewModel();
-            //_viewModel.Playlist = this.Playlist;
-            _viewModel.ForcePlayed += ViewModel_ForcePlayed;
-            this.DataContext = _viewModel;
+
+            //_viewModel = new PlayoutViewModel();
+            //_viewModel.ForcePlayed += ViewModel_ForcePlayed;
+            //this.DataContext = _viewModel;
 
             //GlobalEventAggregator.Instance.MPlaylistCreated += Instance_MPlaylistCreated;
             //GlobalEventAggregator.Instance.MPlaylistDestroying += Instance_MPlaylistDestroying;
-            Pv = this;
-    }
+        }
+
+        public PlayoutView(PlayoutViewModel viewModel):this()
+        {
+            _viewModel = viewModel;
+            _viewModel.ForcePlayed += ViewModel_ForcePlayed;
+            this.DataContext = _viewModel;
+        }
 
         private void ViewModel_ForcePlayed(object sender, ForcePlayEventArgs e)
         {
@@ -131,13 +136,13 @@ namespace FCSPlayout.WPFApp.Views
             set { SetValue(SelectedPlayItemProperty, value); }
         }
 
-        public ICommand ForcePlayCommand
-        {
-            get { return _viewModel.ForcePlayCommand; }
-        }
+        //public ICommand ForcePlayCommand
+        //{
+        //    get { return _viewModel.ForcePlayCommand; }
+        //}
         private void OnPlaylistChanged(IPlaylist oldValue, IPlaylist newValue)
         {
-            _viewModel.Playlist = this.Playlist;
+            //_viewModel.Playlist = this.Playlist;
         }
         public ICommand StartPlayoutCommand
         {
@@ -158,6 +163,5 @@ namespace FCSPlayout.WPFApp.Views
         {
             get { return _viewModel.StopDelayCommand; }
         }
-        public static PlayoutView Pv;
     }
 }

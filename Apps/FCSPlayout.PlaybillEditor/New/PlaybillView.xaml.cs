@@ -14,36 +14,6 @@ namespace FCSPlayout.PlaybillEditor
     /// </summary>
     public partial class PlaybillView : FCSPlayout.WPF.Core.ViewBase
     {
-
-        public static readonly DependencyProperty LoadPlaybillInteractionRequestProperty =
-            DependencyProperty.Register("LoadPlaybillInteractionRequest", typeof(InteractionRequest<LoadPlaybillConfirmation>), typeof(PlaybillView),
-                new FrameworkPropertyMetadata(null, OnLoadPlaybillInteractionRequestProperty));
-
-        private static void OnLoadPlaybillInteractionRequestProperty(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
-        {
-            ((PlaybillView)dpObj).OnLoadPlaybillInteractionRequestChanged((InteractionRequest<LoadPlaybillConfirmation>)e.OldValue, (InteractionRequest<LoadPlaybillConfirmation>)e.NewValue);
-        }
-
-        private void OnLoadPlaybillInteractionRequestChanged(InteractionRequest<LoadPlaybillConfirmation> oldValue, InteractionRequest<LoadPlaybillConfirmation> newValue)
-        {
-            _viewModel.LoadPlaybillInteractionRequest = this.LoadPlaybillInteractionRequest;
-        }
-
-        public InteractionRequest<LoadPlaybillConfirmation> LoadPlaybillInteractionRequest
-        {
-            get { return (InteractionRequest<LoadPlaybillConfirmation>)GetValue(LoadPlaybillInteractionRequestProperty); }
-            set { SetValue(LoadPlaybillInteractionRequestProperty, value); }
-        }
-
-        //public IPlayItem SelectedPlayItem
-        //{
-        //    get { return (IPlayItem)GetValue(SelectedPlayItemProperty); }
-        //    set { SetValue(SelectedPlayItemProperty, value); }
-        //}
-
-        //public static readonly DependencyProperty SelectedPlayItemProperty =
-        //    DependencyProperty.Register("SelectedPlayItem", typeof(IPlayItem), typeof(PlaybillView), new FrameworkPropertyMetadata(null));
-
         private PlaybillViewModel _viewModel;
 
         public PlaybillView()

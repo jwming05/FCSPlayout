@@ -51,7 +51,7 @@
         <prism:InteractionRequestTrigger SourceObject="{Binding EditCGItemsInteractionRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
                 <prism:PopupWindowAction.WindowContent>
-                    <core:CGImageItemView2/>
+                    <core:CGItemsView/>
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
@@ -200,7 +200,8 @@
                     <Button Content="删除" Margin="5" Command="{Binding DeletePlayItemCommand, ElementName=playbillView}"/>
                     <Button Content="强制播" Margin="5" Command="{Binding ForcePlayCommand, ElementName=playoutView}"/>
                     <!--<Button Content="Load" Margin="5" Command="{Binding LoadPlaybillCommand, ElementName=playbillView}"/>-->
-                    <Button Content="开始" Margin="5" Style="{StaticResource PlayButton}" Command="{Binding StartPlayoutCommand,ElementName=playoutView}"/>
+                    <Button Content="开始" Margin="5" Style="{StaticResource PlayButton}" 
+                            Command="{Binding StartPlayoutCommand,ElementName=playoutView}"/>
                     <Button Content="停止" Margin="5" Command="{Binding StopPlayoutCommand,ElementName=playoutView}"/>
                     <Button Content="延时播" Margin="5" Command="{Binding StartDelayCommand,ElementName=playoutView}"/>
                     <Button Content="停止延时" Margin="5" Command="{Binding StopDelayCommand,ElementName=playoutView}"/>

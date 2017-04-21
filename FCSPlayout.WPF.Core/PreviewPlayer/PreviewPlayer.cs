@@ -34,7 +34,7 @@ namespace FCSPlayout.WPF.Core
         {
             _mplaylistSettings = mplaylistSettings;
         }
-        internal PreviewPlayerStatus Status
+        public PreviewPlayerStatus Status
         {
             get { return _status; }
             private set
@@ -55,7 +55,7 @@ namespace FCSPlayout.WPF.Core
         }
 
         public double Duration { get; private set; }
-        internal void SetAudioGain(int audioGain)
+        public void SetAudioGain(int audioGain)
         {
             if (_mitem != null)
             {
@@ -212,7 +212,7 @@ namespace FCSPlayout.WPF.Core
             }
         }
 
-        internal double GetPosition()
+        public double GetPosition()
         {
             if (_mitem != null && this.Status != PreviewPlayerStatus.Closed && this.Status != PreviewPlayerStatus.Stopped)
             {
@@ -224,7 +224,7 @@ namespace FCSPlayout.WPF.Core
             return 0.0;
         }
 
-        internal void SetPosition(double pos)
+        public void SetPosition(double pos)
         {
             if (_mitem != null && this.Status != PreviewPlayerStatus.Closed && this.Status != PreviewPlayerStatus.Stopped)
             {

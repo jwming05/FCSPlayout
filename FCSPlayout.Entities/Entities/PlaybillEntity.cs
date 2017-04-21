@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace FCSPlayout.Entities
 {
@@ -38,5 +39,25 @@ namespace FCSPlayout.Entities
 
         [NotMapped]
         public List<PlayItemEntity> PlayItems { get; internal set; }
+
+        [XmlIgnore]
+        public UserEntity Creator
+        {
+            get; set;
+        }
+
+        [ForeignKey("Creator")]
+        public Guid? CreatorId { get; set; }
+
+        //[XmlIgnore]
+        //public UserEntity LastEditor
+        //{
+        //    get; set;
+        //}
+
+        //[ForeignKey("LastEditor")]
+        public Guid LastEditorId { get; set; }
+
+        public bool Locked { get; set; }
     }
 }

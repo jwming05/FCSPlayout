@@ -10,25 +10,26 @@ namespace FCSPlayout.WPFApp.Models
         private PlayoutSystem _innerPlayout;
         private IPlayPreview _preview;
         //private IPlayItemPlayRecorder _playRecorder;
-        private IPlaylist2 _playlist;
+        private IPlaylist3 _playlist;
         private ILoopPlayToken _loopPlayToken;
 
-        public IPlaylist2 Playlist
+        public IPlaylist3 Playlist
         {
             get
             {
                 return _playlist;
             }
 
-            set
-            {
-                _playlist = value;
-            }
+            //set
+            //{
+            //    _playlist = value;
+            //}
         }
 
-        public BindablePlayout(IPlayPreview preview/*,IPlayItemPlayRecorder playRecorder*/)
+        public BindablePlayout(IPlayPreview preview, IPlaylist3 playlist/*,IPlayItemPlayRecorder playRecorder*/)
         {
             _preview = preview;
+            _playlist = playlist;
             //_playRecorder = playRecorder;            
         }
 
@@ -43,10 +44,10 @@ namespace FCSPlayout.WPFApp.Models
             return _innerPlayout != null;
         }
 
-        internal bool CanForcePlay(IPlayItem playItem)
-        {
-            return _innerPlayout != null && _innerPlayout.CanForcePlay(playItem);
-        }
+        //internal bool CanForcePlay(IPlayItem playItem)
+        //{
+        //    return _innerPlayout != null && _innerPlayout.CanForcePlay(playItem);
+        //}
 
         internal bool CanStopDelay()
         {
@@ -112,14 +113,14 @@ namespace FCSPlayout.WPFApp.Models
             }
         }
 
-        internal void ForcePlay(IPlayItem playItem/*, Action<IPlayItem, PlayRange, IPlayItem> action*/)
-        {
-            if (CanForcePlay(playItem))
-            {
-                _innerPlayout.ForcePlay(playItem/*, action*/);
-                OnStateChanged();
-            }
-        }
+        //internal void ForcePlay(IPlayItem playItem/*, Action<IPlayItem, PlayRange, IPlayItem> action*/)
+        //{
+        //    if (CanForcePlay(playItem))
+        //    {
+        //        _innerPlayout.ForcePlay(playItem/*, action*/);
+        //        OnStateChanged();
+        //    }
+        //}
 
         internal void StartDelay()
         {

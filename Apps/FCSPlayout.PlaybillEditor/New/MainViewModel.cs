@@ -18,7 +18,6 @@ namespace FCSPlayout.PlaybillEditor
         private readonly DelegateCommand _collectGarbageCommand;
         private PeriodicalGarbageCollector _garbageCollector = new PeriodicalGarbageCollector();
 
-        private readonly InteractionRequest<LoadPlaybillConfirmation> _loadPlaybillInteractionRequest;
         public MainViewModel(IUserService userService, InteractionRequests interactionRequests) 
             :base(userService)
         {
@@ -28,7 +27,8 @@ namespace FCSPlayout.PlaybillEditor
             this.EditDurationInteractionRequest = interactionRequests.EditDurationInteractionRequest;
             this.EditDateTimeInteractionRequest = interactionRequests.EditDateTimeInteractionRequest;
             this.EditCGItemsInteractionRequest = interactionRequests.EditCGItemsInteractionRequest;
-            this.SaveFileInteractionRequest = interactionRequests.SaveFileInteractionRequest; 
+            this.SaveFileInteractionRequest = interactionRequests.SaveFileInteractionRequest;
+            this.LoadPlaybillInteractionRequest = interactionRequests.LoadPlaybillInteractionRequest;
 
             //_timer = timer;
 
@@ -43,7 +43,6 @@ namespace FCSPlayout.PlaybillEditor
             _collectGarbageCommand = new DelegateCommand(ExecuteCollectGarbage);
 
             _editMediaItemInteractionRequest = new InteractionRequest<EditMediaItemConfirmation>();
-            _loadPlaybillInteractionRequest = new InteractionRequest<LoadPlaybillConfirmation>();
         }
 
         private void ExecuteCollectGarbage()
@@ -112,10 +111,7 @@ namespace FCSPlayout.PlaybillEditor
 
         public InteractionRequest<LoadPlaybillConfirmation> LoadPlaybillInteractionRequest
         {
-            get
-            {
-                return _loadPlaybillInteractionRequest;
-            }
+            get;private set;
         }
 
         public InteractionRequest<Confirmation> ConfirmationInteractionRequest { get; private set; }

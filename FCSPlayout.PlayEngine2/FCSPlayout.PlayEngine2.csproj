@@ -64,6 +64,7 @@
     <Compile Include="IPlayer.cs" />
     <Compile Include="IPlayerItem.cs" />
     <Compile Include="IPlayerToken.cs" />
+    <Compile Include="IPlaylist3.cs" />
     <Compile Include="IPlayPreview.cs" />
     <Compile Include="MPlaylistFactory.cs" />
     <Compile Include="MPlaylistInitializer.cs" />

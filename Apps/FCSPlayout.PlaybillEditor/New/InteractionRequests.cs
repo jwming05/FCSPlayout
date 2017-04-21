@@ -12,7 +12,8 @@ namespace FCSPlayout.PlaybillEditor
         private readonly InteractionRequest<EditCGItemsConfirmation> _editCGItemsInteractionRequest=new InteractionRequest<EditCGItemsConfirmation>();
         private readonly InteractionRequest<OpenFileDialogConfirmation> _openFileInteractionRequest=new InteractionRequest<OpenFileDialogConfirmation>();
         private readonly InteractionRequest<SaveFileDialogConfirmation> _saveFileInteractionRequest=new InteractionRequest<SaveFileDialogConfirmation>();
-
+        private readonly InteractionRequest<LoadPlaybillConfirmation> _loadPlaybillInteractionRequest = new InteractionRequest<LoadPlaybillConfirmation>();
+        
         public InteractionRequests()
         {
         }
@@ -54,6 +55,14 @@ namespace FCSPlayout.PlaybillEditor
             get
             {
                 return _saveFileInteractionRequest;
+            }
+        }
+
+        public InteractionRequest<LoadPlaybillConfirmation> LoadPlaybillInteractionRequest
+        {
+            get
+            {
+                return _loadPlaybillInteractionRequest;
             }
         }
     }

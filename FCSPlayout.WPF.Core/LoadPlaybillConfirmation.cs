@@ -25,7 +25,25 @@ namespace FCSPlayout.WPF.Core
         public DateTime StopTime { get { return _entity.StopTime; } }
         public TimeSpan Duration { get { return TimeSpan.FromSeconds(_entity.Duration); } }
 
+        public Guid? CreatorId
+        {
+            get { return _entity.CreatorId; }
+        }
 
+        public Guid? LastEditorId
+        {
+            get { return _entity.LastEditorId; }
+        }
+
+        public DateTime CreationTime
+        {
+            get { return _entity.CreationTime; }
+        }
+
+        public DateTime ModificationTime
+        {
+            get { return _entity.ModificationTime; }
+        }
         public BindablePlaybill(PlaybillEntity entity)
         {
             this._entity = entity;

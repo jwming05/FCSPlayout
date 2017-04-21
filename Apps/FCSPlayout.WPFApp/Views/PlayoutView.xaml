@@ -56,11 +56,12 @@
             <!--<ListBox Grid.Row="4" ItemsSource="{Binding PlayRecords,Mode=OneWay}" MinHeight="50" ScrollViewer.VerticalScrollBarVisibility="Visible">
             </ListBox>-->
         </Grid>
-        <!--<StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Content="Start" Margin="5" Command="{Binding StartPlayoutCommand}"/>
-            <Button Content="Stop" Margin="5" Command="{Binding StopPlayoutCommand}"/>
-            <Button Content="StartDelay" Margin="5" Command="{Binding StartDelayCommand}"/>
-            <Button Content="StopDelay" Margin="5" Command="{Binding StopDelayCommand}"/>
-        </StackPanel>-->
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Content="开播" Margin="5" Command="{Binding StartPlayoutCommand}"/>
+            <Button Content="停播" Margin="5" Command="{Binding StopPlayoutCommand}"/>
+            <Button Content="开始延时" Margin="5" Command="{Binding StartDelayCommand}"/>
+            <Button Content="停止延时" Margin="5" Command="{Binding StopDelayCommand}"/>
+            <Button Content="触发播" Margin="5" Command="{Binding ForcePlayCommand}"/>
+        </StackPanel>
     </Grid>
 </UserControl>

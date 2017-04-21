@@ -27,7 +27,7 @@ namespace FCSPlayout.Domain
         public PlayoutConfiguration()
         {
             this.MinPlayDuration = TimeSpan.FromSeconds(4);
-            this.AutoPaddingMediaSource = new AutoPaddingMediaSource();
+            //this.AutoPaddingMediaSource = FCSPlayout.Domain.AutoPaddingMediaSource.Instance; // new AutoPaddingMediaSource();
 
             this.PlayTimeTolerance = TimeSpan.FromMilliseconds(100);
 

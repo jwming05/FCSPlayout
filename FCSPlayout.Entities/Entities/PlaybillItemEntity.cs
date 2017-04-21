@@ -19,10 +19,9 @@ namespace FCSPlayout.Entities
         #region Constructors
         public PlaybillItemEntity()
         {
-
         }
 
-        public PlaybillItemEntity(IPlaybillItem billItem,IMediaSourceConverter mediaSourceConverter)
+        public PlaybillItemEntity(IPlaybillItem billItem, Func<IMediaSource,MediaSourceEntity> converter)
         {
             this.Id = billItem.Id;
 
@@ -36,9 +35,10 @@ namespace FCSPlayout.Entities
             if (billItem.MediaSource.Category != MediaSourceCategory.Null)
             {
                 this.MediaSourceId = billItem.MediaSource.Id;
-                if (mediaSourceConverter != null)
+
+                if (converter != null)
                 {
-                    this.MediaSource = mediaSourceConverter.ToEntity<MediaSourceEntity>(billItem.MediaSource);
+                    this.MediaSource = converter(billItem.MediaSource);
                 }
             }
             else
@@ -64,9 +64,6 @@ namespace FCSPlayout.Entities
             {
                 this.CGContents = CGItemCollection.ToXml(billItem.CGItems);
             }
-
-            
-            
         }
         #endregion Constructors
 
