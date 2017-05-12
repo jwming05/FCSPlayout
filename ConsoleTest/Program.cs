@@ -1,41 +1,31 @@
-﻿using System;
+﻿using ConsoleTest;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
 
 class MainClass
 {
     public static void Main()
     {
-        RandomNumberGenerator rnd = RandomNumberGenerator.Create();
-
-        byte[] input = new byte[20];
-        rnd.GetBytes(input);
-
-        //Console.WriteLine("Input        : {0}\n", BytesToStr(input));
-        //PrintHash(input);
-        //PrintHashOneBlock(input);
-        //PrintHashMultiBlock(input, 1);
-        //PrintHashMultiBlock(input, 2);
-        //PrintHashMultiBlock(input, 3);
-        //PrintHashMultiBlock(input, 5);
-        //PrintHashMultiBlock(input, 10);
-        //PrintHashMultiBlock(input, 11);
-        //PrintHashMultiBlock(input, 19);
-        //PrintHashMultiBlock(input, 20);
-        //PrintHashMultiBlock(input, 21);
-
-        var matrix = new double[][]
+        var input = SamplePointGenerator.Generate(10);
+        double[] rex, imx;
+        FourierTransform.DFT3(input, out rex, out imx);
+        for (int i = 0; i < rex.Length; i++)
         {
-            new double[]{1, 2, 3 },
-            new double[]{4, 5, 6 },
-            new double[]{7, 8, 9 }
-        };
-
-        PrintMatrix(matrix);
+            Console.WriteLine("<{0},{1}> {2}", rex[i], imx[i], Math.Sqrt(rex[i] * rex[i] + imx[i] * imx[i]));
+        }
         Console.WriteLine();
-        PrintMatrix(RowTransform(matrix,true));
+
+        var output=FourierTransform.IDFT3(rex, imx);
+
+        for(int i = 0; i < input.Length; i++)
+        {
+            Console.WriteLine("<{0},{1}>", Math.Round(input[i],2), Math.Round(output[i],2));
+        }
         Console.ReadKey();
     }
 

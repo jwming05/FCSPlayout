@@ -11,9 +11,11 @@ namespace FCSPlayout.WPFApp
         {
             _regionManager = regionManager;
         }
+
         public void Initialize()
         {
             _regionManager.RegisterViewWithRegion("mainRightRegion", typeof(PlaybillView));
+            _regionManager.RegisterViewWithRegion("mainRightRegion2", typeof(PlayedItemsView));
         }
     }
 }

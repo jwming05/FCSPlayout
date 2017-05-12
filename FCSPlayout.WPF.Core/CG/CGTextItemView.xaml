@@ -21,6 +21,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock  Foreground="#c9c9c9" Text="名称：" Margin="5"/>
@@ -61,5 +62,8 @@
             </ComboBox.Items>
             
         </ComboBox>
+
+        <TextBlock  Foreground="#c9c9c9" Grid.Row="4" Grid.Column="2" Text="文字颜色：" Margin="5"/>
+        <xctk:ColorPicker Margin="5" Grid.Row="4" Grid.Column="3" SelectedColor="{Binding CGTextItem.TextColor,RelativeSource={RelativeSource AncestorType=UserControl,Mode=FindAncestor},Mode=TwoWay}"/>
     </Grid>
 </UserControl>

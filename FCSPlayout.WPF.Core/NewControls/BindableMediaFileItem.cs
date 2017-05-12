@@ -224,6 +224,14 @@ namespace FCSPlayout.WPF.Core
 
         public MediaFileEntity Entity { get; private set; }
 
+        public IPlayItem PlayItem
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         private static TimeSpan GetDuration(string filePath)
         {
             return MediaFileDurationGetter.Current.GetDuration(filePath);

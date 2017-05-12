@@ -17,26 +17,38 @@ namespace FileComparator
 
         public static readonly DependencyProperty PointsProperty =
             DependencyProperty.Register("Points", typeof(IEnumerable<Point>), typeof(PlotControl),
-                new FrameworkPropertyMetadata(null, OnPointsPropertyChanged));
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
+        /// <summary>
+        /// 获取或设置窗口坐标原点在视口中的X坐标。
+        /// </summary>
         public double OriginX
         {
             get { return (double)GetValue(OriginXProperty); }
             set { SetValue(OriginXProperty, value); }
         }
 
+        /// <summary>
+        /// 获取或设置窗口坐标原点在视口中的Y坐标。
+        /// </summary>
         public double OriginY
         {
             get { return (double)GetValue(OriginYProperty); }
             set { SetValue(OriginYProperty, value); }
         }
 
+        /// <summary>
+        /// 获取或设置X轴上视口度量与窗口度量之比（视口度量/窗口度量）。
+        /// </summary>
         public double ScaleX
         {
             get { return (double)GetValue(ScaleXProperty); }
             set { SetValue(ScaleXProperty, value); }
         }
 
+        /// <summary>
+        /// 获取或设置Y轴上视口度量与窗口度量之比（视口度量/窗口度量）。
+        /// </summary>
         public double ScaleY
         {
             get { return (double)GetValue(ScaleYProperty); }
@@ -71,9 +83,6 @@ namespace FileComparator
         //{
         //}
 
-        private static void OnPointsPropertyChanged(DependencyObject dpObj, DependencyPropertyChangedEventArgs e)
-        {
-        }
 
 
         public PlotControl()
@@ -99,28 +108,23 @@ namespace FileComparator
         {
             base.OnRender(drawingContext);
 
-            var pt1 = new Point();
-            var pt2 = new Point(100, 100);
-
-            pt1 = MapWindowToViewport(pt1);
-            pt2 = MapWindowToViewport(pt2);
-
-            drawingContext.DrawLine(this.LinePen, pt1, pt2);
-
-            //if(this.Points==null || !this.Points.Any())
-            //{
-            //    return;
-            //}
-
-
-            //Point prevPoint=this.MapInfo.MapWindowToViewport(this.Points.First());
+            // draw x axis
+            drawingContext.DrawLine(this.LinePen, new Point(0,this.OriginY), new Point(this.RenderSize.Width, this.OriginY));
             
-            //foreach(var pt in this.Points)
-            //{
-            //    var current= this.MapInfo.MapWindowToViewport(pt);
-            //    drawingContext.DrawLine(this.LinePen, prevPoint,current);
-            //    prevPoint = current;
-            //}
+            // draw y axis
+            drawingContext.DrawLine(this.LinePen, new Point(this.OriginX, 0), new Point(this.OriginX, this.RenderSize.Height));
+
+
+            if (this.Points!=null && this.Points.Any())
+            {
+                var prevPt = MapWindowToViewport(this.Points.First());
+                foreach(var pt in this.Points)
+                {
+                    var current= MapWindowToViewport(pt);
+                    drawingContext.DrawLine(this.LinePen, prevPt, current);
+                    prevPt = current;
+                }
+            }
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)

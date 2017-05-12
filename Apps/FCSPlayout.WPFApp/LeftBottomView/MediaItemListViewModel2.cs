@@ -7,6 +7,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Prism.Regions;
+using Prism.Interactivity.InteractionRequest;
 
 namespace FCSPlayout.WPFApp
 {
@@ -25,12 +26,13 @@ namespace FCSPlayout.WPFApp
         private int _pageSize = 30;
 
         public MediaItemListViewModel2(IEventAggregator eventAggregator, IMediaFilePathResolver filePathResolver, 
-            IMediaFileImageResolver imageResolver,IRegionManager regionManager)
+            IMediaFileImageResolver imageResolver,IRegionManager regionManager,InteractionRequests interactionRequests)
         {
             this.EventAggregator = eventAggregator;
             this.FilePathResolver = filePathResolver;
             this.ImageResolver = imageResolver;
 
+            _interactionRequests = interactionRequests;
             _regionManager = regionManager;
 
             //_mediaItemCollection = new ObservableCollection<BindableMediaFileItem>();
@@ -52,11 +54,27 @@ namespace FCSPlayout.WPFApp
 
         private void Preview(IPlayableItem playableItem)
         {
-            if (this.EventAggregator != null && playableItem != null)
+            if (/*this.EventAggregator != null && */playableItem != null)
             {
                 _currentPreviewItem = playableItem;
-                this.EventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Publish(playableItem);
+                this.PreviewInteractionRequest.Raise(new PreviewRequestConfirmation(playableItem) { Title = "预览", PlayItemEditorFactory =null },
+                (c) =>
+                {
+                    if (c.Confirmed)
+                    {
+
+                    }
+
+                    playableItem.ClosePreview();
+                });
+
+                //this.EventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Publish(playableItem);
             }
+        }
+
+        public InteractionRequest<PreviewRequestConfirmation> PreviewInteractionRequest
+        {
+            get { return _interactionRequests.PreviewInteractionRequest; }
         }
 
         private void SearchMediaItems(RequestPagingItemsEventArgs e)
@@ -196,6 +214,7 @@ namespace FCSPlayout.WPFApp
         public event EventHandler IsActiveChanged;
         private bool _isActive;
         private IRegionManager _regionManager;
+        private InteractionRequests _interactionRequests;
 
         public bool IsActive
         {

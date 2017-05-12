@@ -19,7 +19,8 @@ namespace PixelFormatViewer
 
         protected override DependencyObject CreateShell()
         {
-            return this.Container.Resolve<MainWindow>();
+            //return this.Container.Resolve<MainWindow>();
+            return this.Container.Resolve<Window1>();
         }
 
         protected override void InitializeShell()

@@ -17,7 +17,7 @@
 
         <DataGrid Name="dgPlaybill" AutoGenerateColumns="False" ItemsSource="{Binding Playbills}" 
                   SelectedItem="{Binding SelectedPlaybill,Mode=TwoWay}" SelectionMode="Single"
-                  SelectionChanged="DataGrid_SelectionChanged">
+                  SelectionChanged="DataGrid_SelectionChanged" IsReadOnly="True">
             <DataGrid.Columns>
                 <!--<DataGridTextColumn Binding="{Binding Id}" Header="ID"/>-->
                 <DataGridTextColumn Binding="{Binding StartTime, Converter={StaticResource TimeCodeConverter}}" Header="开始时间"/>

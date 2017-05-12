@@ -15,11 +15,11 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <TextBlock Text="Origin X:" VerticalAlignment="Center"/>
-            <Slider Width="100" Minimum="-100" Maximum="100" 
+            <Slider Name="sliderOriginX" Width="100" Minimum="-100" Maximum="100" 
                     Value="{Binding OriginX,ElementName=plotControl,Mode=TwoWay}"/>
 
             <TextBlock Text="Origin Y:" VerticalAlignment="Center"/>
-            <Slider Width="100" Minimum="-100" Maximum="100" 
+            <Slider Name="sliderOriginY" Width="100" Minimum="-100" Maximum="100" 
                     Value="{Binding OriginY,ElementName=plotControl,Mode=TwoWay}"/>
 
             <TextBlock Text="Scale X:" VerticalAlignment="Center"/>

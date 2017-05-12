@@ -69,6 +69,22 @@ namespace FCSPlayout.AppInfrastructure
             //return result;
         }
 
+        public static IEnumerable<PlaybillEntity> LoadPlaybills(DateTime minStopTime,DateTime prevStartTime)
+        {
+            return PlayoutRepository.LoadPlaybills(minStopTime, prevStartTime);
+
+            //List<PlaybillEntity> result = new List<PlaybillEntity>();
+            //using (var ctx = new PlayoutDbContext())
+            //{
+            //    var temp = ctx.Playbills.ToList();
+            //    foreach (var item in temp)
+            //    {
+            //        result.Add(new BindablePlaybill(item));
+            //    }
+            //}
+            //return result;
+        }
+
         private void ValidatePlayItems()
         {
             

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleTest
 {
-    class Class1
+    public class Class1
     {
         int count;
         int sum;
@@ -60,6 +60,30 @@ namespace ConsoleTest
             }
 
             return (squareSum / count) - (sum * sum) / (count * count);
+        }
+
+        public static double f(double x)
+        {
+            return 10 + Math.Sin(x) + 2 * Math.Sin(2 * x) + 3 * Math.Sin(3 * x) + 4 * Math.Sin(4 * x);
+        }
+
+        public static Complex[] DFT(double[] input)
+        {
+            Complex[] output = new Complex[input.Length];
+            for(int u = 0; u < output.Length; u++)
+            {
+                Complex temp = (Complex)0.0;
+                for(int x = 0; x < input.Length; x++)
+                {
+                    var a = -2 * Math.PI * u * x / input.Length;
+                    var real = Math.Cos(a);
+                    var imga = Math.Sin(a);
+
+                    temp += (1.0 / input.Length) * input[x] * new Complex(real,imga); // (-j2*Math.PI*u*x/input.Length);
+                }
+            }
+
+            return output;
         }
     }
 }

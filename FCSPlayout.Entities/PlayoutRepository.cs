@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Diagnostics;
+using FCSPlayout.CG;
 
 namespace FCSPlayout.Entities
 {
@@ -290,6 +291,16 @@ namespace FCSPlayout.Entities
             }
         }
 
+        public static List<PlaybillEntity> LoadPlaybills(DateTime minStopTime,DateTime prevStartTime)
+        {
+            using (var ctx = new PlayoutDbContext())
+            {
+                return ctx.Database.SqlQuery<PlaybillEntity>(
+                    "select * from [Playbills] where dateadd(SECOND,[Duration],[StartTime]) >= @p0 and [StartTime]>@p1 and Locked=0 order by [StartTime]",
+                    minStopTime,prevStartTime).ToList();
+            }
+        }
+
         public static void DeleteMediaFile(MediaFileEntity entity, string applicationName, Guid userId, string userName)
         {
             using (var context = new PlayoutDbContext())
@@ -457,6 +468,32 @@ namespace FCSPlayout.Entities
             return _mplaylistSettings;
         }
 
+        private static CG.CGItemCollection _cgItems;
+        public static CGItemCollection GetCGItems()
+        {
+            if (_cgItems == null)
+            {
+                var info = GetSettings("CGItems", null).FirstOrDefault();
+                if (info!=null && !string.IsNullOrEmpty(info.Value))
+                {
+                    _cgItems= CGItemCollection.FromXml(info.Value);
+                }
+                
+            }
+            if (_cgItems == null)
+            {
+                _cgItems = new CGItemCollection();
+            }
+            return _cgItems;
+        }
+
+        public static void SaveCGItems(CGItemCollection cgItems)
+        {
+            _cgItems = cgItems;
+            var value = CGItemCollection.ToXml(cgItems);
+            SaveSetting(null, null, null, "CGItems", value, null);
+        }
+
         public static IEnumerable<SettingInfo> GetSettings(string name, string groupName)
         {
             groupName = groupName ?? PlayoutDbContext.DefaultName;
@@ -480,7 +517,6 @@ namespace FCSPlayout.Entities
                 {
                     return context.ChannelInfos.ToArray();
                 }
-
             }
         }
 
@@ -503,7 +539,8 @@ namespace FCSPlayout.Entities
             }
         }
 
-        public static void SaveSetting(string machineName, string applicationName, string groupName, string name, string value, string tag)
+        public static void SaveSetting(string machineName, string applicationName, 
+            string groupName, string name, string value, string tag)
         {
             machineName = machineName ?? PlayoutDbContext.DefaultName;
             applicationName = applicationName ?? PlayoutDbContext.DefaultName;
@@ -558,7 +595,6 @@ namespace FCSPlayout.Entities
                 }
                 catch (Exception ex)
                 {
-
                 }
             }
         }

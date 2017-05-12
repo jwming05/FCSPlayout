@@ -26,14 +26,14 @@ namespace FCSPlayout.WPFApp
         private IPlayItem _playItem;
         private BitmapSource _image;
         private string _resolvedFilePath;
-        private IPlayItemEditorFactory _itemEditorFactory;
+        //private IPlayItemEditorFactory _itemEditorFactory;
 
-        public BindablePlayItem(IPlayItem playItem,string resolvedFilePath, IPlayItemEditorFactory itemEditorFactory)
+        public BindablePlayItem(IPlayItem playItem,string resolvedFilePath/*, IPlayItemEditorFactory itemEditorFactory*/)
         {
             _playItem = playItem;
 
             _resolvedFilePath = resolvedFilePath;
-            _itemEditorFactory = itemEditorFactory;
+            //_itemEditorFactory = itemEditorFactory;
 
             if (playItem.MediaSource.Category != MediaSourceCategory.File)
             {
@@ -167,7 +167,7 @@ namespace FCSPlayout.WPFApp
         //}
 
 
-        internal IPlayItem PlayItem
+        public IPlayItem PlayItem
         {
             get
             {
@@ -186,6 +186,15 @@ namespace FCSPlayout.WPFApp
                 }
                 return 0;
             }
+        }
+
+        internal void Truncate(DateTime maxStopTime)
+        {
+            var duration = this.StartTime < maxStopTime ? maxStopTime.Subtract(this.StartTime) : TimeSpan.Zero;
+            _playItem.CalculatedPlayDuration = duration;
+
+            this.RaisePropertyChanged(nameof(PlayDuration));
+            this.RaisePropertyChanged(nameof(Duration));
         }
 
         public MediaSourceCategory Category
@@ -250,13 +259,12 @@ namespace FCSPlayout.WPFApp
 
             set
             {
-                using(var editor = this._itemEditorFactory.CreateEditor())
-                {
-                    editor.ChangePlayRange(this.PlayItem, value);
-                }
+                //using(var editor = this._itemEditorFactory.CreateEditor())
+                //{
+                //    editor.ChangePlayRange(this.PlayItem, value);
+                //}
 
-                //_playItem.PlayRange
-                //throw new NotImplementedException();
+                throw new NotImplementedException();
             }
         }
 

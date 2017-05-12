@@ -186,11 +186,15 @@
       <DependentUpon>MediaItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="LeftBottomView\MediaItemViewModel.cs" />
+    <Compile Include="LeftBottomView\PlayedItemsView.xaml.cs">
+      <DependentUpon>PlayedItemsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LeftBottomView\PlaybillView.xaml.cs">
       <DependentUpon>PlaybillView.xaml</DependentUpon>
     </Compile>
     <Compile Include="LeftBottomView\PlaybillViewModel.cs" />
     <Compile Include="LeftBottomView\PlaybillViewModel_2.cs" />
+    <Compile Include="LeftBottomView\PlayedItemsViewModel.cs" />
     <Compile Include="LeftBottomView\PlayItemCollection.cs" />
     <Compile Include="LocalSettings.cs" />
     <Compile Include="Models\BindableMediaItem.cs" />
@@ -213,7 +217,11 @@
     <Compile Include="LeftBottomView\PreviewControlWrapper.xaml.cs">
       <DependentUpon>PreviewControlWrapper.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Playlist3.cs" />
     <Compile Include="PlayoutModule.cs" />
+    <Compile Include="PreviewControl.xaml.cs">
+      <DependentUpon>PreviewControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PreviewRequestConfirmation.cs" />
     <Compile Include="SettingsManager.cs" />
     <Compile Include="ChannelSwitcher.cs" />
@@ -289,6 +297,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="LeftBottomView\PlayedItemsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="LeftBottomView\PlaybillView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -318,6 +330,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="LeftBottomView\PreviewControlWrapper.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PreviewControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

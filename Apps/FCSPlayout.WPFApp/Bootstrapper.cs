@@ -12,6 +12,8 @@ using Prism.Modularity;
 using System.Configuration;
 using FCSPlayout.WPF.Core;
 using FCSPlayout.Entities;
+using FCSPlayout.PlayEngine;
+using System.Collections.ObjectModel;
 
 namespace FCSPlayout.WPFApp
 {
@@ -30,6 +32,12 @@ namespace FCSPlayout.WPFApp
 
             this.Container.RegisterInstance<IPlayoutConfiguration>(PlayoutConfiguration.Current);
             this.Container.RegisterInstance(PlayoutRepository.GetMPlaylistSettings());
+
+            this.Container.RegisterType<PlayItemCollection>(new ContainerControlledLifetimeManager());
+            this.Container.RegisterType<IPlaylist3, Playlist3>();
+
+            this.Container.RegisterInstance<ObservableCollection<BindablePlayItem>>("playedCollection", 
+                new ObservableCollection<BindablePlayItem>());
         }
 
         protected override DependencyObject CreateShell()

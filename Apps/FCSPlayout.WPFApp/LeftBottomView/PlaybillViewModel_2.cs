@@ -30,6 +30,9 @@ namespace FCSPlayout.WPFApp
 
         private readonly DelegateCommand _savePlaybillCommand;
         private readonly DelegateCommand _loadPlaybillCommand;
+        private readonly DelegateCommand _forcePlayCommand;
+
+        private readonly DelegateCommand _loadFirstPlaybillCommand;
 
         private IEventAggregator _eventAggregator;
         private InteractionRequests _interactionRequests;
@@ -39,6 +42,8 @@ namespace FCSPlayout.WPFApp
 
         private IPlayoutConfiguration _playoutConfig;
         private Playbill _playbill;
+        private BindablePlaybill _bindablePlaybill;
+
         private IUserService _userService;
 
         public BindablePlayItem SelectedPlayItem
@@ -56,6 +61,8 @@ namespace FCSPlayout.WPFApp
                 _changeToTimingModeCommand.RaiseCanExecuteChanged();
                 _moveUpCommand.RaiseCanExecuteChanged();
                 _moveDownCommand.RaiseCanExecuteChanged();
+
+                _forcePlayCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -163,11 +170,24 @@ namespace FCSPlayout.WPFApp
         #region Command Methods
         private void Preview(IPlayableItem playableItem)
         {
-            if (_eventAggregator != null && playableItem != null)
+            if (/*_eventAggregator != null && */playableItem != null)
             {
                 _currentPreviewItem = playableItem;
-                _eventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Publish(playableItem);
+                this.PreviewInteractionRequest.Raise(new PreviewRequestConfirmation(playableItem) { Title = "预览",PlayItemEditorFactory=this },
+                (c) =>
+                {
+                    if (c.Confirmed)
+                    {
+
+                    }
+
+                    playableItem.ClosePreview();
+                });
+
+                //_eventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Publish(playableItem);
             }
+
+            
         }
 
         private bool CanDeletePlayItem()
@@ -515,6 +535,35 @@ namespace FCSPlayout.WPFApp
             return true;
         }
 
+        private bool CanLoadFirstPlaybill()
+        {
+            return true;
+        }
+
+        private void LoadFirstPlaybill()
+        {
+            var bill = this.LoadPlaybills().FirstOrDefault();
+            if (bill != null)
+            {
+                List<IPlayItem> playItems = new List<IPlayItem>();
+                var playbill = Playbill.Load(bill.Id, playItems);
+
+                if (playItems.Count > 0)
+                {
+                    //this.Clear();
+
+                    _playbill = playbill;
+
+                    _bindablePlaybill = bill;
+
+                    foreach (var item in playItems)
+                    {
+                        _playItemCollection.Add(_playItemCollection.CreateBindablePlayItem(item));
+                    }
+                }
+            }
+        }
+
         private bool CanLoadPlaybill()
         {
             return true;
@@ -524,8 +573,6 @@ namespace FCSPlayout.WPFApp
         {
             if (CanLoadPlaybill())
             {
-                // TODO: 提示保存
-
                 this.LoadPlaybillInteractionRequest.Raise(new LoadPlaybillConfirmation { Title = "选择节目单", Playbills =LoadPlaybills() },
                     c =>
                     {
@@ -538,27 +585,84 @@ namespace FCSPlayout.WPFApp
                                 List<IPlayItem> playItems = new List<IPlayItem>();
                                 var playbill = Playbill.Load(bill.Id, playItems);
 
-                                if (playItems.Count > 0)
+                                if (playItems.Count == 0) return;
+
+                                if (_playItemCollection.Count > 0)
                                 {
-                                    this.Clear();
 
-                                    _playbill = playbill;
-
-                                    foreach(var item in playItems)
+                                    var maxStopTime = playItems[0].StartTime;
+                                    if (maxStopTime > _playItemCollection.Last().StopTime)
                                     {
-                                        _playItemCollection.Add(_playItemCollection.CreateBindablePlayItem(item));
+                                        int conflictCount = 0;
+                                        // TODO: 提示截短。
+
+                                    for(int i = _playItemCollection.Count - 1; i >= 0; i--)
+                                        {
+                                            var temp = _playItemCollection[i];
+                                            if (temp.StopTime <= maxStopTime)
+                                            {
+                                                break;
+                                            }
+
+                                            if (temp.ScheduleMode != PlayScheduleMode.Auto)
+                                            {
+                                                conflictCount++;
+                                            }
+                                        }
+
+                                        if (conflictCount > 0)
+                                        {
+                                            this.RaiseDisplayMessageInteractionRequest("错误", "新加载的节目单的开始时间为" + maxStopTime.ToString("yyyy-MM--dd HH:mm:ss") + "，在这个时间段内与现有定时播或定时插播存在时间冲突。");
+                                            return;
+                                        }
                                     }
                                 }
+                                
+                                //this.Clear();
+
+                                _playbill = playbill;
+                                _bindablePlaybill = bill;
+
+                                _playItemCollection.Append(playItems);
+                                //foreach (var item in playItems)
+                                //{
+                                //    _playItemCollection.Add(_playItemCollection.CreateBindablePlayItem(item));
+                                //}
                             }
                         }
                     });
             }
         }
 
+        private bool CanForcePlay()
+        {
+            return this.SelectedPlayItem != null && this.SelectedPlayItem.ScheduleMode==PlayScheduleMode.Auto 
+                && _playItemCollection.CanForcePlay(this.SelectedPlayItem);
+        }
+
+        private void ForcePlay()
+        {
+            if (this.CanForcePlay())
+            {
+                using(var editor = this.Edit())
+                {
+                    editor.ForcePlay(_playItemCollection.CurrentItem, this.SelectedPlayItem.PlayItem);
+                }
+                //_playItemCollection.ForcePlay(this.SelectedPlayItem);
+            }
+        }
+
         private IEnumerable<BindablePlaybill> LoadPlaybills()
         {
             DateTime minStopTime = DateTime.Now.AddMinutes(5);
-            return Playbill.LoadPlaybills(minStopTime).Select(i=> new BindablePlaybill(i)).ToArray();
+            if (_bindablePlaybill == null)
+            {
+                return Playbill.LoadPlaybills(minStopTime).Select(i => new BindablePlaybill(i)).ToArray();
+            }
+            else
+            {
+                return Playbill.LoadPlaybills(minStopTime,_bindablePlaybill.StartTime).Select(i => new BindablePlaybill(i)).ToArray();
+            }
         }
         #endregion Command Methods
 
@@ -754,6 +858,7 @@ namespace FCSPlayout.WPFApp
 
             this.RaisePropertyChanged(nameof(this.Duration));
 
+            this._playItemCollection.OnCommitted();
             _saveXmlCommand.RaiseCanExecuteChanged();
             _savePlaybillCommand.RaiseCanExecuteChanged();
             _clearCommand.RaiseCanExecuteChanged();
@@ -788,27 +893,54 @@ namespace FCSPlayout.WPFApp
             _playItemCollection.Clear();
         }
 
-        FCSPlayout.AppInfrastructure.IPlayItemEditor IPlayItemEditorFactory.CreateEditor()
+        FCSPlayout.AppInfrastructure.IPlayableItemEditor IPlayableItemEditorFactory.CreateEditor()
         {
-            return new PlayItemEditor(this.Edit(), OnError);
+            return new PlayableItemEditor(this.Edit(), OnError);
         }
 
         private void OnError(Exception ex)
         {
             RaiseDisplayMessageInteractionRequest("错误", ex.Message);
         }
-        class PlayItemEditor : FCSPlayout.AppInfrastructure.IPlayItemEditor
+
+        public InteractionRequest<PreviewRequestConfirmation> PreviewInteractionRequest
+        {
+            get { return _interactionRequests.PreviewInteractionRequest; }
+        }
+
+        public DelegateCommand ForcePlayCommand
+        {
+            get
+            {
+                return _forcePlayCommand;
+            }
+        }
+
+        public DelegateCommand LoadFirstPlaybillCommand
+        {
+            get
+            {
+                return _loadFirstPlaybillCommand;
+            }
+        }
+
+        class PlayableItemEditor : FCSPlayout.AppInfrastructure.IPlayableItemEditor
         {
             private Action<Exception> _onError;
             private IPlaylistEditor _playlistEditor;
 
-            public PlayItemEditor(IPlaylistEditor playlistEditor,Action<Exception> onError)
+            public PlayableItemEditor(IPlaylistEditor playlistEditor,Action<Exception> onError)
             {
                 this._playlistEditor = playlistEditor;
                 _onError = onError;
             }
 
-            public void ChangePlayRange(IPlayItem playItem,PlayRange newRange)
+            public void ChangePlayRange(IPlayableItem playItem, PlayRange newRange)
+            {
+                this.ChangePlayRange(playItem.PlayItem, newRange);
+            }
+
+            private void ChangePlayRange(IPlayItem playItem,PlayRange newRange)
             {
                 try
                 {
@@ -823,7 +955,6 @@ namespace FCSPlayout.WPFApp
                     }
                 }
             }
-
 
             public void Dispose()
             {

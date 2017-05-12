@@ -1,4 +1,5 @@
-﻿using FCSPlayout.Domain;
+﻿using FCSPlayout.AppInfrastructure;
+using FCSPlayout.Domain;
 using FCSPlayout.WPF.Core;
 using Microsoft.Practices.ServiceLocation;
 using System;
@@ -33,11 +34,16 @@ namespace FCSPlayout.WPFApp
 
         
 
-        internal void Apply()
+        internal void Apply(IPlayableItemEditorFactory playItemEditorFactory)
         {
-            if (_viewModel.ApplyCommand.CanExecute(null))
+            //if (_viewModel.ApplyCommand.CanExecute(null))
+            //{
+            //    _viewModel.ApplyCommand.Execute(null);
+            //}
+
+            if (_viewModel.CanApply())
             {
-                _viewModel.ApplyCommand.Execute(null);
+                _viewModel.Apply(playItemEditorFactory);
             }
         }
         //public PreviewPlayControl(PreviewPlayControlModel2 viewModel)

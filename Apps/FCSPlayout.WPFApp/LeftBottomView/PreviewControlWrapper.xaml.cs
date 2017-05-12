@@ -49,7 +49,7 @@ namespace FCSPlayout.WPFApp
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
             _confirmation.Confirmed = true;
-            this.playControl.Apply();
+            this.playControl.Apply(_confirmation.PlayItemEditorFactory);
             this.FinishInteraction();
         }
 

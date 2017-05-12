@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FCSPlayout.WPF.Core;
+using FCSPlayout.AppInfrastructure;
 
 namespace FCSPlayout.WPFApp
 {
@@ -16,5 +17,7 @@ namespace FCSPlayout.WPFApp
         }
 
         public IPlayableItem PlayableItem { get; private set; }
+
+        public IPlayableItemEditorFactory PlayItemEditorFactory { get; set; }
     }
 }

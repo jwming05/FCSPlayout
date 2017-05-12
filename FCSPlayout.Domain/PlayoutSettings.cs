@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FCSPlayout.CG;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,5 +41,8 @@ namespace FCSPlayout.Domain
                 _playlistSettings = value;
             }
         }
+
+
+        public CGItemCollection CGItems { get; set; }
     }
 }

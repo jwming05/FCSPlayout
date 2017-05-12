@@ -12,6 +12,7 @@ namespace FCSPlayout.WPFApp.Models
         //private IPlayItemPlayRecorder _playRecorder;
         private IPlaylist3 _playlist;
         private ILoopPlayToken _loopPlayToken;
+        private IMediaFilePathResolver _filePathResolver;
 
         public IPlaylist3 Playlist
         {
@@ -26,10 +27,12 @@ namespace FCSPlayout.WPFApp.Models
             //}
         }
 
-        public BindablePlayout(IPlayPreview preview, IPlaylist3 playlist/*,IPlayItemPlayRecorder playRecorder*/)
+        public BindablePlayout(IPlayPreview preview, IPlaylist3 playlist, 
+            IMediaFilePathResolver filePathResolver/*,IPlayItemPlayRecorder playRecorder*/)
         {
             _preview = preview;
             _playlist = playlist;
+            _filePathResolver = filePathResolver;
             //_playRecorder = playRecorder;            
         }
 
@@ -67,7 +70,8 @@ namespace FCSPlayout.WPFApp.Models
             {
 
                 PlayoutSettings settings = GetPlayoutSettings();
-                var playout = new PlayoutSystem(_preview, /*_playRecorder,*/ _playlist, settings, this.Log, /*new ChannelSwitcher()*/ChannelSwitcher.Instance);
+                var playout = new PlayoutSystem(_preview, /*_playRecorder,*/ _playlist, settings, this.Log, /*new ChannelSwitcher()*/ChannelSwitcher.Instance,
+                    _filePathResolver,settings.CGItems);
                 playout.CurrentPlayItemChanged += Playout_CurrentPlayItemChanged;
                 playout.NextPlayItemChanged += Playout_NextPlayItemChanged;
                 playout.Start();
@@ -92,6 +96,7 @@ namespace FCSPlayout.WPFApp.Models
             var result = new PlayoutSettings();
             result.RendererSettings.VideoDevice= Properties.Settings.Default.RendererDeviceName;
             result.PlaylistSettings = PlayoutRepository.GetMPlaylistSettings();
+            result.CGItems= PlayoutRepository.GetCGItems();
             return result;
         }
 
@@ -172,8 +177,11 @@ namespace FCSPlayout.WPFApp.Models
                 if (_preview.CurrentPlayItem != null)
                 {
                     _preview.CurrentPlayItemPosition = _preview.CurrentPlayItem.Position;
+                    return;
                 }
             }
+
+            _preview.CurrentPlayItemPosition = TimeSpan.Zero;
         }
 
         private void UpdatePlaylistPosition()
@@ -192,6 +200,11 @@ namespace FCSPlayout.WPFApp.Models
             {
                 StateChanged(this, EventArgs.Empty);
             }
+        }
+
+        public CG.CGItemCollection CGItems
+        {
+            get;set;
         }
     }
 }

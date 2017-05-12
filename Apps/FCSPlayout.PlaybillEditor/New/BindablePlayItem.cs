@@ -26,9 +26,9 @@ namespace FCSPlayout.PlaybillEditor
         private IPlayItem _playItem;
         private BitmapSource _image;
         private string _resolvedFilePath;
-        private IPlayItemEditorFactory _itemEditorFactory;
+        private IPlayableItemEditorFactory _itemEditorFactory;
 
-        public BindablePlayItem(IPlayItem playItem,string resolvedFilePath, IPlayItemEditorFactory itemEditorFactory)
+        public BindablePlayItem(IPlayItem playItem,string resolvedFilePath, IPlayableItemEditorFactory itemEditorFactory)
         {
             _playItem = playItem;
 
@@ -167,7 +167,7 @@ namespace FCSPlayout.PlaybillEditor
         //}
 
 
-        internal IPlayItem PlayItem
+        public IPlayItem PlayItem
         {
             get
             {
@@ -252,7 +252,8 @@ namespace FCSPlayout.PlaybillEditor
             {
                 using(var editor = this._itemEditorFactory.CreateEditor())
                 {
-                    editor.ChangePlayRange(this.PlayItem, value);
+                    editor.ChangePlayRange(this, value);
+                    //editor.ChangePlayRange(this.PlayItem, value);
                 }
 
                 //_playItem.PlayRange

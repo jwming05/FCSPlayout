@@ -122,10 +122,10 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <Slider Name="slider" VerticalAlignment="Center" 
+            <Slider Name="slider" SnapsToDevicePixels="True" VerticalAlignment="Center"
                     Minimum="0" Value="0" Grid.Column="1" ValueChanged="slider_ValueChanged">
             </Slider>
-            <xctk:RangeSlider Name="rangeSlider" Grid.Row="1" Height="12" Minimum="0"
+            <xctk:RangeSlider Name="rangeSlider" Grid.Row="1" Height="12" Minimum="0" SnapsToDevicePixels="True"
                               RangeBackground="Green" VerticalAlignment="Center" 
                               LowerRangeBackground="Yellow" HigherRangeBackground="Yellow"
                               HigherValueChanged="rangeSlider_HigherValueChanged"

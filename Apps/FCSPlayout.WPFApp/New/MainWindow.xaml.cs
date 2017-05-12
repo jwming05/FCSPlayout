@@ -1,6 +1,8 @@
-﻿using FCSPlayout.Entities;
+﻿using FCSPlayout.Domain;
+using FCSPlayout.Entities;
 using FCSPlayout.WPF.Core;
 using FCSPlayout.WPFApp.Properties;
+using Microsoft.Practices.Unity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,10 +33,17 @@ namespace FCSPlayout.WPFApp
             //this.playoutView.ForcePlayed += PlayoutView_ForcePlayed;
         }
 
-        public MainWindow(MainViewModel viewModel)
+        public MainWindow(MainViewModel viewModel,IUnityContainer container)
             :this()
         {
             this.DataContext = viewModel;
+
+            var timer = new DispatcherTimer(DispatcherPriority.Send);
+            timer.Interval = TimeSpan.FromMilliseconds(30);
+            timer.Tick += OnTimer_Tick;
+            timer.Start();
+
+            container.RegisterInstance<ITimer>(new TimerAdapter(timer));
         }
 
         private void PlayoutView_ForcePlayed(object sender, ViewModels.ForcePlayEventArgs e)
@@ -44,10 +53,10 @@ namespace FCSPlayout.WPFApp
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var timer = new DispatcherTimer(DispatcherPriority.Send);
-            timer.Interval = TimeSpan.FromMilliseconds(30);
-            timer.Tick += OnTimer_Tick;
-            timer.Start();
+            //var timer = new DispatcherTimer(DispatcherPriority.Send);
+            //timer.Interval = TimeSpan.FromMilliseconds(30);
+            //timer.Tick += OnTimer_Tick;
+            //timer.Start();
             
             //this.DataContext = new MainViewModel(new TimerAdapter(timer));
         }

@@ -13,7 +13,7 @@ namespace FCSPlayout.CG
     {
         protected override void Attach(CoMLCharGen charGen, string id)
         {
-            charGen.TickerAddNew("<ticker type='crawl'/>", this.X, this.Y, this.Width, this.Height, 
+            charGen.TickerAddNew("<ticker type='ticker-horz-1'/>", this.X, this.Y, this.Width, this.Height, 
                 Convert.ToInt32(this.IsRelative), Convert.ToInt32(this.Visible), ref id);
             charGen.TickerAddContent(id, this.Text, string.Empty);
         }
@@ -47,7 +47,6 @@ namespace FCSPlayout.CG
             element.Add(new XAttribute("Width", this.Width.ToString()));
             element.Add(new XAttribute("Height", this.Height.ToString()));
             element.Add(new XAttribute("Text", this.Text));
-
         }
     }
 }

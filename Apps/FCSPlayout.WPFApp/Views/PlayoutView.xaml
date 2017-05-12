@@ -4,11 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FCSPlayout.WPFApp.Views"
+             xmlns:local2="clr-namespace:FCSPlayout.WPFApp"
              xmlns:core="clr-namespace:FCSPlayout.WPF.Core;assembly=FCSPlayout.WPF.Core"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <core:SecondsToTimeCode x:Key="SecondsToTimeCode"/>
+        <core:TimeCodeConverter x:Key="TimeCodeConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -16,8 +18,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        <Grid Grid.Row="0">
+        <local2:PreviewControl MObject="{Binding MObject}"/>
+        <!--<Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -26,7 +28,7 @@
                 <MediaElement Source="{Binding SourceUri}" />
             </Grid>
             <core:MAudioMeter x:Name="audioMeter" MinWidth="50" Grid.Column="1"/>
-        </Grid>
+        </Grid>-->
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -42,10 +44,13 @@
                 <TextBlock HorizontalAlignment="Center" Foreground="White" Text="{Binding ElementName=pbPlayItem,Path=Value,Converter={StaticResource SecondsToTimeCode}}" Margin="10 0 50 0"/>
                 <TextBlock HorizontalAlignment="Right" Foreground="White" Text="{Binding ElementName=pbPlayItem,Path=Maximum,Converter={StaticResource SecondsToTimeCode}}"/>
                 <TextBlock HorizontalAlignment="Right" Margin="350 0 0 0" Foreground="White" Text="开播计时：" />
-                <TextBlock x:Name="djs" HorizontalAlignment="Right" Foreground="White" Text="00:00:00" />
+                <TextBlock x:Name="djs" HorizontalAlignment="Right" Foreground="White" 
+                           Text="{Binding StartRemainTime,Mode=OneWay,Converter={StaticResource TimeCodeConverter}}" />
             </StackPanel>
+            
             <ProgressBar Name="pbPlaylist"   Background="Black" BorderBrush="Black" Margin="5" Grid.Row="2" Height="10" Minimum="0" Maximum="{Binding PlaylistDuration,Mode=OneWay,FallbackValue=1}"
                          Value="{Binding PlaylistPosition,Mode=OneWay,FallbackValue=0}"/>
+            
             <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Stretch">
                 <TextBlock HorizontalAlignment="Center" Foreground="White" Text="{Binding ElementName=pbPlaylist,Path=Value,Converter={StaticResource SecondsToTimeCode}}" Margin="10 0 50 0"/>
                 <TextBlock HorizontalAlignment="Right" Foreground="White" Text="{Binding ElementName=pbPlaylist,Path=Maximum,Converter={StaticResource SecondsToTimeCode}}"/>
@@ -61,7 +66,7 @@
             <Button Content="停播" Margin="5" Command="{Binding StopPlayoutCommand}"/>
             <Button Content="开始延时" Margin="5" Command="{Binding StartDelayCommand}"/>
             <Button Content="停止延时" Margin="5" Command="{Binding StopDelayCommand}"/>
-            <Button Content="触发播" Margin="5" Command="{Binding ForcePlayCommand}"/>
+            <!--<Button Content="触发播" Margin="5" Command="{Binding ForcePlayCommand}"/>-->
         </StackPanel>
     </Grid>
 </UserControl>

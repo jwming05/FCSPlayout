@@ -23,18 +23,21 @@ namespace FCSPlayout.PlayEngine
         private IPlayerItem _currentItem;
 
         private IDateTimeService _dateTimeService;
+        private IMediaFilePathResolver _filePathResolver;
 
         public event EventHandler<PlayerItemEventArgs> ItemLoaded;
         public event EventHandler<PlayerItemEventArgs> ItemStarted;
         public event EventHandler<PlayerItemEventArgs> ItemStopped;
 
-        public Player(IPlayPreview preview, PlayoutSettings settings, ILog log, IDateTimeService dateTimeService)
+        public Player(IPlayPreview preview, PlayoutSettings settings, ILog log, IDateTimeService dateTimeService,
+            IMediaFilePathResolver filePathResolver)
         {
             _preview = preview;
             _log = log;
             _rendererInfo = settings.RendererSettings;
             _playlistSettings = settings.PlaylistSettings;
             _dateTimeService = dateTimeService;
+            _filePathResolver = filePathResolver;
         }
 
         #region
@@ -96,7 +99,8 @@ namespace FCSPlayout.PlayEngine
 
                 string objName = null;
                 _mplaylist.ObjectNameGet(out objName);
-                _preview.SetPreviewUri(new Uri("mplatform://" + objName));
+                //_preview.SetPreviewUri(new Uri("mplatform://" + objName));
+                _preview.MObject = _mplaylist;
 
                 if (_rendererInfo != null && !string.IsNullOrEmpty(_rendererInfo.VideoDevice))
                 {
@@ -132,7 +136,8 @@ namespace FCSPlayout.PlayEngine
                     _rendererManager = null;
                 }
 
-                _preview.SetPreviewUri(null);
+                _preview.MObject = null;
+                //_preview.SetPreviewUri(null);
                 //GlobalEventAggregator.Instance.RaiseMPlaylistDestroying();
 
                 _cgManager.Dispose();
@@ -329,7 +334,7 @@ namespace FCSPlayout.PlayEngine
 
             MItem mitem = null;
             index = -1;
-            _mplaylist.PlaylistAdd(null, fileSource.FileName, string.Empty, ref index, out mitem);
+            _mplaylist.PlaylistAdd(null, _filePathResolver.Resolve(fileSource.FileName), string.Empty, ref index, out mitem);
 
             var adjustedRange = fileSource.Adjust(playToken.PlayRange);
 

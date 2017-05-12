@@ -11,6 +11,8 @@ namespace FCSPlayout.WPF.Core
 
         void ClosePreview();
         event EventHandler PreviewClosing;
+
+        IPlayItem PlayItem { get; }
     }
 
     public interface IPlayableItemWithCG:IPlayableItem

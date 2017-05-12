@@ -38,7 +38,16 @@ namespace FCSPlayout.WPF.Core
                     Application.Current.MainWindow.Close();
                     Application.Current.Shutdown();
                 }
+                else
+                {
+                    this.OnLogin();
+                }
             });
+        }
+
+        protected virtual void OnLogin()
+        {
+
         }
 
         public InteractionRequest<LoginConfirmation> LoginInteractionRequest

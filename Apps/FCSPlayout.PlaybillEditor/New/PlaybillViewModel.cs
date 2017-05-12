@@ -16,7 +16,7 @@ using System.Windows.Input;
 
 namespace FCSPlayout.PlaybillEditor
 {
-    public partial class PlaybillViewModel : ViewModelBase,IPlayItemEditorFactory
+    public partial class PlaybillViewModel : ViewModelBase,IPlayableItemEditorFactory
     {
         private Playlist _playlist;
         private PlayItemCollection _playItemCollection;

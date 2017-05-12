@@ -32,6 +32,7 @@ namespace FCSPlayout.WPFApp
             this.DragOver += PlaybillView_DragOver;
             this.Drop += PlaybillView_Drop;
         }
+
         private void PlaybillView_Drop(object sender, DragEventArgs e)
         {
             var elem = dgPlayItems.InputHitTest(e.GetPosition(dgPlayItems));

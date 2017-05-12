@@ -1,4 +1,5 @@
-﻿using FCSPlayout.Domain;
+﻿using FCSPlayout.CG;
+using FCSPlayout.Domain;
 using System;
 
 namespace FCSPlayout.PlayEngine
@@ -17,11 +18,12 @@ namespace FCSPlayout.PlayEngine
         public event EventHandler<PlayerItemEventArgs> NextPlayItemChanged;
 
         public PlayoutSystem(IPlayPreview preview, IPlaylist3 playlist,
-            PlayoutSettings settings, ILog log,IChannelSwitcher switcher)
+            PlayoutSettings settings, ILog log,IChannelSwitcher switcher, IMediaFilePathResolver filePathResolver,
+            CGItemCollection cgItems)
         {
             _playlist = playlist;
-            var player = new Player(preview, settings, log, DefaultDateTimeService.Instance);
-            _scheduler = new PlayScheduler(player,playlist, DefaultDateTimeService.Instance, switcher);
+            var player = new Player(preview, settings, log, DefaultDateTimeService.Instance,filePathResolver);
+            _scheduler = new PlayScheduler(player,playlist, DefaultDateTimeService.Instance, switcher,cgItems);
             _scheduler.CurrentPlayItemChanged += OnCurrentPlayItemChanged;
             _scheduler.NextPlayItemChanged += OnNextPlayItemChanged;
         }

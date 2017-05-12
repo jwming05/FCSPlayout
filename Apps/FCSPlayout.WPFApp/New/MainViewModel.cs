@@ -6,15 +6,14 @@ using Prism.Events;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System.Windows.Input;
+using System;
+using FCSPlayout.Entities;
 
 namespace FCSPlayout.WPFApp
 {
     public class MainViewModel : ShellModelBase // BindableBase
     {
-
         //private readonly ITimer _timer;
-
-
 
         //private Playbill _playbill;
         //private ObservableCollection<IPlayItem> _playItemCollection;
@@ -23,12 +22,15 @@ namespace FCSPlayout.WPFApp
 
         private readonly DelegateCommand _collectGarbageCommand;
         private PeriodicalGarbageCollector _garbageCollector = new PeriodicalGarbageCollector();
+
+        private readonly DelegateCommand _editCGItemsCommand;
+
         //private IPlaylist _playlist;
 
         public MainViewModel(/*ITimer timer*/ IUserService userService, InteractionRequests interactionRequests, IEventAggregator eventAggregator)
             :base(userService)
         {
-            eventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Subscribe(Preview);
+            //eventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Subscribe(Preview);
 
             this.PreviewInteractionRequest = interactionRequests.PreviewInteractionRequest;
             this.OpenFileInteractionRequest = interactionRequests.OpenFileInteractionRequest;
@@ -39,8 +41,6 @@ namespace FCSPlayout.WPFApp
             this.EditCGItemsInteractionRequest = interactionRequests.EditCGItemsInteractionRequest;
             this.SaveFileInteractionRequest = interactionRequests.SaveFileInteractionRequest;
             this.LoadPlaybillInteractionRequest = interactionRequests.LoadPlaybillInteractionRequest;
-
-
 
             //_timer = timer;
 
@@ -56,21 +56,35 @@ namespace FCSPlayout.WPFApp
 
             _collectGarbageCommand = new DelegateCommand(ExecuteCollectGarbage);
 
+            _editCGItemsCommand = new DelegateCommand(EditCGItems);
         }
 
-        private void Preview(IPlayableItem playableItem)
+        private void EditCGItems()
         {
-            this.PreviewInteractionRequest.Raise(new PreviewRequestConfirmation(playableItem) { Title = "预览" },
-                (c)=> 
+            var items = PlayoutRepository.GetCGItems();
+            this.EditCGItemsInteractionRequest.Raise(new EditCGItemsConfirmation { Title = "编辑字幕", Items = items.Clone() },
+                c=> 
                 {
                     if (c.Confirmed)
                     {
-
+                        PlayoutRepository.SaveCGItems(c.Items);
                     }
-
-                    playableItem.ClosePreview();
                 });
         }
+
+        //private void Preview(IPlayableItem playableItem)
+        //{
+        //    this.PreviewInteractionRequest.Raise(new PreviewRequestConfirmation(playableItem) { Title = "预览" },
+        //        (c)=> 
+        //        {
+        //            if (c.Confirmed)
+        //            {
+
+        //            }
+
+        //            playableItem.ClosePreview();
+        //        });
+        //}
         private void ExecuteCollectGarbage()
         {
             _garbageCollector.OnTimer();
@@ -182,6 +196,14 @@ namespace FCSPlayout.WPFApp
 
         public InteractionRequest<PreviewRequestConfirmation> PreviewInteractionRequest { get; private set; }
         public InteractionRequest<Confirmation> ConfirmationInteractionRequest { get; private set; }
+
+        public DelegateCommand EditCGItemsCommand
+        {
+            get
+            {
+                return _editCGItemsCommand;
+            }
+        }
 
         //public IPlaylist Playlist
         //{

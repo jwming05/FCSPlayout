@@ -140,6 +140,7 @@
                 <MenuItem Header="切换器设置..." Name="miSwitcherSettings" Click="miSwitcherSettings_Click"/>
                 <MenuItem Header="通道设置..." Name="miChannelSettings" Click="miChannelSettings_Click"/>
                 <MenuItem Header="切换器通道设置..." Name="miSwitcherChannelSettings" Click="miSwitcherChannelSettings_Click"/>
+                <MenuItem Header="字幕..." Command="{Binding EditCGItemsCommand}"/>
             </MenuItem>
         </Menu>
 
@@ -167,8 +168,18 @@
 
             <ContentControl Margin="0 10 0 0 " Grid.Row="1"  BorderBrush="#D29A00" BorderThickness="1 1 0 1" prism:RegionManager.RegionName="mainLeftRegion"/>
         </Grid>
-        <ContentControl Margin="0 10 0 0 " Grid.Column="1" Grid.Row="1"  BorderBrush="#D29A00" BorderThickness="1 1 0 1" 
+
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <ContentControl Margin="0 10 0 0 " BorderBrush="#D29A00" BorderThickness="1 1 0 1" 
+                        prism:RegionManager.RegionName="mainRightRegion2"/>
+            <ContentControl Margin="0 10 0 0 " Grid.Row="1"  BorderBrush="#D29A00" BorderThickness="1 1 0 1" 
                         prism:RegionManager.RegionName="mainRightRegion"/>
+        </Grid>
+        
     </Grid>
 </Window>
 

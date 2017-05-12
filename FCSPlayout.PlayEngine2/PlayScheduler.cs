@@ -15,10 +15,13 @@ namespace FCSPlayout.PlayEngine
         private PlayItemWrapper _currentPlayItem;
 
         private IChannelSwitcher _switcher;
+        private CGItemCollection _cgItems;
+
         public event EventHandler CurrentPlayItemChanged;
         public event EventHandler NextPlayItemChanged;
 
-        public PlayScheduler(IPlayer player, IPlaylist3 playlist, IDateTimeService dateTimeService, IChannelSwitcher switcher)
+        public PlayScheduler(IPlayer player, IPlaylist3 playlist, IDateTimeService dateTimeService, IChannelSwitcher switcher,
+            CGItemCollection cgItems)
         {
             _player = player;
             _player.ItemLoaded += Player_ItemLoaded;
@@ -27,6 +30,8 @@ namespace FCSPlayout.PlayEngine
             _playlist = playlist;
             _dateTimeService = dateTimeService;
             _switcher = switcher;
+
+            _cgItems = cgItems;
         }
 
         private void Player_ItemStopped(object sender, PlayerItemEventArgs e)
@@ -72,6 +77,10 @@ namespace FCSPlayout.PlayEngine
         internal void Start()
         {
             _player.Start();
+            if(_cgItems!=null && _cgItems.Count > 0)
+            {
+                _player.Attach(_cgItems);
+            }
         }
 
         internal void Stop()

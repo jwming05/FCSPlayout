@@ -15,6 +15,7 @@ namespace FCSPlayout.CG
         {
             this.Visible = true;
         }
+
         public double X { get; set; }
         public double Y { get; set; }
 
@@ -44,6 +45,8 @@ namespace FCSPlayout.CG
 
         public override void Init(XElement element)
         {
+            this.ItemName = element.Attribute("name").Value;
+
             this.X=double.Parse(element.Attribute("X").Value);
 
             this.Y=double.Parse(element.Attribute("Y").Value);
@@ -64,11 +67,13 @@ namespace FCSPlayout.CG
         public override XElement ToXElement()
         {
             XElement element = new XElement("cgitem");
+            element.Add(new XAttribute("name", this.ItemName));
             element.Add(new XAttribute("X", this.X.ToString()));
             element.Add(new XAttribute("Y", this.Y.ToString()));
             element.Add(new XAttribute("IsRelative", this.IsRelative.ToString()));
             element.Add(new XAttribute("Visible", this.Visible.ToString()));
-            element.Add(new XAttribute("FileNameOrItemDesc", this.FileNameOrItemDesc));
+            
+            element.Add(new XAttribute("FileNameOrItemDesc", this.FileNameOrItemDesc ?? string.Empty));
             ToXElementInternal(element);
             return element;
         }

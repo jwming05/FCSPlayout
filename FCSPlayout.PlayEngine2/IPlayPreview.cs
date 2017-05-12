@@ -9,5 +9,7 @@ namespace FCSPlayout.PlayEngine
         double PlaylistPosition { get; set; }
 
         void SetPreviewUri(Uri uri);
+
+        MPLATFORMLib.IMObject MObject { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using MLCHARGENLib;
+using System.Windows.Media;
 
 namespace FCSPlayout.CG
 {
@@ -14,9 +15,10 @@ namespace FCSPlayout.CG
         //#AABBGGRR
         private CG_TEXT_PROPS _textProps = new CG_TEXT_PROPS()
         {
-            nTextColor =Convert.ToInt32(0x7F00FF00),
-            nFontHeight =24 /*int.MaxValue*/
+            nTextColor = Convert.ToInt32(0x7F00FF00),
+            nFontHeight = 24 /*int.MaxValue*/
         };
+
         protected override void Attach(CoMLCharGen charGen, string id)
         {
             charGen.AddNewTextItem(ref _textProps, this.X, this.Y, 
@@ -82,11 +84,13 @@ namespace FCSPlayout.CG
             get { return _textProps.nOutlineColor; }
             set { _textProps.nOutlineColor = value; }
         }
+
         public int TextColor
         {
             get { return _textProps.nTextColor; }
             set { _textProps.nTextColor = value; }
         }
+
         public int TimeOffset
         {
             get { return _textProps.nTimeOffset; }
@@ -99,6 +103,9 @@ namespace FCSPlayout.CG
             base.InitInternal(element);
 
             // TODO: 
+            this.FontHeight = int.Parse(element.Attribute("FontHeight").Value);
+            this.TextColor =int.Parse(element.Attribute("TextColor").Value);
+            this.Text = element.Attribute("Text").Value;
         }
 
         protected override void ToXElementInternal(XElement element)
@@ -106,6 +113,9 @@ namespace FCSPlayout.CG
             base.ToXElementInternal(element);
 
             // TODO: 
+            element.Add(new XAttribute("FontHeight", this.FontHeight.ToString()));
+            element.Add(new XAttribute("TextColor", this.TextColor.ToString()));
+            element.Add(new XAttribute("Text", this.Text));
         }
     }
 }

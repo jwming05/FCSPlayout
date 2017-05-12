@@ -102,10 +102,10 @@ namespace FCSPlayout.WPFApp.Views
             }
         }
 
-        private void Instance_MPlaylistDestroying(object sender, EventArgs e)
-        {
-            this.audioMeter.SetControlledObject(null);
-        }
+        //private void Instance_MPlaylistDestroying(object sender, EventArgs e)
+        //{
+        //    this.audioMeter.SetControlledObject(null);
+        //}
 
         private void Instance_MPlaylistCreated(object sender, EventArgs e)
         {

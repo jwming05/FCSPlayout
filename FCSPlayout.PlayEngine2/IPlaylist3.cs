@@ -20,5 +20,7 @@ namespace FCSPlayout.PlayEngine
 
         TimeSpan Duration { get; }
         DateTime? StartTime { get; }
+
+        event EventHandler Changed;
     }
 }

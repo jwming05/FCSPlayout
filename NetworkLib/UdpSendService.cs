@@ -85,42 +85,45 @@ namespace NetworkLib
                     SendData(data);
                 }
 
+                Thread.Sleep(0);
             }
         }
 
         private void SendData(byte[] data)
         {
-            Guid messageId = Guid.NewGuid();
-            int segmentId = 0;
-            int totalLength = data.Length;
-            int segmentOffset = 0;
+            _udpClient.Send(data, data.Length, _remoteEndPoint);
 
-            while (segmentOffset < totalLength)
-            {
-                var nextOffset = segmentOffset + _maxSegmentLength;
-                if (nextOffset > totalLength)
-                {
-                    nextOffset = totalLength;
-                }
+            //Guid messageId = Guid.NewGuid();
+            //int segmentId = 0;
+            //int totalLength = data.Length;
+            //int segmentOffset = 0;
 
-                int length = nextOffset - segmentOffset;
-                byte[] buffer = new byte[length + 32];
+            //while (segmentOffset < totalLength)
+            //{
+            //    var nextOffset = segmentOffset + _maxSegmentLength;
+            //    if (nextOffset > totalLength)
+            //    {
+            //        nextOffset = totalLength;
+            //    }
 
-                Array.Copy(messageId.ToByteArray(), 0, buffer, 0, 16);
-                Array.Copy(BitConverter.GetBytes(segmentId), 0, buffer, 16, 4);
-                Array.Copy(BitConverter.GetBytes(totalLength), 0, buffer, 20, 4);
-                Array.Copy(BitConverter.GetBytes(segmentOffset), 0, buffer, 24, 4);
-                Array.Copy(BitConverter.GetBytes(length), 0, buffer, 28, 4);
+            //    int length = nextOffset - segmentOffset;
+            //    byte[] buffer = new byte[length + 32];
 
-                Array.Copy(data, segmentOffset, buffer, 32, length);
+            //    Array.Copy(messageId.ToByteArray(), 0, buffer, 0, 16);
+            //    Array.Copy(BitConverter.GetBytes(segmentId), 0, buffer, 16, 4);
+            //    Array.Copy(BitConverter.GetBytes(totalLength), 0, buffer, 20, 4);
+            //    Array.Copy(BitConverter.GetBytes(segmentOffset), 0, buffer, 24, 4);
+            //    Array.Copy(BitConverter.GetBytes(length), 0, buffer, 28, 4);
 
-                _udpClient.Send(buffer, buffer.Length, _remoteEndPoint);
+            //    Array.Copy(data, segmentOffset, buffer, 32, length);
 
-                segmentId++;
-                segmentOffset = nextOffset;
+            //    _udpClient.Send(buffer, buffer.Length, _remoteEndPoint);
 
-                Thread.Sleep(0);
-            }
+            //    segmentId++;
+            //    segmentOffset = nextOffset;
+
+            //    Thread.Sleep(0);
+            //}
         }
 
 

@@ -129,8 +129,6 @@ namespace FCSPlayout.Domain
             UpdatePlaylist(beginIndex, _playlist.Count - beginIndex, playItems);
         }
 
-        
-
         public event EventHandler Disposed;
 
         #region
@@ -351,6 +349,65 @@ namespace FCSPlayout.Domain
                     _onCommitted();
                 }
             }
+        }
+
+        public void ForcePlay(IPlayItem currentItem, IPlayItem forcedItem)
+        {
+            this.Delete(forcedItem);
+
+            DateTime stopTime;
+            int beginIndex;
+
+            var startTime = DateTime.Now.AddSeconds(1.0);
+            var currentIndex = _playlist.FindIndex(i => i.PlayItem == currentItem);
+            beginIndex = currentIndex + 1;
+
+            Tuple<ScheduleItem, int> temp = FindFirstTiming(beginIndex, (i)=>true);
+            int endIndex;
+            if (temp.Item1 != null)
+            {
+                stopTime = temp.Item1.StartTime;
+                endIndex = temp.Item2 - 1;
+            }
+            else
+            {
+                stopTime = DateTime.MaxValue;
+                endIndex = _playlist.Count - 1;
+            }
+
+            // 调整当前项的播放时长（入出点）
+
+
+            // 复制当前项，并调整时长。
+            var startOffset = startTime.Subtract(currentItem.StartTime);
+
+            var newRange = new PlayRange(currentItem.CalculatedPlayRange.StartPosition + startOffset,
+                currentItem.CalculatedPlayRange.Duration-startOffset);
+            var copyItem = new AutoPlayItem(new AutoPlaybillItem(currentItem.PlaybillItem.PlaySource.Clone(newRange)));
+
+            
+
+            //if (segment.Head == null)
+            //{
+            //    startTime = segment.StartTime;
+            //    beginIndex = segment.BeginIndex;
+            //}
+            //else
+            //{
+            //    startTime = segment.Head.CalculatedStopTime;
+            //    beginIndex = segment.BeginIndex + 1;
+            //}
+
+            //stopTime = segment.StopTime;
+            //endIndex = segment.EndIndex;
+
+            this.Rebuild(startTime, stopTime, beginIndex, endIndex, (items) =>
+            {
+                // 插入复制项和forcedItem。
+                items.Insert(0, new ScheduleItem(copyItem));
+                items.Insert(0, new ScheduleItem(forcedItem));
+
+            });
         }
     }
 

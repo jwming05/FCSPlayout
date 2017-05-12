@@ -11,9 +11,9 @@ namespace FCSPlayout.PlaybillEditor
     public class PlayItemCollection : ObservableCollection<BindablePlayItem>, IPlayItemCollection
     {
         private IMediaFilePathResolver _filePathResolver;
-        private IPlayItemEditorFactory _itemEditFactory;
+        private IPlayableItemEditorFactory _itemEditFactory;
 
-        public PlayItemCollection(IMediaFilePathResolver filePathResolver,IPlayItemEditorFactory itemEditFactory)
+        public PlayItemCollection(IMediaFilePathResolver filePathResolver,IPlayableItemEditorFactory itemEditFactory)
         {
             _filePathResolver = filePathResolver;
             _itemEditFactory = itemEditFactory;

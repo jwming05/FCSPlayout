@@ -44,9 +44,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Complex.cs" />
+    <Compile Include="FourierTransform.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SamplePointGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -739,12 +739,11 @@ namespace FCSPlayout.PlaybillEditor
                 }
             }
         }
+
         private void Playlist_EditCompleted(object sender, EditCompletedEventArgs e)
         {
             //this.StartTime = this.Playlist.GetStartTime();
             //this.StopTime = this.Playlist.GetStopTime();
-
-            
         }
 
         private void OnCommitted()
@@ -788,7 +787,7 @@ namespace FCSPlayout.PlaybillEditor
             _playItemCollection.Clear();
         }
 
-        FCSPlayout.AppInfrastructure.IPlayItemEditor IPlayItemEditorFactory.CreateEditor()
+        FCSPlayout.AppInfrastructure.IPlayableItemEditor IPlayableItemEditorFactory.CreateEditor()
         {
             return new PlayItemEditor(this.Edit(), OnError);
         }
@@ -797,7 +796,8 @@ namespace FCSPlayout.PlaybillEditor
         {
             RaiseDisplayMessageInteractionRequest("错误", ex.Message);
         }
-        class PlayItemEditor : FCSPlayout.AppInfrastructure.IPlayItemEditor
+
+        class PlayItemEditor : FCSPlayout.AppInfrastructure.IPlayableItemEditor
         {
             private Action<Exception> _onError;
             private IPlaylistEditor _playlistEditor;
@@ -808,7 +808,12 @@ namespace FCSPlayout.PlaybillEditor
                 _onError = onError;
             }
 
-            public void ChangePlayRange(IPlayItem playItem,PlayRange newRange)
+            public void ChangePlayRange(IPlayableItem playableItem, PlayRange newRange)
+            {
+                ChangePlayRange(playableItem.PlayItem, newRange);
+            }
+
+            private void ChangePlayRange(IPlayItem playItem,PlayRange newRange)
             {
                 try
                 {

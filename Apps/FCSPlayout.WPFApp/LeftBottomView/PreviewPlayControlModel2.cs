@@ -1,4 +1,5 @@
-﻿using FCSPlayout.Domain;
+﻿using FCSPlayout.AppInfrastructure;
+using FCSPlayout.Domain;
 using FCSPlayout.WPF.Core;
 using MPLATFORMLib;
 using Prism.Commands;
@@ -498,7 +499,7 @@ namespace FCSPlayout.WPFApp
             }
         }
 
-        private bool CanApply()
+        internal bool CanApply()
         {
             return _playableItem != null && _player.Status!=PreviewPlayerStatus.Closed;
         }
@@ -508,6 +509,23 @@ namespace FCSPlayout.WPFApp
             if (this.CanApply())
             {
                 this._playableItem.AudioGain = this.AudioGain;
+                this._playableItem.PlayRange = this.PlayRange;
+            }
+        }
+
+        internal void Apply(IPlayableItemEditorFactory playItemEditorFactory)
+        {
+            this._playableItem.AudioGain = this.AudioGain;
+            if (playItemEditorFactory != null)
+            {
+                using (var editor = playItemEditorFactory.CreateEditor())
+                {
+                    //editor.ChangePlayRange(this._playableItem.PlayItem, this.PlayRange);
+                    editor.ChangePlayRange(this._playableItem, this.PlayRange);
+                }
+            }
+            else
+            {
                 this._playableItem.PlayRange = this.PlayRange;
             }
         }
@@ -616,6 +634,14 @@ namespace FCSPlayout.WPFApp
             get
             {
                 return _playableItem;
+            }
+        }
+
+        public IPlayItem PlayItem
+        {
+            get
+            {
+                return _playableItem.PlayItem;
             }
         }
 

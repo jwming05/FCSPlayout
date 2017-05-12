@@ -71,8 +71,8 @@
     <Compile Include="FileMediaSource.cs" />
     <Compile Include="IChannelMediaSource.cs" />
     <Compile Include="IMediaItemSelector.cs" />
-    <Compile Include="IPlayItemEditor.cs" />
-    <Compile Include="IPlayItemEditorFactory.cs" />
+    <Compile Include="IPlayableItemEditor.cs" />
+    <Compile Include="IPlayableItemEditorFactory.cs" />
     <Compile Include="LocalMachineIdManager.cs" />
     <Compile Include="LocalSettingsBase.cs" />
     <Compile Include="MediaFileImageExtractor.cs" />
