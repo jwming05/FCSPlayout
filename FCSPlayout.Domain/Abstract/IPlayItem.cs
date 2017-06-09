@@ -6,6 +6,7 @@ namespace FCSPlayout.Domain
     public interface IPlayItem
     {
         Guid Id { get; }
+
         /// <summary>
         /// 获取播放项的开始时间。
         /// </summary>
@@ -20,8 +21,6 @@ namespace FCSPlayout.Domain
         /// 获取播放项对应的编单项。
         /// </summary>
         IPlaybillItem PlaybillItem { get; }
-
-        //long? EditId { get; set; }
 
         /// <summary>
         /// 获取播放项的播放范围。
@@ -50,8 +49,6 @@ namespace FCSPlayout.Domain
 
         CGItemCollection CGItems { get; set; }
         IPlaylistEditor Editor { get; set; }
-
-        //IPlayItem Clone();
 
         void Split(TimeSpan duration, out IPlayItem first, out IPlayItem second);
     }

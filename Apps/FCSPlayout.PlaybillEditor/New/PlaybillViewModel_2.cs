@@ -31,6 +31,9 @@ namespace FCSPlayout.PlaybillEditor
         private readonly DelegateCommand _savePlaybillCommand;
         private readonly DelegateCommand _loadPlaybillCommand;
 
+        private readonly DelegateCommand _changeSourceCommand;
+        private readonly DelegateCommand _changeSourceAndDurationCommand;
+
         private IEventAggregator _eventAggregator;
         private InteractionRequests _interactionRequests;
         private IPlayableItem _currentPreviewItem;
@@ -40,6 +43,18 @@ namespace FCSPlayout.PlaybillEditor
         private IPlayoutConfiguration _playoutConfig;
         private Playbill _playbill;
         private IUserService _userService;
+        private MediaItem? _selectedMediaItem;
+
+        private MediaItem? SelectedMediaItem
+        {
+            get { return _selectedMediaItem; }
+            set
+            {
+                _selectedMediaItem = value;
+                _changeSourceCommand.RaiseCanExecuteChanged();
+                _changeSourceAndDurationCommand.RaiseCanExecuteChanged();
+            }
+        }
 
         public BindablePlayItem SelectedPlayItem
         {
@@ -56,6 +71,9 @@ namespace FCSPlayout.PlaybillEditor
                 _changeToTimingModeCommand.RaiseCanExecuteChanged();
                 _moveUpCommand.RaiseCanExecuteChanged();
                 _moveDownCommand.RaiseCanExecuteChanged();
+
+                _changeSourceCommand.RaiseCanExecuteChanged();
+                _changeSourceAndDurationCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -158,6 +176,21 @@ namespace FCSPlayout.PlaybillEditor
             }
         }
 
+        public ICommand ChangeSourceCommand
+        {
+            get
+            {
+                return _changeSourceCommand;
+            }
+        }
+
+        public ICommand ChangeSourceAndDurationCommand
+        {
+            get
+            {
+                return _changeSourceAndDurationCommand;
+            }
+        }
         #endregion Commands
 
         #region Command Methods
@@ -235,6 +268,56 @@ namespace FCSPlayout.PlaybillEditor
                             ChangeStartTime(this.SelectedPlayItem.PlayItem, c.Time);
                         }
                     });
+            }
+        }
+
+        private bool CanChangeSourceAndDuration()
+        {
+            return this.SelectedPlayItem != null && this.SelectedMediaItem!=null;
+        }
+
+        private void ChangeSourceAndDuration()
+        {
+            if (CanChangeSourceAndDuration())
+            {
+                using (var editor = this.Edit())
+                {
+                    try
+                    {
+                        editor.ChangeMediaSource(this.SelectedPlayItem.PlayItem, this.SelectedMediaItem.Value.Source,
+                            this.SelectedMediaItem.Value.PlayRange);
+                    }
+                    catch (Exception ex)
+                    {
+                        editor.Rollback();
+                        OnError(ex);
+                    }
+                }
+            }
+        }
+
+        private bool CanChangeSource()
+        {
+            return this.SelectedPlayItem != null && this.SelectedMediaItem != null 
+                && this.SelectedMediaItem.Value.Duration>=this.SelectedPlayItem.PlayDuration;
+        }
+
+        private void ChangeSource()
+        {
+            if (CanChangeSource())
+            {
+                using(var editor = this.Edit())
+                {
+                    try
+                    {
+                        editor.ChangeMediaSource(this.SelectedPlayItem.PlayItem, this.SelectedMediaItem.Value.Source);
+                    }
+                    catch (Exception ex)
+                    {
+                        editor.Rollback();
+                        OnError(ex);
+                    }
+                }
             }
         }
 
@@ -612,6 +695,7 @@ namespace FCSPlayout.PlaybillEditor
 
         private DateTime? _startTime;
         private DateTime? _stopTime;
+        
 
         public DateTime? StartTime
         {

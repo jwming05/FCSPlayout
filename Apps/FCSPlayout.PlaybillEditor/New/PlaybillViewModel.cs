@@ -28,21 +28,7 @@ namespace FCSPlayout.PlaybillEditor
 
         
         //private readonly DelegateCommand<object> _editMediaItemCommand;
-        
-
-        
-
-        
-        
-        
-        
-        
-
-        
-        
-
-        
-        
+                
         private readonly DelegateCommand _createPlaybillCommand;
 
         
@@ -113,17 +99,14 @@ namespace FCSPlayout.PlaybillEditor
 
             _previewCommand = new DelegateCommand<IPlayableItem>(Preview);
 
+            _changeSourceCommand = new DelegateCommand(ChangeSource, CanChangeSource);
+            _changeSourceAndDurationCommand = new DelegateCommand(ChangeSourceAndDuration, CanChangeSourceAndDuration);
+
             _eventAggregator = eventAggregator;
             _eventAggregator.GetEvent<PubSubEvent<AddPlayItemPayload>>().Subscribe(AddPlayItem);
+
+            _eventAggregator.GetEvent<PubSubEvent<MediaItem?>>().Subscribe((i) => this.SelectedMediaItem = i);
         }
-
-        
-
-
-
-
-
-
 
         //private void Playbill_AfterExecuteAction(object sender, AfterExecuteActionEventArgs e)
         //{
@@ -247,16 +230,6 @@ namespace FCSPlayout.PlaybillEditor
             get { return _playItemCollection; }
         }
 
-        
-
-        
-
-        
-
-        
-        
-        
-
         public ICommand EditCGItemsCommand
         {
             get
@@ -314,20 +287,6 @@ namespace FCSPlayout.PlaybillEditor
 
 
         #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         //private void ChangeToTimingMode(ISchedulablePlaybillItem playbillItem, DateTime time)
         //{
@@ -405,9 +364,8 @@ namespace FCSPlayout.PlaybillEditor
                 //});
             }
         }
-        #region
-        
 
+        #region
         public DelegateCommand CreatePlaybillCommand
         {
             get
@@ -415,6 +373,8 @@ namespace FCSPlayout.PlaybillEditor
                 return _createPlaybillCommand;
             }
         }
+
+        
 
         private bool CanCreatePlaybill()
         {
@@ -449,10 +409,6 @@ namespace FCSPlayout.PlaybillEditor
         //        return billEntity;
         //    }
         //}
-
-
         #endregion
-
-        
     }
 }

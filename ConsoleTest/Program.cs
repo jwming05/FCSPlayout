@@ -6,26 +6,43 @@ using System.Drawing;
 using System.Security.Cryptography;
 using System.Text;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 class MainClass
 {
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct FloatUnion
+    {
+        [FieldOffset(0)]
+        public float FloatValue;
+
+        [FieldOffset(0)]
+        public uint UintValue;
+    }
+
     public static void Main()
     {
-        var input = SamplePointGenerator.Generate(10);
-        double[] rex, imx;
-        FourierTransform.DFT3(input, out rex, out imx);
-        for (int i = 0; i < rex.Length; i++)
-        {
-            Console.WriteLine("<{0},{1}> {2}", rex[i], imx[i], Math.Sqrt(rex[i] * rex[i] + imx[i] * imx[i]));
-        }
-        Console.WriteLine();
+        double d = Math.Pow(2, -149);
+        double d2 = float.Epsilon;
 
-        var output=FourierTransform.IDFT3(rex, imx);
+        Console.WriteLine("{0}, {1}, {2}", d, d2, d == d2);
 
-        for(int i = 0; i < input.Length; i++)
-        {
-            Console.WriteLine("<{0},{1}>", Math.Round(input[i],2), Math.Round(output[i],2));
-        }
+        var floatUnion = default(FloatUnion);
+        floatUnion.UintValue = 0x00800000;
+        double d3 = floatUnion.FloatValue;
+        Console.WriteLine(d3);
+
+        floatUnion = default(FloatUnion);
+        floatUnion.UintValue = 0x00800001;
+        double d4 = floatUnion.FloatValue;
+        Console.WriteLine(d4);
+
+        var d5 = d4 - d3;
+        //var d6= Math.Pow(2, -1);
+        Console.WriteLine("{0}, {1}, {2}", d5, d2, d5 == d2);
+
+        floatUnion.UintValue = 0x80000000;
+        Console.WriteLine(floatUnion.FloatValue);
         Console.ReadKey();
     }
 

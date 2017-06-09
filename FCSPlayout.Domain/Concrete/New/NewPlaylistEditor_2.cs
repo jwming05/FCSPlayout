@@ -30,10 +30,10 @@ namespace FCSPlayout.Domain
                 }
                 else
                 {
-                    var playlistStartTime = GetPlaylistStartTime(); // _playlist.GetStartTime();
+                    var playlistStartTime = GetPlaylistStartTime();
                     if (playlistStartTime == null)
                     {
-                        throw new InvalidOperationException();
+                        throw new InvalidOperationException("第一个播放项必须是定时播。");
                     }
 
                     startTime = playlistStartTime.Value;
@@ -42,7 +42,7 @@ namespace FCSPlayout.Domain
             }
             else
             {
-                startTime = prevTuple.Item1.CalculatedStopTime; //.StartTime;
+                startTime = prevTuple.Item1.CalculatedStopTime;
                 beginIndex = prevTuple.Item2 + 1;
             }
 
@@ -103,11 +103,43 @@ namespace FCSPlayout.Domain
         /// <param name="playItem"></param>
         public void AddTiming(IPlayItem playItem)
         {
-            Debug.Assert(playItem.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing || playItem.PlaybillItem.ScheduleMode == PlayScheduleMode.TimingBreak);
+            Debug.Assert(playItem.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing || 
+                playItem.PlaybillItem.ScheduleMode == PlayScheduleMode.TimingBreak);
 
             // 验证时间范围（包含开始时间验证）。
-            //_playlist.ValidateTimeRange(playItem.StartTime, playItem.CalculatedPlayDuration);
             ValidateTimeRange(playItem.StartTime, playItem.CalculatedPlayDuration);
+
+            if (playItem.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing)
+            {
+                // 是否已经存在定时播。
+                var temp = this.FindLastTiming(i => true);
+                if (temp.Item2 != -1)
+                {
+                    // 如果已经存在定时播，则开始时间必须在最后一个定时播结束时间之后。
+                    if (playItem.StartTime < temp.Item1.CalculatedStopTime)
+                    {
+                        throw new ArgumentException();
+                    }
+                }
+            }
+            else if (playItem.PlaybillItem.ScheduleMode == PlayScheduleMode.TimingBreak)
+            {
+                if (_playlist.Count == 0)
+                {
+                    //当列表为空时不能添加定时插播。
+                    throw new InvalidOperationException("第一个播放项必须是定时播。");
+                }
+
+                if (playItem.StartTime < _playlist[0].StartTime)
+                {
+                    //新加的定时插播开始时间不能小于列表中第一项的开始时间。
+                    throw new ArgumentException("定时插播的开始时间无效。");
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
 
             var prevTuple = this.FindLastTiming(i => i.StartTime < playItem.StartTime);
 
@@ -368,7 +400,7 @@ namespace FCSPlayout.Domain
                 ValidateTimeRange(playItem.StartTime, newPlayRange.Value.Duration, playItem);
             }
 
-            PlayRange playRange = newPlayRange ?? new PlayRange(TimeSpan.Zero, playItem.PlayRange.Duration);
+            PlayRange playRange = newPlayRange ?? new PlayRange(TimeSpan.Zero, playItem.CalculatedPlayDuration/*playItem.PlayRange.Duration*/);
 
             if (mediaSource == null)
             {
@@ -429,8 +461,77 @@ namespace FCSPlayout.Domain
             var playSource = new PlaySource(playItem.MediaSource/*.Clone()*/, playRange, playItem.CGItems);
             
             var newItem = newScheduleMode == PlayScheduleMode.Timing ?
-                PlaybillItem.Timing(playSource, newStartTime) :
-                PlaybillItem.TimingBreak(playSource, newStartTime);
+                PlaybillItem.Timing(playSource, newStartTime) : PlaybillItem.TimingBreak(playSource, newStartTime);
+
+            /*
+             * 修改定时播开始时间。不能跨越前后定时播。
+             * 修改定时插播开始时间。不能向前跨越第一个定时播。
+             */
+
+            if (scheduleMode == null && startTime!=null)
+            {
+                if (playItem.ScheduleMode == PlayScheduleMode.Timing)
+                {
+                    // 查找前一个定时播。
+                    var prevTuple = this.FindLastTiming(i => i.StartTime <playItem.StartTime/*startTime.Value*/);
+   
+                    if (prevTuple.Item2 != -1)
+                    {
+                        // 如果前面有定时播，则开始时间不能小于前面定时播的结束时间。
+                        if (startTime.Value < prevTuple.Item1.CalculatedStopTime)
+                        {
+                            throw new ArgumentException();
+                        }
+                    }
+
+                    // 查找后一个定时播。
+                    var nextTuple = this.FindFirstTiming(i => i.StartTime > playItem.StartTime/*startTime.Value*/);
+                    if (nextTuple.Item2 != -1)
+                    {
+                        // 如果后面有定时播，则结束时间不能大于后面定时播的开始时间。
+                        if (startTime.Value.Add(playItem.PlayRange.Duration) > prevTuple.Item1.StartTime)
+                        {
+                            throw new ArgumentException();
+                        }
+                    }
+
+                    var currentTuple = this.FindFirstTiming(i => i.PlayItem == playItem);
+
+                    if (currentTuple.Item2 != 0)
+                    {
+                        // 如果前面有片断，则更新前面片断。
+                        var begin1 = prevTuple.Item2 == -1 ? 0 : prevTuple.Item2 + 1;
+
+                        this.Rebuild(_playlist[begin1].StartTime < startTime.Value ? _playlist[begin1].StartTime : startTime.Value, 
+                            startTime.Value, begin1, currentTuple.Item2 - 1, null);
+                    }
+
+                    // 更新本片断。
+                    var temp = (IPlayItem)newItem;
+                    _playlist[currentTuple.Item2] = new ScheduleItem(temp);
+                    this.Rebuild(temp.CalculatedStopTime,
+                            nextTuple.Item2==-1 ? DateTime.MaxValue : nextTuple.Item1.StartTime/*stopTime*/, currentTuple.Item2+1,
+                            nextTuple.Item2 == -1 ? _playlist.Count-1 : nextTuple.Item2-1, null);
+
+                    return;
+                }
+                else if (playItem.ScheduleMode == PlayScheduleMode.TimingBreak)
+                {
+                    //var prevTuple = this.FindLastTiming(i => i.StartTime < startTime.Value);
+
+                    //if (prevTuple.Item2 == -1)
+                    //{
+                    //    if (startTime.Value < prevTuple.Item1.CalculatedStopTime)
+                    //    {
+                    //        throw new ArgumentException();
+                    //    }
+                    //}
+                }
+                else
+                {
+
+                }
+            }
 
             this.Delete(playItem);
             this.AddTiming((IPlayItem)newItem);
@@ -486,7 +587,6 @@ namespace FCSPlayout.Domain
 
         private void Rebuild(DateTime startTime, DateTime stopTime, int beginIndex,int endIndex,Action<List<ScheduleItem>> itemsAction)
         {
-            //IList<IPlayItem> playItems = _playlist.GetPlayItems(beginIndex, endIndex);
             List<ScheduleItem> playItems = GetPlaylistItems(beginIndex, endIndex);
 
             if (itemsAction != null)
@@ -513,7 +613,6 @@ namespace FCSPlayout.Domain
                 }
             }
 
-            //_playlist.Update(beginIndex, endIndex - beginIndex + 1, _builder.Build(data));
             UpdatePlaylist(beginIndex, endIndex - beginIndex + 1, _builder.Build(data));
         }
     }

@@ -47,6 +47,8 @@ namespace FCSPlayout.PlaybillEditor
             {
                 _selectedMediaItem = value;
                 _addPlayItemCommand.RaiseCanExecuteChanged();
+
+                _eventAggregator.GetEvent<PubSubEvent<MediaItem?>>().Publish(_selectedMediaItem);
             }
         }
 

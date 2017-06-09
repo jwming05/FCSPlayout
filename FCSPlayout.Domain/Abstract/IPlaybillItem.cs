@@ -17,11 +17,6 @@ namespace FCSPlayout.Domain
         PlayScheduleMode ScheduleMode { get; }
 
         /// <summary>
-        /// 获取播放源。
-        /// </summary>
-        //IPlaySource PlaySource { get; }
-
-        /// <summary>
         /// 获取媒体源。
         /// </summary>
         IMediaSource MediaSource { get; }
@@ -31,30 +26,17 @@ namespace FCSPlayout.Domain
         /// </summary>
         PlayRange PlayRange { get; }
 
-        //IPlayParameters Parameters { get; }
-
         string Title { get; }
 
         CGItemCollection CGItems { get; set; }
 
+        /// <summary>
+        /// 获取播放源。
+        /// </summary>
+        IPlaySource PlaySource { get; }
+
         IPlaybillItem Clone(PlayRange newRange);
         bool CanMerge(IPlaybillItem playbillItem);
         IPlaybillItem Merge(IPlaybillItem playbillItem);
-
-        IPlaySource PlaySource { get; }
-        //IPlaybillItem Clone();
-    }
-
-    public static class PlaybillItemExtensions
-    {
-        //public static DateTime GetStopTime(this IPlaybillItem playbillItem)
-        //{
-        //    return playbillItem.StartTime.Value.Add(playbillItem.PlaySource.GetDuration());
-        //}
-
-        //public static PlayRange GetPlayRange(this IPlaybillItem playbillItem)
-        //{
-        //    return playbillItem.PlaySource.PlayRange;
-        //}
     }
 }

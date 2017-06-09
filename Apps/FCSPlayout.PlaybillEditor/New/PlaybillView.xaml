@@ -93,7 +93,6 @@
             </DataGrid.Columns>
             <DataGrid.ContextMenu>
                 <ContextMenu Name="ctxMenu">
-                    <!--<MenuItem Header="编辑时长" Command="{Binding EditMediaItemCommand}" CommandParameter="{Binding Tag,RelativeSource={RelativeSource AncestorType=ContextMenu,Mode=FindAncestor}}"/>-->
                     <MenuItem Header="编辑时长" Command="{Binding EditDurationCommand}" />
                     <Separator/>
                     <MenuItem Header="下移" Command="{Binding MoveDownCommand}" />
@@ -106,21 +105,9 @@
                     <MenuItem Header="编辑开始时间" Command="{Binding ChangeStartTimeCommand}" />
                     <Separator/>
                     <MenuItem Header="编辑字幕..." Command="{Binding EditCGItemsCommand}"/>
-                    <!--<MenuItem Header="音量增益" Tag="Gain" SubmenuOpened="GainMenuItem_SubmenuOpened" MenuItem.Click="GainMenuItem_Click">
-                        <MenuItem Header="60dB" IsCheckable="True" Tag="60"/>
-                        <MenuItem Header="50dB" IsCheckable="True" Tag="50"/>
-                        <MenuItem Header="40dB" IsCheckable="True" Tag="40"/>
-                        <MenuItem Header="30dB" IsCheckable="True" Tag="30"/>
-                        <MenuItem Header="20dB" IsCheckable="True" Tag="20"/>
-                        <MenuItem Header="10dB" IsCheckable="True" Tag="10"/>
-                        <MenuItem Header="0dB" IsCheckable="True" Tag="0"/>
-                        <MenuItem Header="-10dB" IsCheckable="True" Tag="-10"/>
-                        <MenuItem Header="-20dB" IsCheckable="True" Tag="-20"/>
-                        <MenuItem Header="-30dB" IsCheckable="True" Tag="-30"/>
-                        <MenuItem Header="-40dB" IsCheckable="True" Tag="-40"/>
-                        <MenuItem Header="-50dB" IsCheckable="True" Tag="-50"/>
-                        <MenuItem Header="-60dB" IsCheckable="True" Tag="-60"/>
-                    </MenuItem>-->
+                    <Separator/>
+                    <MenuItem Header="等长替换" Command="{Binding ChangeSourceCommand}" />
+                    <MenuItem Header="变长替换" Command="{Binding ChangeSourceAndDurationCommand}" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>

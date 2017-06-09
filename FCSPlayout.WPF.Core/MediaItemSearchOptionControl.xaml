@@ -20,12 +20,12 @@
             <ComboBox Margin="5" MinWidth="90" ItemsSource="{x:Static entities:PlayoutRepository.MediaFileCategories}" 
                       SelectedValuePath="Key" DisplayMemberPath="Value" 
                       SelectedValue="{Binding BindableSearchOptions.MediaFileCategoryId,Mode=TwoWay,RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-            <TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="频道类型:"/>
+            <!--<TextBlock Margin="5" VerticalAlignment="Center" Foreground="#c9c9c9" Text="频道类型:"/>-->
 
-            <ComboBox Margin="5" MinWidth="90" VerticalAlignment="Center" Background="#868686"
+            <!--<ComboBox Margin="5" MinWidth="90" VerticalAlignment="Center" Background="#868686"
                       ItemsSource="{x:Static entities:PlayoutRepository.MediaFileChannels}"
                       SelectedValuePath="Key" DisplayMemberPath="Value" 
-                      SelectedValue="{Binding BindableSearchOptions.MediaFileChannelId,Mode=TwoWay,RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                      SelectedValue="{Binding BindableSearchOptions.MediaFileChannelId,Mode=TwoWay,RelativeSource={RelativeSource AncestorType=UserControl}}"/>-->
         </StackPanel>
     </Grid>
 </UserControl>

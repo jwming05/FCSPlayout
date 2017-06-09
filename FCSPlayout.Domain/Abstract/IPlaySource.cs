@@ -14,8 +14,6 @@ namespace FCSPlayout.Domain
         /// </summary>
         PlayRange PlayRange { get; }
 
-        //IPlayParameters Parameters { get; }
-
         string Title { get; }
 
         CGItemCollection CGItems { get; set; }

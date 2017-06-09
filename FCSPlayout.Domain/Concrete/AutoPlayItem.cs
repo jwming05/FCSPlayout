@@ -54,7 +54,7 @@ namespace FCSPlayout.Domain
         #endregion Static Members
 
 
-        private TimeSpan? _playDuration;
+        private TimeSpan? _calculatedPlayDuration;
         private PlayRange? _playRange;
         public AutoPlayItem(IPlaybillItem billItem)
         {
@@ -101,19 +101,19 @@ namespace FCSPlayout.Domain
         {
             get
             {
-                if (_playDuration == null)
+                if (_calculatedPlayDuration == null)
                 {
                     return this.PlayRange.Duration;
                 }
                 else
                 {
-                    return _playDuration.Value;
+                    return _calculatedPlayDuration.Value;
                 }
             }
 
             set
             {
-                _playDuration = value;
+                _calculatedPlayDuration = value;
             }
         }
 
@@ -121,7 +121,7 @@ namespace FCSPlayout.Domain
         {
             get
             {
-                if (_playDuration == null)
+                if (_calculatedPlayDuration == null)
                 {
                     return this.PlayRange;
                 }

@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FCSPlayout.MediaFileImporter
+namespace FCSPlayout.Domain
 {
-    public enum UploadLocationCategory
+    public class Class1
     {
-        Primary,
-        Secondary
     }
 }

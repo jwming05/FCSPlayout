@@ -49,130 +49,23 @@ namespace FCSPlayout.MediaFileImporter
 
             _mediaItemCollection = new ObservableCollection<BindableMediaFileItem>();
             _mediaItemCollection.CollectionChanged += MediaItemCollection_CollectionChanged;
+
             _addMediaItemCommand = new DelegateCommand(AddMediaItem);
             _deleteMediaItemCommand = new DelegateCommand(DeleteMediaItem, CanDeleteMediaItem);
             _saveMediaItemsCommand = new DelegateCommand(SaveMediaItems, CanSaveMediaItems);
-
             _saveXmlCommand = new DelegateCommand(SaveXml, CanSaveXml);
             _openXmlCommand = new DelegateCommand(OpenXml);
-
             _previewCommand = new DelegateCommand<IPlayableItem>(Preview);
-
             _clearCommand = new DelegateCommand(Clear, CanClear);
         }
 
-        private bool CanClear()
-        {
-            return _mediaItemCollection.Count > 0 && this.CurrentUploadItem == null;
-        }
-
-        private void Clear()
-        {
-            if (CanClear())
-            {
-                _mediaItemCollection.Clear();
-            }
-        }
+        
 
         private void MediaItemCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             _saveMediaItemsCommand.RaiseCanExecuteChanged();
             _saveXmlCommand.RaiseCanExecuteChanged();
             _clearCommand.RaiseCanExecuteChanged();
-        }
-
-        private void OpenXml()
-        {
-            _interactionRequests.OpenFileInteractionRequest.Raise(new OpenFileDialogConfirmation() { Filter = "XML文件(*.xml)|*.xml", Multiselect = false },
-                n =>
-                {
-                    if (n.Confirmed)
-                    {
-                        foreach(var item in LoadFromXml(n.FileName))
-                        {
-                            if(!string.IsNullOrEmpty(item.FilePath) && System.IO.File.Exists(item.FilePath))
-                            {
-                                _mediaItemCollection.Add(item);
-                            }
-                            
-                        }
-                    }
-                });
-        }
-
-        
-
-        private bool CanSaveXml()
-        {
-            return _mediaItemCollection.Count > 0 && this.CurrentUploadItem==null;
-        }
-
-        private void SaveXml()
-        {
-            if (CanSaveXml())
-            {
-                _interactionRequests.SaveFileInteractionRequest.Raise(new SaveFileDialogConfirmation() { Filter = "XML文件(*.xml)|*.xml", OverwritePrompt=true },
-                n =>
-                {
-                    if (n.Confirmed)
-                    {
-                        SaveToXml(n.FileName, _mediaItemCollection);
-                    }
-                });
-            }
-        }
-
-        private void SaveToXml(string fileName, IList<BindableMediaFileItem> items)
-        {
-            XmlRepository.Save(fileName, items.Select(i => i.Entity));
-        }
-
-        private IEnumerable<BindableMediaFileItem> LoadFromXml(string fileName)
-        {
-            return XmlRepository.Load(fileName).Select(i => new BindableMediaFileItem(i, i.OriginalFileName));
-        }
-
-        private void Preview(IPlayableItem playableItem)
-        {
-            if(this.EventAggregator!=null && playableItem != null)
-            {
-                _currentPreviewItem = playableItem;
-                this.EventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Publish(playableItem);
-            }
-        }
-
-        private bool CanDeleteMediaItem()
-        {
-            return this.SelectedMediaItem != null && this.SelectedMediaItem!=CurrentUploadItem;
-        }
-
-        private void DeleteMediaItem()
-        {
-            if (CanDeleteMediaItem())
-            {
-                var item = this.SelectedMediaItem;
-                this.SelectedMediaItem = null;
-
-                RemoveItem(item);
-            }
-        }
-
-        private bool CanSaveMediaItems()
-        {
-            return _mediaItemCollection.Count > 0 && this.CurrentUploadItem==null;
-        }
-
-        private void SaveMediaItems()
-        {
-            if (CanSaveMediaItems())
-            {
-                ProgressFeedback.Open();
-                if (_mediaItemCollection.Count > 0)
-                {
-                    var item = _mediaItemCollection[0];
-                    Upload(item);      
-                }
-            }
         }
      
         public ObservableCollection<BindableMediaFileItem> MediaItems
@@ -210,24 +103,7 @@ namespace FCSPlayout.MediaFileImporter
 
         public IEventAggregator EventAggregator { get; private set; }
 
-        private void AddMediaItem()
-        {
-            _interactionRequests.OpenFileInteractionRequest.Raise(new OpenFileDialogConfirmation() { Filter = "媒体文件(*.*)|*.*", Multiselect = true },
-                n =>
-                {
-                    if (n.Confirmed)
-                    {
-                        var fileNames = n.FileNames.ToList();
-                        for (int j = 0; j < fileNames.Count; j++)
-                        {
-                            var fileName = fileNames[j];
-
-                            _mediaItemCollection.Add(new BindableMediaFileItem(fileName,this.UserService.CurrentUser.Id));
-                        }
-                    }
-                });
-        }
-
+        
         #region
         private void Upload(BindableMediaFileItem item)
         {
@@ -326,6 +202,33 @@ namespace FCSPlayout.MediaFileImporter
         }
         #endregion
 
+        
+
+        public IMediaFileImageResolver ImageResolver
+        {
+            get;private set;
+        }
+        public IUserService UserService { get; private set; }
+
+        public BindableMediaFileItem CurrentUploadItem
+        {
+            get
+            {
+                return _currentUploadItem;
+            }
+
+            set
+            {
+                _currentUploadItem = value;
+
+                _saveMediaItemsCommand.RaiseCanExecuteChanged();
+                _saveXmlCommand.RaiseCanExecuteChanged();
+                _deleteMediaItemCommand.RaiseCanExecuteChanged();
+                _clearCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        #region Commands
         public ICommand PreviewCommand
         {
             get { return _previewCommand; }
@@ -378,29 +281,135 @@ namespace FCSPlayout.MediaFileImporter
                 return _clearCommand;
             }
         }
+        #endregion Commands
 
-        public IMediaFileImageResolver ImageResolver
+        #region Command Methods
+        private void AddMediaItem()
         {
-            get;private set;
+            _interactionRequests.OpenFileInteractionRequest.Raise(
+                new OpenFileDialogConfirmation() { Filter = "媒体文件(*.*)|*.*", Multiselect = true },
+                n =>
+                {
+                    if (n.Confirmed)
+                    {
+                        AddMediaItems(n.FileNames);
+                    }
+                });
         }
-        public IUserService UserService { get; private set; }
 
-        public BindableMediaFileItem CurrentUploadItem
+        private void AddMediaItems(string[] fileNames)
         {
-            get
+            for (int j = 0; j < fileNames.Length; j++)
             {
-                return _currentUploadItem;
-            }
-
-            set
-            {
-                _currentUploadItem = value;
-
-                _saveMediaItemsCommand.RaiseCanExecuteChanged();
-                _saveXmlCommand.RaiseCanExecuteChanged();
-                _deleteMediaItemCommand.RaiseCanExecuteChanged();
-                _clearCommand.RaiseCanExecuteChanged();
+                var fileName = fileNames[j];
+                _mediaItemCollection.Add(new BindableMediaFileItem(fileName, this.UserService.CurrentUser.Id));
             }
         }
+
+        private bool CanDeleteMediaItem()
+        {
+            return this.SelectedMediaItem != null && this.SelectedMediaItem != CurrentUploadItem;
+        }
+
+        private void DeleteMediaItem()
+        {
+            if (CanDeleteMediaItem())
+            {
+                var item = this.SelectedMediaItem;
+                this.SelectedMediaItem = null;
+
+                RemoveItem(item);
+            }
+        }
+
+        private bool CanClear()
+        {
+            return _mediaItemCollection.Count > 0 && this.CurrentUploadItem == null;
+        }
+
+        private void Clear()
+        {
+            if (CanClear())
+            {
+                _mediaItemCollection.Clear();
+            }
+        }
+
+        private void Preview(IPlayableItem playableItem)
+        {
+            if (this.EventAggregator != null && playableItem != null)
+            {
+                _currentPreviewItem = playableItem;
+                this.EventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Publish(playableItem);
+            }
+        }
+
+        private void OpenXml()
+        {
+            _interactionRequests.OpenFileInteractionRequest.Raise(new OpenFileDialogConfirmation() { Filter = "XML文件(*.xml)|*.xml", Multiselect = false },
+                n =>
+                {
+                    if (n.Confirmed)
+                    {
+                        foreach (var item in LoadFromXml(n.FileName))
+                        {
+                            if (!string.IsNullOrEmpty(item.FilePath) && System.IO.File.Exists(item.FilePath))
+                            {
+                                _mediaItemCollection.Add(item);
+                            }
+
+                        }
+                    }
+                });
+        }
+
+        private bool CanSaveXml()
+        {
+            return _mediaItemCollection.Count > 0 && this.CurrentUploadItem == null;
+        }
+
+        private void SaveXml()
+        {
+            if (CanSaveXml())
+            {
+                _interactionRequests.SaveFileInteractionRequest.Raise(new SaveFileDialogConfirmation() { Filter = "XML文件(*.xml)|*.xml", OverwritePrompt = true },
+                n =>
+                {
+                    if (n.Confirmed)
+                    {
+                        SaveToXml(n.FileName, _mediaItemCollection);
+                    }
+                });
+            }
+        }
+
+        private bool CanSaveMediaItems()
+        {
+            return _mediaItemCollection.Count > 0 && this.CurrentUploadItem == null;
+        }
+
+        private void SaveMediaItems()
+        {
+            if (CanSaveMediaItems())
+            {
+                ProgressFeedback.Open();
+                if (_mediaItemCollection.Count > 0)
+                {
+                    var item = _mediaItemCollection[0];
+                    Upload(item);
+                }
+            }
+        }
+
+        private void SaveToXml(string fileName, IList<BindableMediaFileItem> items)
+        {
+            XmlRepository.Save(fileName, items.Select(i => i.Entity));
+        }
+
+        private IEnumerable<BindableMediaFileItem> LoadFromXml(string fileName)
+        {
+            return XmlRepository.Load(fileName).Select(i => new BindableMediaFileItem(i, i.OriginalFileName));
+        }
+        #endregion Command Methods
     }
 }

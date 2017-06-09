@@ -16,11 +16,6 @@
         <core:MediaFileChannelConverter x:Key="MediaFileChannelConverter"/>
         <!--<inf:PlayItemStyleSelector x:Key="PlayItemStyleSelector"/>-->
     </core:ViewBase.Resources>
-    <!--<i:Interaction.Triggers>
-        <i:EventTrigger EventName="MediaItemDoubleClicked" SourceObject="{Binding RelativeSource={RelativeSource AncestorType=core:ViewBase,Mode=FindAncestor}}">
-            <core:CustomInvokeCommandAction Command="{Binding EditMediaItemCommand}" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -66,7 +61,7 @@
                 <DataGridTextColumn Binding="{Binding Duration, Converter={StaticResource TimeCodeConverter}}" Header="总时长"/>
                 
                 <DataGridTextColumn Binding="{Binding MediaFileCategoryId,Converter={StaticResource MediaFileCategoryConverter}}" Header="节目类型"/>
-                <DataGridTextColumn Binding="{Binding MediaFileChannelId,Converter={StaticResource MediaFileChannelConverter}}" Header="频道类型"/>
+                <!--<DataGridTextColumn Binding="{Binding MediaFileChannelId,Converter={StaticResource MediaFileChannelConverter}}" Header="频道类型"/>-->
                 
                 <DataGridTextColumn Binding="{Binding AudioGain}" Header="音频增益"/>
                 <DataGridTextColumn Binding="{Binding CreationTime,StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" Header="创建日期" />

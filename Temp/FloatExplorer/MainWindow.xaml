@@ -1,0 +1,72 @@
+﻿<Window x:Class="FloatExplorer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FloatExplorer"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+        <local:FloatSignConverter x:Key="FloatSignConverter"/>
+        <local:BitsConverter x:Key="BitsConverter"/>
+        <local:FloatExponentConverter x:Key="FloatExponentConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Float Value:" Margin="5" VerticalAlignment="Center"/>
+            <ComboBox Grid.Column="1" Margin="5" ItemsSource="{Binding ConstantNames,Mode=OneWay}" Text="{Binding SelectedText}" IsEditable="True"/>
+            <TextBox Grid.Column="2" Margin="5" Text="{Binding FloatValue,Mode=OneWay}" IsReadOnly="True" MinWidth="10"/>
+            <Button Grid.Column="3" Content="Parse" Margin="5" Command="{Binding ParseCommand}"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Bits:" Margin="5"/>
+            <TextBox Grid.Column="1" Margin="5" Text="{Binding UintValue,Mode=OneWay,Converter={StaticResource BitsConverter}}" IsReadOnly="True"/>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Sign:" Margin="5"/>
+            <TextBox Grid.Column="1" Margin="5" IsReadOnly="True" Text="{Binding UintValue,Mode=OneWay,Converter={StaticResource FloatSignConverter}}"/>
+        </Grid>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Raw Exponent:" Margin="5"/>
+            <TextBox Grid.Column="1" Margin="5" IsReadOnly="True" Text="{Binding RawExponent,Mode=OneWay}"/>
+
+            <TextBlock Grid.Column="2" Text="Exponent:" Margin="5"/>
+            <TextBox Grid.Column="3" Margin="5" IsReadOnly="True" Text="{Binding RawExponent,Mode=OneWay,Converter={StaticResource FloatExponentConverter}}"/>
+        </Grid>
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Raw Mantissa:" Margin="5"/>
+            <TextBox Grid.Column="1" Margin="5" IsReadOnly="True" Text="{Binding RawMantissa,Mode=OneWay}"/>
+        </Grid>
+    </Grid>
+</Window>

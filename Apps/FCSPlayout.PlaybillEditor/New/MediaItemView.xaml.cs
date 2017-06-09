@@ -24,8 +24,6 @@ namespace FCSPlayout.PlaybillEditor
         public MediaItemView()
         {
             InitializeComponent();
-
-            //var region=this.RegionManager.Regions[""];
         }
 
         public MediaItemView(MediaItemViewModel viewModel, IRegionManager regionManager)
@@ -33,8 +31,7 @@ namespace FCSPlayout.PlaybillEditor
         {
             this.DataContext = viewModel;
             this.RegionManager = regionManager;
-
-            
+        
             regionManager.Regions.CollectionChanged += Regions_CollectionChanged;
         }
 
@@ -52,12 +49,5 @@ namespace FCSPlayout.PlaybillEditor
         {
             get; private set;
         }
-
-        //void Temp()
-        //{
-        //    var region= this.RegionManager.Regions["t"];
-            
-        //    //region.vi
-        //}
     }
 }

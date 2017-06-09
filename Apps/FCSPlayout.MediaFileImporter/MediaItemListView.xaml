@@ -51,19 +51,12 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        
+
         <DataGrid Grid.Row="1" Name="dgMediaItem" AutoGenerateColumns="False"
                   ItemsSource="{Binding MediaItems}" SelectionMode="Single"
                   IsReadOnly="False"
                   SelectedItem="{Binding SelectedMediaItem,Mode=TwoWay}"
                   >
-            <!--MouseDoubleClick="dgMediaItem_MouseDoubleClick"-->
-            <!--<DataGrid.RowHeaderStyle>
-                <Style TargetType="{x:Type DataGridRowHeader}">
-                    <Setter Property="Content" Value="{Binding Converter={StaticResource IndexConverter},ConverterParameter=dgMediaItem}" />
-                </Style>
-            </DataGrid.RowHeaderStyle>-->
-           
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="缩略图" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
@@ -90,9 +83,9 @@
                 <DataGridComboBoxColumn Header="节目类型"
                                         ItemsSource="{x:Static entities:PlayoutRepository.MediaFileCategories}" 
                                         SelectedValuePath="Key" DisplayMemberPath="Value" SelectedValueBinding="{Binding MediaFileCategoryId}"/>
-                <DataGridComboBoxColumn Header="频道类型"
+                <!--<DataGridComboBoxColumn Header="频道类型"
                                         ItemsSource="{x:Static entities:PlayoutRepository.MediaFileChannels}"
-                                        SelectedValuePath="Key" DisplayMemberPath="Value" SelectedValueBinding="{Binding MediaFileChannelId}"/>
+                                        SelectedValuePath="Key" DisplayMemberPath="Value" SelectedValueBinding="{Binding MediaFileChannelId}"/>-->
                 <DataGridTemplateColumn Header="音频增益">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

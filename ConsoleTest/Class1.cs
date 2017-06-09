@@ -85,5 +85,46 @@ namespace ConsoleTest
 
             return output;
         }
+
+        public static void DFT(double[,] input)
+        {
+            int height = input.GetLength(0);
+            int width = input.GetLength(1);
+
+            Complex[,] result = new Complex[height, width];
+
+            for(int v = 0; v < height; v++)
+            {
+                for(int u = 0; u < width; u++)
+                {
+                    Complex c2 = new Complex(0);
+                    for(int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            c2 = c2 + input[y,x]*Generate(v, y, height, u, x, width);
+                        }
+                    }
+
+                    result[v, u] = c2;
+                }
+            }
+        }
+
+        private static Complex Generate(double v, double y, double height, double u, double x, double width)
+        {
+            var arg = -2.0 * Math.PI * (v * y / height + u * x / width);
+            return new Complex(Math.Cos(arg), Math.Sin(arg));
+        }
+        private void FFT()
+        {
+        }
+
+        // 线性插值。
+        private void LineInterpolation()
+        {
+            //k = (y1-y0)/(x1-x0) = (y-y0)/(x-x0) = (y-y1)/(x-x1)
+            // 
+        }
     }
 }

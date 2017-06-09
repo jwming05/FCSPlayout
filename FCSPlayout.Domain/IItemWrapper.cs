@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FCSPlayout.Domain
 {
@@ -34,7 +32,6 @@ namespace FCSPlayout.Domain
             set
             {
                 _wrapperList[index] = _creator(value);
-                //throw new NotImplementedException();
             }
         }
 

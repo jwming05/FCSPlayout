@@ -9,11 +9,6 @@ using System.Threading.Tasks;
 
 namespace FCSPlayout.MediaFileImporter
 {
-    
-
-
-    
-
     public class MediaFileImportService
     {
         private BackgroundWorker _worker;
@@ -105,21 +100,8 @@ namespace FCSPlayout.MediaFileImporter
                 percent = ((double)totalCount) / ((double)length);
                 _worker.ReportProgress((int)percent);
                 count = source.Read(buffer, 0, buffer.Length);
-
-
             }
-
-
         }
-
-        //private Disposable _disposable=null;
-        //class Disposable : IDisposable
-        //{
-        //    public void Dispose()
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-        //}
 
         public class RunContext
         {
@@ -169,8 +151,4 @@ namespace FCSPlayout.MediaFileImporter
     {
         void CancelAsync();
     }
-    //public class FileTransfer
-    //{
-
-    //}
 }
