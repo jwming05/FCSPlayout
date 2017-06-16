@@ -24,12 +24,12 @@ namespace FCSPlayout.MediaFileImporter
         private int _pageSize = 30;
 
         public MediaItemListViewModel2(IEventAggregator eventAggregator, IMediaFilePathResolver filePathResolver, 
-            IMediaFileImageResolver imageResolver)
+            IMediaFileImageResolver imageResolver,IMediaFileService mediaFileService)
         {
             this.EventAggregator = eventAggregator;
             this.FilePathResolver = filePathResolver;
             this.ImageResolver = imageResolver;
-
+            this.MediaFileService = mediaFileService;
             _mediaItemCollection = new ObservableCollection<BindableMediaFileItem>();
 
             _deleteMediaItemCommand = new DelegateCommand(DeleteMediaItem, CanDeleteMediaItem);
@@ -42,91 +42,6 @@ namespace FCSPlayout.MediaFileImporter
             _previewCommand = new DelegateCommand<IPlayableItem>(Preview);
             this.SearchOptions = new MediaItemSearchOptions();
         }
-
-        public ICommand PreviewCommand
-        {
-            get { return _previewCommand; }
-        }
-
-        private void Preview(IPlayableItem playableItem)
-        {
-            if (this.EventAggregator != null && playableItem != null)
-            {
-                _currentPreviewItem = playableItem;
-                this.EventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Publish(playableItem);
-            }
-        }
-
-        private void SearchMediaItems(RequestPagingItemsEventArgs e)
-        {
-            if (_currentPreviewItem != null)
-            {
-                _currentPreviewItem.ClosePreview();
-                _currentPreviewItem = null;
-            }
-
-            _mediaItemCollection.Clear();
-            
-            var result = MediaFileService.GetMediaFiles(this.SearchOptions, e.PagingInfo);
-
-            foreach (var item in result.Items)
-            {
-                _mediaItemCollection.Add(new BindableMediaFileItem(item,this.ResolvePath(item.FileName)));
-            }
-
-            e.Result = result;
-        }
-
-        //private static string ResolvePath(string fileName)
-        //{
-        //    return MediaFilePathResolver.Current.Resolve(fileName, BindableMediaFileItem.MediaFileStorage);
-        //}
-
-        private string ResolvePath(string fileName)
-        {
-            return this.FilePathResolver.Resolve(fileName/*, BindableMediaFileItem.MediaFileStorage*/);
-        }
-
-        private bool CanDeleteMediaItem()
-        {
-            return this.SelectedMediaItem != null && 
-                (UserService.CurrentUser.IsAdmin() || this.SelectedMediaItem.CreatorId==UserService.CurrentUser.Id);
-        }
-
-        private void DeleteMediaItem()
-        {
-            if (CanDeleteMediaItem())
-            {
-                var item = this.SelectedMediaItem;
-                this.SelectedMediaItem = null;
-
-                if (item == _currentPreviewItem)
-                {
-                    _currentPreviewItem.ClosePreview();
-                    _currentPreviewItem = null;
-                }
-
-                MediaFileService.DeleteMediaFile(item.Entity,App.Current.Name);
-                _mediaItemCollection.Remove(item);
-                //_saveMediaItemsCommand.RaiseCanExecuteChanged();
-            }
-        }
-
-        //private bool CanSaveMediaItems()
-        //{
-        //    return _mediaItemCollection.Count > 0;
-        //}
-
-        //private void SaveMediaItems()
-        //{
-        //    if (CanSaveMediaItems())
-        //    {
-        //        if (_mediaItemCollection.Count > 0)
-        //        {
-        //            var item = _mediaItemCollection[0];
-        //        }
-        //    }
-        //}
 
         public ObservableCollection<BindableMediaFileItem> MediaItemView
         {
@@ -150,14 +65,109 @@ namespace FCSPlayout.MediaFileImporter
             }
         }
 
-        //public event EventHandler SelectedMediaItemChanged;
-        //private void OnSelectedMediaItemChanged()
-        //{
-        //    if (SelectedMediaItemChanged != null)
-        //    {
-        //        SelectedMediaItemChanged(this, EventArgs.Empty);
-        //    }
-        //}
+        public MediaItemSearchOptions SearchOptions
+        {
+            get;private set;
+        }
+
+        
+
+        public int PageSize
+        {
+            get { return _pageSize; }
+            set
+            {
+                _pageSize = value;
+                this.RaisePropertyChanged(nameof(PageSize));
+            }
+        }
+
+        private IEventAggregator EventAggregator { get; set; }
+        public IMediaFilePathResolver FilePathResolver { get; private set; }
+        public IMediaFileImageResolver ImageResolver { get; private set; }
+        public IMediaFileService MediaFileService { get; private set; }
+
+        private string ResolvePath(string fileName)
+        {
+            return this.FilePathResolver.Resolve(fileName);
+        }
+
+        #region Command Methods
+        private bool CanDeleteMediaItem()
+        {
+            return this.SelectedMediaItem != null &&
+                (UserService.CurrentUser.IsAdmin() || this.SelectedMediaItem.CreatorId == UserService.CurrentUser.Id);
+        }
+
+        private void DeleteMediaItem()
+        {
+            if (CanDeleteMediaItem())
+            {
+                var item = this.SelectedMediaItem;
+                this.SelectedMediaItem = null;
+
+                if (item == _currentPreviewItem)
+                {
+                    _currentPreviewItem.ClosePreview();
+                    _currentPreviewItem = null;
+                }
+
+                this.MediaFileService.DeleteMediaFile(item.Entity, App.Current.Name);
+                _mediaItemCollection.Remove(item);
+                //_saveMediaItemsCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        private bool CanEditMediaItem(object cmdParameter)
+        {
+            return false;
+        }
+
+        private void EditMediaItem(object cmdParameter)
+        {
+            if (CanEditMediaItem(cmdParameter))
+            {
+            }
+        }
+
+        private void SearchMediaItems(RequestPagingItemsEventArgs e)
+        {
+            if (_currentPreviewItem != null)
+            {
+                _currentPreviewItem.ClosePreview();
+                _currentPreviewItem = null;
+            }
+
+            _mediaItemCollection.Clear();
+
+            var result = this.MediaFileService.GetMediaFiles(this.SearchOptions, e.PagingInfo);
+
+            foreach (var item in result.Items)
+            {
+                _mediaItemCollection.Add(new BindableMediaFileItem(item, this.ResolvePath(item.FileName)));
+            }
+
+            e.Result = result;
+        }
+
+        private void Preview(IPlayableItem playableItem)
+        {
+            if (this.EventAggregator != null && playableItem != null)
+            {
+                _currentPreviewItem = playableItem;
+                this.EventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Publish(playableItem);
+            }
+        }
+        #endregion Command Methods
+
+        #region Commands
+        public ICommand SearchCommand
+        {
+            get
+            {
+                return _searchCommand;
+            }
+        }
 
         public ICommand EditMediaItemCommand
         {
@@ -175,51 +185,10 @@ namespace FCSPlayout.MediaFileImporter
             }
         }
 
-        //public ICommand SaveMediaItemsCommand
-        //{
-        //    get
-        //    {
-        //        return _saveMediaItemsCommand;
-        //    }
-        //}
-
-        public MediaItemSearchOptions SearchOptions
+        public ICommand PreviewCommand
         {
-            get;private set;
+            get { return _previewCommand; }
         }
-
-        public ICommand SearchCommand
-        {
-            get
-            {
-                return _searchCommand;
-            }
-        }
-
-        public int PageSize
-        {
-            get { return _pageSize; }
-            set
-            {
-                _pageSize = value;
-                this.RaisePropertyChanged(nameof(PageSize));
-            }
-        }
-
-        private IEventAggregator EventAggregator { get; set; }
-        public IMediaFilePathResolver FilePathResolver { get; private set; }
-        public IMediaFileImageResolver ImageResolver { get; private set; }
-
-        private bool CanEditMediaItem(object cmdParameter)
-        {
-            return false;
-        }
-      
-        private void EditMediaItem(object cmdParameter)
-        {
-            if (CanEditMediaItem(cmdParameter))
-            {
-            }
-        }
+        #endregion Commands
     }
 }

@@ -148,7 +148,7 @@
     <Compile Include="datagridHepler.cs" />
     <Compile Include="Code\DelegateBackgroundWorker.cs" />
     <Compile Include="Code\IUploadProgressFeedback.cs" />
-    <Compile Include="Code\FileSystemDestinationStreamCreator.cs" />
+    <Compile Include="Code\FileSystemDestinationStreamManager.cs" />
     <Compile Include="Code\InteractionRequests.cs" />
     <Compile Include="MediaItemListView2.xaml.cs">
       <DependentUpon>MediaItemListView2.xaml</DependentUpon>

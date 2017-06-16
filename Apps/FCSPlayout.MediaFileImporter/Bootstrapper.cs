@@ -20,6 +20,9 @@ namespace FCSPlayout.MediaFileImporter
             this.Container.RegisterInstance<IMediaFileImageResolver>(new MediaFileImageResolver());
             this.Container.RegisterInstance<IUserService>(new UserServiceAdapter());
             this.Container.RegisterInstance<IMediaFilePathResolver>(new MediaFilePathResolver(MediaFileStorage.Primary));
+            this.Container.RegisterType<IDestinationStreamManager, FileSystemDestinationStreamManager>(new ContainerControlledLifetimeManager());
+            this.Container.RegisterType<IFileUploader, DefaultFileUploader>(new ContainerControlledLifetimeManager());
+            this.Container.RegisterType<IMediaFileService, DefaultMediaFileService>(new ContainerControlledLifetimeManager());
         }
 
         protected override void InitializeModules()

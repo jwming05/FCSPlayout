@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloatExplorer", "Temp\Float
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloatExplorer.Domain", "Temp\FloatExplorer.Domain\FloatExplorer.Domain.csproj", "{9E1912F4-F918-4B99-AB18-594046AF4066}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCSPlayout.Common", "FCSPlayout.Common\FCSPlayout.Common.csproj", "{BA13ED0C-06F9-47CD-86DF-9E725AD020CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -213,6 +215,14 @@ Global
 		{9E1912F4-F918-4B99-AB18-594046AF4066}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9E1912F4-F918-4B99-AB18-594046AF4066}.Release|x86.ActiveCfg = Release|Any CPU
 		{9E1912F4-F918-4B99-AB18-594046AF4066}.Release|x86.Build.0 = Release|Any CPU
+		{BA13ED0C-06F9-47CD-86DF-9E725AD020CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA13ED0C-06F9-47CD-86DF-9E725AD020CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA13ED0C-06F9-47CD-86DF-9E725AD020CC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BA13ED0C-06F9-47CD-86DF-9E725AD020CC}.Debug|x86.Build.0 = Debug|Any CPU
+		{BA13ED0C-06F9-47CD-86DF-9E725AD020CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA13ED0C-06F9-47CD-86DF-9E725AD020CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA13ED0C-06F9-47CD-86DF-9E725AD020CC}.Release|x86.ActiveCfg = Release|Any CPU
+		{BA13ED0C-06F9-47CD-86DF-9E725AD020CC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

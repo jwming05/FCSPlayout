@@ -27,30 +27,32 @@ namespace FCSPlayout.Entities
 
         public Guid? MediaFileCategoryId { get; set; }
 
-        [ForeignKey("MediaFileCategoryId")]
-        [XmlIgnore]
-        public MediaFileCategory MediaFileCategory { get; set; }
-
         public Guid? MediaFileChannelId { get; set; }
-
-        [ForeignKey("MediaFileChannelId")]
-        [XmlIgnore]
-        public MediaFileChannel MediaFileChannel { get; set; }
 
         public bool Deleted { get; set; }
 
         public DateTime? DeleteTime { get; set; }
 
-        [XmlIgnore]
-        public UserEntity Creator
-        {
-            get;set;
-        }
+        
 
         [ForeignKey("Creator")]
         public Guid? CreatorId { get; set; }
 
         public MediaFileMetadata Metadata { get; set; }
+
+        [ForeignKey("MediaFileCategoryId")]
+        [XmlIgnore]
+        public MediaFileCategory MediaFileCategory { get; set; }
+
+        [XmlIgnore]
+        public UserEntity Creator
+        {
+            get; set;
+        }
+
+        [ForeignKey("MediaFileChannelId")]
+        [XmlIgnore]
+        public MediaFileChannel MediaFileChannel { get; set; }
     }
 
     

@@ -37,7 +37,7 @@ namespace FCSPlayout.MediaFileImporter
             //FCSPlayout.Common.AppSettings.Instance.MediaFileDirectory = ConfigurationManager.AppSettings["MediaFileDirectory"];
 
             MediaFileDurationGetter.Current = new MLMediaFileDurationGetter();
-            MediaFileService.DestinationStreamCreator = FileSystemDestinationStreamCreator.Instance;
+            //MediaFileService.DestinationStreamCreator = FileSystemDestinationStreamManager.Instance;
 
             //LocalSettings.Instance.Initialize();
         }
@@ -46,10 +46,6 @@ namespace FCSPlayout.MediaFileImporter
         {
             base.OnExit(e);
             //Common.GlobalEventAggregator.Instance.RaiseApplicationExit();
-        }
-
-        
+        }   
     }
-
-    
 }

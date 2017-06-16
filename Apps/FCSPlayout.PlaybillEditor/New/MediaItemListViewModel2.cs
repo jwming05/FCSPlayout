@@ -25,11 +25,12 @@ namespace FCSPlayout.PlaybillEditor
         private int _pageSize = 30;
 
         public MediaItemListViewModel2(IEventAggregator eventAggregator, IMediaFilePathResolver filePathResolver, 
-            IMediaFileImageResolver imageResolver,IRegionManager regionManager)
+            IMediaFileImageResolver imageResolver,IRegionManager regionManager,IMediaFileService mediaService)
         {
             this.EventAggregator = eventAggregator;
             this.FilePathResolver = filePathResolver;
             this.ImageResolver = imageResolver;
+            this.MediaFileService = mediaService;
 
             _regionManager = regionManager;
 
@@ -214,5 +215,7 @@ namespace FCSPlayout.PlaybillEditor
         {
             get { return _regionManager.Regions["mediaItemRegion"].Context as IMediaItemSelector; }
         }
+
+        public IMediaFileService MediaFileService { get; private set; }
     }
 }

@@ -4,7 +4,6 @@ using FCSPlayout.WPF.Core;
 using Prism.Commands;
 using Prism.Events;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -34,11 +33,12 @@ namespace FCSPlayout.MediaFileImporter
 
         public MediaItemListViewModel(IEventAggregator eventAggregator,
             InteractionRequests interactionRequests,
-            IMediaFileImageResolver imageResolver,IUserService userService)
+            IMediaFileImageResolver imageResolver,IUserService userService,IMediaFileService mediaFileService)
         {
             this.EventAggregator = eventAggregator;
             this.ImageResolver = imageResolver;
             this.UserService = userService;
+            this.MediaFileService = mediaFileService;
 
             _interactionRequests = interactionRequests;
 
@@ -107,12 +107,37 @@ namespace FCSPlayout.MediaFileImporter
         #region
         private void Upload(BindableMediaFileItem item)
         {
+            var entity = item.Entity;
+            var metadata = entity.Metadata;
+
+            if (metadata == null)
+            {
+                metadata = new Entities.MediaFileMetadata();
+                entity.Metadata = metadata;
+            }
+
+            if (metadata.Icon == null)
+            {
+                var image = item.Image;
+                if (image == null)
+                {
+                    image = this.ResolveImage(item);
+                }
+                metadata.Icon = GetIcon(image);
+            }
+
             this.ProgressFeedback.Reset();
 
             CurrentUploadItem = item;
             _worker.State = item;
-            _worker.Run((c) => { MediaFileService.UploadFile(item.FilePath, item.FileName, c); });
+            _worker.Run((c) => 
+            {
+                this.DoUpload(item, c);
+                //this.MediaFileService.UploadFile(item.FilePath, item.FileName, c);
+            });
         }
+
+        
 
         private void ReportUploadProgress(int progress,object state)
         {
@@ -130,32 +155,38 @@ namespace FCSPlayout.MediaFileImporter
             _mediaItemCollection.Remove(item);
         }
 
+        private void DoUpload(BindableMediaFileItem item, IBackgroundWorkContext c)
+        {
+            this.MediaFileService.UploadFile(item.FilePath, item.FileName, c);
+            this.MediaFileService.Add(item.Entity, App.Current.Name);
+        }
+
         private void OnUploadCompleted(Exception error,bool cancelled,object result)
         {
             BindableMediaFileItem item = (BindableMediaFileItem)_worker.State;
 
             if (error==null && !cancelled)
             {
-                var entity = item.Entity;
-                var metadata = entity.Metadata;
+                //var entity = item.Entity;
+                //var metadata = entity.Metadata;
 
-                if (metadata == null)
-                {
-                    metadata = new Entities.MediaFileMetadata();
-                    entity.Metadata = metadata;
-                }
+                //if (metadata == null)
+                //{
+                //    metadata = new Entities.MediaFileMetadata();
+                //    entity.Metadata = metadata;
+                //}
 
-                if(metadata.Icon==null)
-                {
-                    var image = item.Image;
-                    if (image == null)
-                    {
-                        image = this.ResolveImage(item);
-                    }
-                    metadata.Icon = GetIcon(image);
-                }
+                //if(metadata.Icon==null)
+                //{
+                //    var image = item.Image;
+                //    if (image == null)
+                //    {
+                //        image = this.ResolveImage(item);
+                //    }
+                //    metadata.Icon = GetIcon(image);
+                //}
 
-                MediaFileService.Add(item.Entity, App.Current.Name);
+                //this.MediaFileService.Add(item.Entity, App.Current.Name);
                 _worker.State = null;
                 RemoveItem(item);
             }
@@ -228,6 +259,8 @@ namespace FCSPlayout.MediaFileImporter
             }
         }
 
+        public IMediaFileService MediaFileService { get; private set; }
+
         #region Commands
         public ICommand PreviewCommand
         {
@@ -281,6 +314,8 @@ namespace FCSPlayout.MediaFileImporter
                 return _clearCommand;
             }
         }
+
+        
         #endregion Commands
 
         #region Command Methods

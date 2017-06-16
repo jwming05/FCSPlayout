@@ -77,10 +77,13 @@
     <Compile Include="LocalSettingsBase.cs" />
     <Compile Include="MediaFileImageExtractor.cs" />
     <Compile Include="IBackgroundWorkContext.cs" />
-    <Compile Include="IDestinationStreamCreator.cs" />
+    <Compile Include="IDestinationStreamManager.cs" />
     <Compile Include="MediaFileImageResolver.cs" />
+    <Compile Include="MediaFileImporter\DefaultFileUploader.cs" />
+    <Compile Include="MediaFileImporter\DefaultMediaFileService.cs" />
+    <Compile Include="MediaFileImporter\IFileUploader.cs" />
+    <Compile Include="MediaFileImporter\IMediaFileService.cs" />
     <Compile Include="MediaFilePathResolver.cs" />
-    <Compile Include="MediaFileService.cs" />
     <Compile Include="MediaItemUtils.cs" />
     <Compile Include="MediaSourceBase.cs" />
     <Compile Include="Extensions\MediaSourceExtensions.cs" />

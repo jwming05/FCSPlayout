@@ -64,7 +64,9 @@
     <Compile Include="AutoPaddingMediaSource.cs" />
     <Compile Include="AutoPlayItemEditor.cs" />
     <Compile Include="Common\DefaultDateTimeService.cs" />
+    <Compile Include="Concrete\New\MyPlaylistEditor.cs" />
     <Compile Include="Concrete\New\NewPlaylistEditor.cs" />
+    <Compile Include="Concrete\New\MyPlaylistEditor_2.cs" />
     <Compile Include="Concrete\New\NewPlaylistEditor_2.cs" />
     <Compile Include="Concrete\New\NewPlaylistBuildData.cs" />
     <Compile Include="Concrete\New\NewPlaylistBuilder.cs" />

@@ -28,6 +28,8 @@ namespace FCSPlayout.PlaybillEditor
             this.Container.RegisterInstance<IPlayoutConfiguration>(PlayoutConfiguration.Current);
 
             this.Container.RegisterInstance(PlayoutRepository.GetMPlaylistSettings());
+
+            this.Container.RegisterInstance<IMediaFileService>(new DefaultMediaFileService(null));
         }
 
         protected override void InitializeModules()
