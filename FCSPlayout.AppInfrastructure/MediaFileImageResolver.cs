@@ -80,7 +80,7 @@ namespace FCSPlayout.AppInfrastructure
             return null;
         }
 
-        public /*static */BitmapSource Decode(byte[] imageBytes)
+        public BitmapSource Decode(byte[] imageBytes)
         {
             using (var ms = new System.IO.MemoryStream(imageBytes))
             {

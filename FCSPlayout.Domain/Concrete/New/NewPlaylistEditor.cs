@@ -24,7 +24,6 @@ namespace FCSPlayout.Domain
             this.Id = DateTime.Now.Ticks;
             _originalPlayItems = playItems;
 
-            
             _playlist = _originalPlayItems.Select(i=>new ScheduleItem(i)).ToList();
 
             _onCommitted = onCommitted;

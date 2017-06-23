@@ -13,8 +13,6 @@ namespace FCSPlayout.MediaFileImporter
     /// </summary>
     public partial class App : WPFApplicationBase
     {
-        //public static readonly string Name = "入库系统";
-
         public App()
             :base(ApplicationNames.FileImporter)
         {
@@ -34,18 +32,12 @@ namespace FCSPlayout.MediaFileImporter
             MLLicenseLib.MLLicenseManager.Instance.Timer();
             CheckMedialooks();
 
-            //FCSPlayout.Common.AppSettings.Instance.MediaFileDirectory = ConfigurationManager.AppSettings["MediaFileDirectory"];
-
-            MediaFileDurationGetter.Current = new MLMediaFileDurationGetter();
-            //MediaFileService.DestinationStreamCreator = FileSystemDestinationStreamManager.Instance;
-
-            //LocalSettings.Instance.Initialize();
+            //MediaFileDurationGetter.Current = new MLMediaFileDurationGetter();
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
-            //Common.GlobalEventAggregator.Instance.RaiseApplicationExit();
         }   
     }
 }

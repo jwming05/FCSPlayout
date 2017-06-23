@@ -9,7 +9,7 @@ namespace FCSPlayout.Domain
     public class Playlist:IPlaylist
     {
         //private List<IPlayItem> _playItems=new List<IPlayItem>();
-        private PlaylistEditor _editor;
+        //private PlaylistEditor _editor;
         private IPlayItemCollection _playItems;
 
         public event EventHandler<TimeValidationEventArgs> ValidateStartTime;
@@ -43,32 +43,32 @@ namespace FCSPlayout.Domain
             }
         }
 
-        public IPlaylistEditor Edit()
-        {
-            if (_editor != null)
-            {
-                throw new InvalidOperationException();
-            }
+        //public IPlaylistEditor Edit()
+        //{
+        //    if (_editor != null)
+        //    {
+        //        throw new InvalidOperationException();
+        //    }
 
-            _editor = CreateEditor();
-            _editor.Disposed += Editor_Disposed;
-            return _editor;
-        }
+        //    _editor = CreateEditor();
+        //    _editor.Disposed += Editor_Disposed;
+        //    return _editor;
+        //}
 
-        protected virtual PlaylistEditor CreateEditor()
-        {
-            return new PlaylistEditor(this);
-        }
-        private void Editor_Disposed(object sender, EventArgs e)
-        {
-            long editId = _editor.Id;
-            if (_playItems.IsDirty)
-            {
-                OnEditorDisposed(editId);
-                _playItems.IsDirty = false;
-            }
-            _editor = null;
-        }
+        //protected virtual PlaylistEditor CreateEditor()
+        //{
+        //    return new PlaylistEditor(this);
+        //}
+        //private void Editor_Disposed(object sender, EventArgs e)
+        //{
+        //    long editId = _editor.Id;
+        //    if (_playItems.IsDirty)
+        //    {
+        //        OnEditorDisposed(editId);
+        //        _playItems.IsDirty = false;
+        //    }
+        //    _editor = null;
+        //}
 
         protected virtual void OnEditorDisposed(long editId)
         {

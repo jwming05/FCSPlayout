@@ -585,7 +585,8 @@ namespace FCSPlayout.Domain
             });
         }
 
-        private void Rebuild(DateTime startTime, DateTime stopTime, int beginIndex,int endIndex,Action<List<ScheduleItem>> itemsAction)
+        private void Rebuild(DateTime startTime, DateTime stopTime, int beginIndex, int endIndex,
+            Action<List<ScheduleItem>> itemsAction)
         {
             List<ScheduleItem> playItems = GetPlaylistItems(beginIndex, endIndex);
 

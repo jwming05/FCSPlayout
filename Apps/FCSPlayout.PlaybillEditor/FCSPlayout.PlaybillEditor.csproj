@@ -141,56 +141,56 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="New\InteractionRequests.cs" />
-    <Compile Include="New\MediaItemView.xaml.cs">
+    <Compile Include="Code\InteractionRequests.cs" />
+    <Compile Include="MediaItemModule\MediaItemView.xaml.cs">
       <DependentUpon>MediaItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="New\BindableFileMediaItem.cs" />
+    <Compile Include="Code\BindableFileMediaItem.cs" />
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="New\ChannelItemListViewModel.cs" />
-    <Compile Include="New\ChannelItemListView.xaml.cs">
+    <Compile Include="MediaItemModule\ChannelItemListViewModel.cs" />
+    <Compile Include="MediaItemModule\ChannelItemListView.xaml.cs">
       <DependentUpon>ChannelItemListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="datagridHepler.cs" />
-    <Compile Include="New\MainViewModel.cs" />
-    <Compile Include="MediaItemModule.cs" />
-    <Compile Include="New\MainWindow.xaml.cs">
+    <Compile Include="MainViewModel.cs" />
+    <Compile Include="Modules\MediaItemModule.cs" />
+    <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="New\MediaItemListView2.xaml.cs">
-      <DependentUpon>MediaItemListView2.xaml</DependentUpon>
+    <Compile Include="MediaItemModule\DbMediaItemListView.xaml.cs">
+      <DependentUpon>DbMediaItemListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="New\MediaItemListViewModel2.cs" />
-    <Compile Include="New\MediaItemViewModel.cs" />
-    <Compile Include="New\PlaybillViewModel_2.cs" />
-    <Compile Include="PlaybillModule.cs" />
-    <Compile Include="PlayItemCollection.cs" />
-    <Compile Include="New\BindablePlayItem.cs" />
-    <Compile Include="New\PlaybillView.xaml.cs">
+    <Compile Include="MediaItemModule\DbMediaItemListViewModel.cs" />
+    <Compile Include="MediaItemModule\MediaItemViewModel.cs" />
+    <Compile Include="PlaybillModule\PlaybillViewModel_2.cs" />
+    <Compile Include="Modules\PlaybillModule.cs" />
+    <Compile Include="Code\PlayItemCollection.cs" />
+    <Compile Include="Code\BindablePlayItem.cs" />
+    <Compile Include="PlaybillModule\PlaybillView.xaml.cs">
       <DependentUpon>PlaybillView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="New\PlaybillViewModel.cs" />
+    <Compile Include="PlaybillModule\PlaybillViewModel.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="New\MediaItemView.xaml">
+    <Page Include="MediaItemModule\MediaItemView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="New\ChannelItemListView.xaml">
+    <Page Include="MediaItemModule\ChannelItemListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="New\MainWindow.xaml">
+    <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="New\MediaItemListView2.xaml">
+    <Page Include="MediaItemModule\DbMediaItemListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="New\PlaybillView.xaml">
+    <Page Include="PlaybillModule\PlaybillView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

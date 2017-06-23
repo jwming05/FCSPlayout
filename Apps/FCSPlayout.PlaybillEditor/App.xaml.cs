@@ -28,7 +28,6 @@ namespace FCSPlayout.PlaybillEditor
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
-            //Common.GlobalEventAggregator.Instance.RaiseApplicationExit();
         }
 
         private void Initialize()
@@ -37,12 +36,8 @@ namespace FCSPlayout.PlaybillEditor
 
             CheckMedialooks();
 
-            //FCSPlayout.Common.AppSettings.Instance.MediaFileDirectory = ConfigurationManager.AppSettings["MediaFileDirectory"];
-
             // NOTE: 编单使用主播目录浏览。
-            MediaFilePathResolver.Current.CurrentStorage = MediaFileStorage.Primary;
-            MediaFileDurationGetter.Current = new MLMediaFileDurationGetter();
-            //LocalSettings.Instance.Initialize();
+            //MediaFilePathResolver.Current.CurrentStorage = MediaFileStorage.Primary;
         }
     }
 }

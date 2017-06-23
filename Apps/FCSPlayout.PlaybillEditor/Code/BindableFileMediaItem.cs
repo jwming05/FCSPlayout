@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace FCSPlayout.WPFApp
+namespace FCSPlayout.PlaybillEditor
 {
     public class BindableFileMediaItem:BindableBase, IPlayableItem, IImageItem
     {
@@ -22,7 +22,7 @@ namespace FCSPlayout.WPFApp
 
         public BindableFileMediaItem(MediaFileEntity entity, string filePath)
         {
-            this.MediaSource = new FileMediaSource(entity); // mediaSource;
+            this.MediaSource = new FileMediaSource(entity);
             //this.StartPosition= TimeSpan.FromSeconds(this.Entity.MarkerIn);
             //this.PlayDuration= TimeSpan.FromSeconds(this.Entity.MarkerDuration);
 

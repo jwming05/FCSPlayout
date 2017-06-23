@@ -104,9 +104,17 @@ namespace FCSPlayout.Domain
         //    return result;
         //}
 
+        //public override IPlaybillItem Clone(PlayRange newRange)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
         public override IPlaybillItem Clone(PlayRange newRange)
         {
-            throw new NotImplementedException();
+            var newSource = this.PlaySource.Clone(newRange);
+            var result = new TimingPlaybillItem(newSource, this.StartTime.Value, this.ScheduleMode==PlayScheduleMode.TimingBreak ? true: false);
+            result.Id = Guid.NewGuid();
+            return result;
         }
     }
 }

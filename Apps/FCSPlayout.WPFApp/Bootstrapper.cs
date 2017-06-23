@@ -38,6 +38,8 @@ namespace FCSPlayout.WPFApp
 
             this.Container.RegisterInstance<ObservableCollection<BindablePlayItem>>("playedCollection", 
                 new ObservableCollection<BindablePlayItem>());
+
+            this.Container.RegisterInstance<IMediaFileService>(new DefaultMediaFileService(null));
         }
 
         protected override DependencyObject CreateShell()
@@ -54,6 +56,7 @@ namespace FCSPlayout.WPFApp
         protected override void ConfigureModuleCatalog()
         {
             base.ConfigureModuleCatalog();
+
             ((ModuleCatalog)this.ModuleCatalog).AddModule(typeof(MediaItemModule));
             ((ModuleCatalog)this.ModuleCatalog).AddModule(typeof(PlaybillModule));
             ((ModuleCatalog)this.ModuleCatalog).AddModule(typeof(PlayoutModule));

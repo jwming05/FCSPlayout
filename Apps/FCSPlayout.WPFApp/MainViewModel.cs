@@ -2,26 +2,18 @@
 using FCSPlayout.Domain;
 using FCSPlayout.WPF.Core;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System.Windows.Input;
+using System;
+using FCSPlayout.Entities;
 
 namespace FCSPlayout.WPFApp
 {
-    public class MainViewModel : BindableBase
+    public class MainViewModel : ShellModelBase // BindableBase
     {
-        private readonly InteractionRequest<EditMediaItemConfirmation> _editMediaItemInteractionRequest;
-        private readonly InteractionRequest<EditDurationConfirmation> _editDurationInteractionRequest;
-
-        private readonly InteractionRequest<OpenFileDialogConfirmation> _openFileInteractionRequest;
-        private readonly InteractionRequest<Notification> _displayMessageInteractionRequest;
-        private readonly InteractionRequest<SaveFileDialogConfirmation> _saveFileInteractionRequest;
-        private readonly ITimer _timer;
-
-        private readonly InteractionRequest<EditDateTimeConfirmation> _editDateTimeInteractionRequest;
-        private readonly InteractionRequest<EditCGItemsConfirmation> _editCGItemsInteractionRequest;
-
-        private readonly InteractionRequest<LoadPlaybillConfirmation> _loadPlaybillInteractionRequest;
+        //private readonly ITimer _timer;
 
         //private Playbill _playbill;
         //private ObservableCollection<IPlayItem> _playItemCollection;
@@ -30,17 +22,27 @@ namespace FCSPlayout.WPFApp
 
         private readonly DelegateCommand _collectGarbageCommand;
         private PeriodicalGarbageCollector _garbageCollector = new PeriodicalGarbageCollector();
+
+        private readonly DelegateCommand _editCGItemsCommand;
+
         //private IPlaylist _playlist;
 
-        public MainViewModel(ITimer timer)
+        public MainViewModel(/*ITimer timer*/ IUserService userService, InteractionRequests interactionRequests, IEventAggregator eventAggregator)
+            :base(userService)
         {
+            //eventAggregator.GetEvent<PubSubEvent<IPlayableItem>>().Subscribe(Preview);
 
-            _openFileInteractionRequest = new InteractionRequest<OpenFileDialogConfirmation>();
-            _displayMessageInteractionRequest = new InteractionRequest<Notification>();
+            this.PreviewInteractionRequest = interactionRequests.PreviewInteractionRequest;
+            this.OpenFileInteractionRequest = interactionRequests.OpenFileInteractionRequest;
+            this.DisplayMessageInteractionRequest = interactionRequests.DisplayMessageInteractionRequest;
+            this.ConfirmationInteractionRequest = interactionRequests.ConfirmationInteractionRequest;
+            this.EditDurationInteractionRequest = interactionRequests.EditDurationInteractionRequest;
+            this.EditDateTimeInteractionRequest = interactionRequests.EditDateTimeInteractionRequest;
+            this.EditCGItemsInteractionRequest = interactionRequests.EditCGItemsInteractionRequest;
+            this.SaveFileInteractionRequest = interactionRequests.SaveFileInteractionRequest;
+            this.LoadPlaybillInteractionRequest = interactionRequests.LoadPlaybillInteractionRequest;
 
-            _saveFileInteractionRequest = new InteractionRequest<SaveFileDialogConfirmation>();
-
-            _timer = timer;
+            //_timer = timer;
 
             //_playItemCollection = new ObservableCollection<IPlayItem>();
             //_playItemsView = new CollectionView(_playItemCollection);
@@ -54,24 +56,44 @@ namespace FCSPlayout.WPFApp
 
             _collectGarbageCommand = new DelegateCommand(ExecuteCollectGarbage);
 
-            _editMediaItemInteractionRequest = new InteractionRequest<EditMediaItemConfirmation>();
-            _editDurationInteractionRequest = new InteractionRequest<EditDurationConfirmation>();
-
-            _editDateTimeInteractionRequest = new InteractionRequest<EditDateTimeConfirmation>();
-            _editCGItemsInteractionRequest = new InteractionRequest<EditCGItemsConfirmation>();
-
-            _loadPlaybillInteractionRequest = new InteractionRequest<LoadPlaybillConfirmation>();
+            _editCGItemsCommand = new DelegateCommand(EditCGItems);
         }
 
+        private void EditCGItems()
+        {
+            var items = PlayoutRepository.GetCGItems();
+            this.EditCGItemsInteractionRequest.Raise(new EditCGItemsConfirmation { Title = "编辑字幕", Items = items.Clone() },
+                c=> 
+                {
+                    if (c.Confirmed)
+                    {
+                        PlayoutRepository.SaveCGItems(c.Items);
+                    }
+                });
+        }
+
+        //private void Preview(IPlayableItem playableItem)
+        //{
+        //    this.PreviewInteractionRequest.Raise(new PreviewRequestConfirmation(playableItem) { Title = "预览" },
+        //        (c)=> 
+        //        {
+        //            if (c.Confirmed)
+        //            {
+
+        //            }
+
+        //            playableItem.ClosePreview();
+        //        });
+        //}
         private void ExecuteCollectGarbage()
         {
             _garbageCollector.OnTimer();
         }
 
-        private void RaiseDisplayMessageInteractionRequest(string title, string message)
-        {
-            _displayMessageInteractionRequest.Raise(new Notification { Title = title, Content = message });
-        }
+        //private void RaiseDisplayMessageInteractionRequest(string title, string message)
+        //{
+        //    DisplayMessageInteractionRequest.Raise(new Notification { Title = title, Content = message });
+        //}
 
 
         //private void Playbill_PlayItemsChanged(object sender, EventArgs e)
@@ -104,28 +126,23 @@ namespace FCSPlayout.WPFApp
 
         public IInteractionRequest OpenFileInteractionRequest
         {
-            get
-            {
-                return _openFileInteractionRequest;
-            }
+            get;private set;
         }
 
 
-        public InteractionRequest<EditMediaItemConfirmation> EditMediaItemInteractionRequest
-        {
-            get
-            {
-                return _editMediaItemInteractionRequest;
-            }
-        }
+        //public InteractionRequest<EditMediaItemConfirmation> EditMediaItemInteractionRequest
+        //{
+        //    get
+        //    {
+        //        return _editMediaItemInteractionRequest;
+        //    }
+        //}
 
         public InteractionRequest<EditDurationConfirmation> EditDurationInteractionRequest
         {
-            get
-            {
-                return _editDurationInteractionRequest;
-            }
+            get;private set;
         }
+
         //public IPlayItem SelectedPlayItem
         //{
         //    get { return _selectedPlayItem; }
@@ -138,27 +155,21 @@ namespace FCSPlayout.WPFApp
 
         public IInteractionRequest DisplayMessageInteractionRequest
         {
-            get
-            {
-                return _displayMessageInteractionRequest;
-            }
+            get;private set;
         }
 
         public IInteractionRequest SaveFileInteractionRequest
         {
-            get
-            {
-                return _saveFileInteractionRequest;
-            }
+            get;private set;
         }
 
-        public ITimer Timer
-        {
-            get
-            {
-                return _timer;
-            }
-        }
+        //public ITimer Timer
+        //{
+        //    get
+        //    {
+        //        return _timer;
+        //    }
+        //}
 
         public ICommand CollectGarbageCommand
         {
@@ -170,25 +181,27 @@ namespace FCSPlayout.WPFApp
 
         public InteractionRequest<EditDateTimeConfirmation> EditDateTimeInteractionRequest
         {
-            get
-            {
-                return _editDateTimeInteractionRequest;
-            }
+            get;private set;
         }
 
         public InteractionRequest<EditCGItemsConfirmation> EditCGItemsInteractionRequest
         {
-            get
-            {
-                return _editCGItemsInteractionRequest;
-            }
+            get;private set;
         }
 
         public InteractionRequest<LoadPlaybillConfirmation> LoadPlaybillInteractionRequest
         {
+            get;private set;
+        }
+
+        public InteractionRequest<PreviewRequestConfirmation> PreviewInteractionRequest { get; private set; }
+        public InteractionRequest<Confirmation> ConfirmationInteractionRequest { get; private set; }
+
+        public DelegateCommand EditCGItemsCommand
+        {
             get
             {
-                return _loadPlaybillInteractionRequest;
+                return _editCGItemsCommand;
             }
         }
 

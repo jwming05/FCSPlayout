@@ -289,17 +289,15 @@ namespace FCSPlayout.WPFApp
             {
                 if (_currentItem != value)
                 {
-                    if (value==null && _currentItem != null && this.Count>0 /*&& _currentIndex!=-1*/)
+                    if (value==null && _currentItem != null && this.Count>0)
                     {
                         this.PlayedCollection.Add(this[0]);
-                        //var item = this[_currentIndex];
-                        this.RemoveAt(0/*_currentIndex*/);
+                        this.RemoveAt(0);
                     }
 
                     _currentItem = value;
-                    if(_currentItem!=null/*&& _nextIndex != -1*/)
+                    if(_currentItem!=null)
                     {
-                        //_currentIndex = _nextIndex;
                         _nextIndex = -1;
                     }
                 }
@@ -333,14 +331,5 @@ namespace FCSPlayout.WPFApp
             }
             return false;
         }
-
-        //internal void ForcePlay(BindablePlayItem selectedPlayItem)
-        //{
-        //    if (CanForcePlay(selectedPlayItem))
-        //    {
-        //        // 复制当前播放项。
-
-        //    }
-        //}
     }
 }

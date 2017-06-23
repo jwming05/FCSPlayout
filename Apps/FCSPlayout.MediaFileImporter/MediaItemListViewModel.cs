@@ -33,12 +33,15 @@ namespace FCSPlayout.MediaFileImporter
 
         public MediaItemListViewModel(IEventAggregator eventAggregator,
             InteractionRequests interactionRequests,
-            IMediaFileImageResolver imageResolver,IUserService userService,IMediaFileService mediaFileService)
+            IMediaFileImageResolver imageResolver,
+            IUserService userService,IMediaFileService mediaFileService,
+            MediaFileDurationGetter mediaFileDurationGetter)
         {
             this.EventAggregator = eventAggregator;
             this.ImageResolver = imageResolver;
             this.UserService = userService;
             this.MediaFileService = mediaFileService;
+            this.MediaFileDurationGetter = mediaFileDurationGetter;
 
             _interactionRequests = interactionRequests;
 
@@ -315,7 +318,9 @@ namespace FCSPlayout.MediaFileImporter
             }
         }
 
-        
+        public MediaFileDurationGetter MediaFileDurationGetter { get; private set; }
+
+
         #endregion Commands
 
         #region Command Methods
@@ -337,8 +342,13 @@ namespace FCSPlayout.MediaFileImporter
             for (int j = 0; j < fileNames.Length; j++)
             {
                 var fileName = fileNames[j];
-                _mediaItemCollection.Add(new BindableMediaFileItem(fileName, this.UserService.CurrentUser.Id));
+                _mediaItemCollection.Add(new BindableMediaFileItem(fileName, this.UserService.CurrentUser.Id, GetDuration(fileName)));
             }
+        }
+
+        private TimeSpan GetDuration(string filePath)
+        {
+            return this.MediaFileDurationGetter.GetDuration(filePath);
         }
 
         private bool CanDeleteMediaItem()

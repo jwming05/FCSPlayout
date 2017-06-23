@@ -96,15 +96,8 @@ namespace FCSPlayout.WPF.Core
             get
             {
                 return this.MediaFileItem.Duration.TotalSeconds/2.0;
-
-                //this.MediaFileItem.StartPosition.TotalSeconds + (this.MediaFileItem.PlayDuration.TotalSeconds / 2.0);
             }
         }
-
-        //byte[] IMediaFileImageRequester.ImageBytes
-        //{
-        //    get { return this.MediaFileItem.ImageBytes; }
-        //}
 
         MediaFileImageRequest IMediaFileImageRequester.RequestToken
         {
@@ -126,12 +119,10 @@ namespace FCSPlayout.WPF.Core
                 if (this.MediaFileItem.ImageBytes == null)
                 {
                     _requestToken = null;
-                    //MediaFileImageResolver.Instance.ResolveAsync(this);
                     this.MediaFileImageResolver.ResolveAsync(this);
                 }
                 else
                 {
-                    //this.MediaFileItem.Image = MediaFileImageResolver.Decode(this.MediaFileItem.ImageBytes);
                     this.MediaFileItem.Image = this.MediaFileImageResolver.Decode(this.MediaFileItem.ImageBytes);
                 }
             }            

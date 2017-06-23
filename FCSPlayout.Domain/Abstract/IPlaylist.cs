@@ -6,7 +6,7 @@ namespace FCSPlayout.Domain
     {
         bool Contains(IPlayItem playItem);
         IPlayItem this[int index] { get; }
-        IPlaylistEditor Edit();
+        //IPlaylistEditor Edit();
 
         int FindLastIndex(Func<IPlayItem, bool> predicate);
         int FindFirstIndex(Func<IPlayItem, bool> predicate);

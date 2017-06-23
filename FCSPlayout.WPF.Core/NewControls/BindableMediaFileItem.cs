@@ -22,19 +22,17 @@ namespace FCSPlayout.WPF.Core
             this.FilePath = filePath;
         }
 
-        public BindableMediaFileItem(string filePath, Guid creatorId)
+        public BindableMediaFileItem(string filePath, Guid creatorId, TimeSpan duration)
         {
             this.Entity = new MediaFileEntity { CreatorId = creatorId, CreationTime = DateTime.Now };
             this.FilePath = filePath;
 
-            this.OriginalFileName = filePath; // Path.GetFileName(filePath);
+            this.OriginalFileName = filePath;
             this.FileName = GetNewFileName(filePath);
             this.Title = Path.GetFileNameWithoutExtension(filePath);
-            this.Duration = GetDuration(filePath);
+            this.Duration = duration; // GetDuration(filePath);
 
             this.PlayRange = new PlayRange(this.Duration);
-            //this.StartPosition = TimeSpan.Zero;
-            //this.PlayDuration = this.Duration;
         }
 
         public void ClosePreview()
@@ -97,7 +95,6 @@ namespace FCSPlayout.WPF.Core
             get
             {
                 return this.PlayRange.StartPosition;
-                //return TimeSpan.FromSeconds(this.Entity.MarkerIn);
             }
         }
 
@@ -114,7 +111,6 @@ namespace FCSPlayout.WPF.Core
             get
             {
                 return this.PlayRange.Duration;
-                //return TimeSpan.FromSeconds(this.Entity.MarkerDuration);
             }
         }
 
@@ -224,7 +220,7 @@ namespace FCSPlayout.WPF.Core
 
         public MediaFileEntity Entity { get; private set; }
 
-        public IPlayItem PlayItem
+        IPlayItem IPlayableItem.PlayItem
         {
             get
             {
@@ -232,9 +228,9 @@ namespace FCSPlayout.WPF.Core
             }
         }
 
-        private static TimeSpan GetDuration(string filePath)
-        {
-            return MediaFileDurationGetter.Current.GetDuration(filePath);
-        }
+        //private static TimeSpan GetDuration(string filePath)
+        //{
+        //    return MediaFileDurationGetter.Current.GetDuration(filePath);
+        //}
     }
 }

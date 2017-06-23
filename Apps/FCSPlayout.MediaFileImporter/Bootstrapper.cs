@@ -23,6 +23,8 @@ namespace FCSPlayout.MediaFileImporter
             this.Container.RegisterType<IDestinationStreamManager, FileSystemDestinationStreamManager>(new ContainerControlledLifetimeManager());
             this.Container.RegisterType<IFileUploader, DefaultFileUploader>(new ContainerControlledLifetimeManager());
             this.Container.RegisterType<IMediaFileService, DefaultMediaFileService>(new ContainerControlledLifetimeManager());
+
+            this.Container.RegisterInstance<MediaFileDurationGetter>(new MLMediaFileDurationGetter());
         }
 
         protected override void InitializeModules()
@@ -30,9 +32,10 @@ namespace FCSPlayout.MediaFileImporter
             base.InitializeModules();
 
             var viewRegistry = this.Container.Resolve<IRegionViewRegistry>();
+
             viewRegistry.RegisterViewWithRegion("previewRegion", typeof(PreviewPlayControl));
             viewRegistry.RegisterViewWithRegion("mediaItemListRegion", typeof(MediaItemListView));
-            viewRegistry.RegisterViewWithRegion("mediaItemList2Region", typeof(MediaItemListView2));
+            viewRegistry.RegisterViewWithRegion("mediaItemList2Region", typeof(DbMediaItemListView));
         }
 
         protected override DependencyObject CreateShell()

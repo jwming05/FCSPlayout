@@ -9,7 +9,6 @@ namespace FCSPlayout.WPFApp.Models
     {
         private PlayoutSystem _innerPlayout;
         private IPlayPreview _preview;
-        //private IPlayItemPlayRecorder _playRecorder;
         private IPlaylist3 _playlist;
         private ILoopPlayToken _loopPlayToken;
         private IMediaFilePathResolver _filePathResolver;
@@ -20,15 +19,10 @@ namespace FCSPlayout.WPFApp.Models
             {
                 return _playlist;
             }
-
-            //set
-            //{
-            //    _playlist = value;
-            //}
         }
 
         public BindablePlayout(IPlayPreview preview, IPlaylist3 playlist, 
-            IMediaFilePathResolver filePathResolver/*,IPlayItemPlayRecorder playRecorder*/)
+            IMediaFilePathResolver filePathResolver)
         {
             _preview = preview;
             _playlist = playlist;
@@ -70,7 +64,7 @@ namespace FCSPlayout.WPFApp.Models
             {
 
                 PlayoutSettings settings = GetPlayoutSettings();
-                var playout = new PlayoutSystem(_preview, /*_playRecorder,*/ _playlist, settings, this.Log, /*new ChannelSwitcher()*/ChannelSwitcher.Instance,
+                var playout = new PlayoutSystem(_preview, _playlist, settings, this.Log, ChannelSwitcher.Instance,
                     _filePathResolver,settings.CGItems);
                 playout.CurrentPlayItemChanged += Playout_CurrentPlayItemChanged;
                 playout.NextPlayItemChanged += Playout_NextPlayItemChanged;
@@ -148,24 +142,6 @@ namespace FCSPlayout.WPFApp.Models
             }
         }
         #endregion
-
-        //private void Playout_ScheduleStateChanged(object sender, EventArgs e)
-        //{
-        //    OnStateChanged();
-        //    //throw new NotImplementedException();
-        //}
-
-        //private void Playout_PlayItemStopped(object sender, PlayItemEventArgs e)
-        //{
-        //    _preview.CurrentPlayItem = null;
-        //    OnStateChanged();
-        //}
-
-        //private void Playout_PlayItemStarted(object sender, PlayItemEventArgs e)
-        //{
-        //    _preview.CurrentPlayItem = e.PlayItem;
-        //    OnStateChanged();
-        //}
 
         internal void OnTimer()
         {
