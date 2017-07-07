@@ -4,13 +4,17 @@ using Prism.Mvvm;
 using System;
 using System.IO;
 using System.Threading;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace FCSPlayout.WPF.Core
 {
     public class BindableMediaFileItem : BindableBase,IPlayableItem,IImageItem
     {
-        private BitmapSource _image;
+        public static IImageSourceDecoder ImageSourceDecoder;
+        public static ImageSource PlaceholderImage;
+
+        private ImageSource _image;
         private PlayRange _playRange;
 
         public event EventHandler PreviewClosing;
@@ -22,17 +26,48 @@ namespace FCSPlayout.WPF.Core
             this.FilePath = filePath;
         }
 
-        public BindableMediaFileItem(string filePath, Guid creatorId, TimeSpan duration)
+        //private BindableMediaFileItem(string filePath, Guid creatorId, TimeSpan duration)
+        //{
+        //    this.Entity = new MediaFileEntity
+        //    {
+        //        CreatorId = creatorId,
+        //        CreationTime = DateTime.Now,
+        //        OriginalFileName = filePath,
+        //        FileName= GetNewFileName(filePath),
+        //        Title= Path.GetFileNameWithoutExtension(filePath),
+        //        Duration=duration.TotalSeconds
+        //    };
+        //    this.FilePath = filePath;
+
+        //    //this.OriginalFileName = filePath;
+        //    //this.FileName = GetNewFileName(filePath);
+        //    //this.Title = Path.GetFileNameWithoutExtension(filePath);
+        //    //this.Duration = duration;
+
+        //    this.PlayRange = new PlayRange(this.Duration);
+        //}
+
+        public BindableMediaFileItem(string filePath, Guid creatorId, TimeSpan duration, byte[] thumbnailBytes)
+            //:this(filePath,creatorId,duration)
         {
-            this.Entity = new MediaFileEntity { CreatorId = creatorId, CreationTime = DateTime.Now };
+            this.Entity = new MediaFileEntity
+            {
+                CreatorId = creatorId,
+                CreationTime = DateTime.Now,
+                OriginalFileName = filePath,
+                FileName = GetNewFileName(filePath),
+                Title = Path.GetFileNameWithoutExtension(filePath),
+                Duration = duration.TotalSeconds
+            };
             this.FilePath = filePath;
 
-            this.OriginalFileName = filePath;
-            this.FileName = GetNewFileName(filePath);
-            this.Title = Path.GetFileNameWithoutExtension(filePath);
-            this.Duration = duration; // GetDuration(filePath);
+            //this.OriginalFileName = filePath;
+            //this.FileName = GetNewFileName(filePath);
+            //this.Title = Path.GetFileNameWithoutExtension(filePath);
+            //this.Duration = duration;
 
             this.PlayRange = new PlayRange(this.Duration);
+            this.Entity.Metadata = new MediaFileMetadata { Icon = thumbnailBytes };
         }
 
         public void ClosePreview()
@@ -201,11 +236,15 @@ namespace FCSPlayout.WPF.Core
             }
         }
 
-        public BitmapSource Image
+        public ImageSource Image
         {
             get
             {
-                return _image;
+                if(_image==null && this.ImageBytes!=null && this.ImageBytes.Length > 0 && this.Duration>TimeSpan.Zero)
+                {
+                    _image = ImageSourceDecoder.Decode(this.ImageBytes);
+                }
+                return _image ?? PlaceholderImage;
             }
 
             set
@@ -228,9 +267,6 @@ namespace FCSPlayout.WPF.Core
             }
         }
 
-        //private static TimeSpan GetDuration(string filePath)
-        //{
-        //    return MediaFileDurationGetter.Current.GetDuration(filePath);
-        //}
+
     }
 }

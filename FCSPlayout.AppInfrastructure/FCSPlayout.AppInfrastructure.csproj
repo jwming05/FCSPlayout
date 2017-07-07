@@ -54,6 +54,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -68,6 +69,7 @@
     <Compile Include="BitmapSourceCache.cs" />
     <Compile Include="ChannelMediaSource.cs" />
     <Compile Include="DefaultPlayoutRecordService.cs" />
+    <Compile Include="FakeAppSettings.cs" />
     <Compile Include="FileMediaSource.cs" />
     <Compile Include="IChannelMediaSource.cs" />
     <Compile Include="IMediaItemSelector.cs" />
@@ -89,8 +91,10 @@
     <Compile Include="Extensions\MediaSourceExtensions.cs" />
     <Compile Include="MLMediaFileDurationGetter.cs" />
     <Compile Include="MLMediaFileImageExtractor.cs" />
+    <Compile Include="MLMediaFileInfoExtractor.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="PeriodicalGarbageCollector.cs" />
+    <Compile Include="PhotoResizer.cs" />
     <Compile Include="Playbill.cs" />
     <Compile Include="PlayControlService\PlayControlService.cs" />
     <Compile Include="Extensions\PlayItemExtensions.cs" />

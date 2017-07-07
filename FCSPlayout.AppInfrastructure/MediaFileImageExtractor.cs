@@ -1,11 +1,28 @@
 ﻿using FCSPlayout.WPF.Core;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 namespace FCSPlayout.AppInfrastructure
 {
+    
+
+    public interface IMediaFileImageExtractor
+    {
+        byte[] GetImageBytes(string filePath, double position, int targetSize);
+    }
+
+    public static class MediaFileImageExtractorExtensions
+    {
+        public static Task<byte[]> GetImageBytesAsync(this IMediaFileImageExtractor extractor,
+            string filePath, double position, int targetSize)
+        {
+            return Task.Run(() => extractor.GetImageBytes(filePath,position,targetSize));
+        }
+    }
+
     public abstract class MediaFileImageExtractor : IDisposable
     {
         private static MediaFileImageExtractor _current;
@@ -33,7 +50,6 @@ namespace FCSPlayout.AppInfrastructure
         protected MediaFileImageExtractor()
         {
             _actionExecuter = new AsyncActionExecuter();
-            //Common.GlobalEventAggregator.Instance.ApplicationExit += OnApplicationExit;
         }
 
         private void OnApplicationExit(object sender, EventArgs e)

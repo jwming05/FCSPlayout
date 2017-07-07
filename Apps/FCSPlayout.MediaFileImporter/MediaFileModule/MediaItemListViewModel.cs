@@ -33,16 +33,16 @@ namespace FCSPlayout.MediaFileImporter
 
         public MediaItemListViewModel(IEventAggregator eventAggregator,
             InteractionRequests interactionRequests,
-            IMediaFileImageResolver imageResolver,
+            //IMediaFileImageResolver imageResolver,
             IUserService userService,IMediaFileService mediaFileService,
-            MediaFileDurationGetter mediaFileDurationGetter)
+            MediaFileItemManager mediaFileItemManager) //MediaFileDurationGetter mediaFileDurationGetter
         {
             this.EventAggregator = eventAggregator;
-            this.ImageResolver = imageResolver;
+            //this.ImageResolver = imageResolver;
             this.UserService = userService;
             this.MediaFileService = mediaFileService;
-            this.MediaFileDurationGetter = mediaFileDurationGetter;
-
+            //this.MediaFileDurationGetter = mediaFileDurationGetter;
+            this.MediaFileItemManager = mediaFileItemManager;
             _interactionRequests = interactionRequests;
 
             _worker = new DelegateBackgroundWorker();
@@ -106,28 +106,56 @@ namespace FCSPlayout.MediaFileImporter
 
         public IEventAggregator EventAggregator { get; private set; }
 
-        
+        //public IMediaFileImageResolver ImageResolver
+        //{
+        //    get; private set;
+        //}
+        public IUserService UserService { get; private set; }
+
+        public BindableMediaFileItem CurrentUploadItem
+        {
+            get
+            {
+                return _currentUploadItem;
+            }
+
+            set
+            {
+                _currentUploadItem = value;
+
+                _saveMediaItemsCommand.RaiseCanExecuteChanged();
+                _saveXmlCommand.RaiseCanExecuteChanged();
+                _deleteMediaItemCommand.RaiseCanExecuteChanged();
+                _clearCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public IMediaFileService MediaFileService { get; private set; }
+
+        //public MediaFileDurationGetter MediaFileDurationGetter { get; private set; }
+        public MediaFileItemManager MediaFileItemManager { get; private set; }
+
         #region
         private void Upload(BindableMediaFileItem item)
         {
-            var entity = item.Entity;
-            var metadata = entity.Metadata;
+            //var entity = item.Entity;
+            //var metadata = entity.Metadata;
 
-            if (metadata == null)
-            {
-                metadata = new Entities.MediaFileMetadata();
-                entity.Metadata = metadata;
-            }
+            //if (metadata == null)
+            //{
+            //    metadata = new Entities.MediaFileMetadata();
+            //    entity.Metadata = metadata;
+            //}
 
-            if (metadata.Icon == null)
-            {
-                var image = item.Image;
-                if (image == null)
-                {
-                    image = this.ResolveImage(item);
-                }
-                metadata.Icon = GetIcon(image);
-            }
+            //if (metadata.Icon == null)
+            //{
+            //    var image = item.Image;
+            //    if (image == null)
+            //    {
+            //        image = this.ResolveImage(item);
+            //    }
+            //    metadata.Icon = GetIcon((BitmapSource)image);
+            //}
 
             this.ProgressFeedback.Reset();
 
@@ -170,26 +198,6 @@ namespace FCSPlayout.MediaFileImporter
 
             if (error==null && !cancelled)
             {
-                //var entity = item.Entity;
-                //var metadata = entity.Metadata;
-
-                //if (metadata == null)
-                //{
-                //    metadata = new Entities.MediaFileMetadata();
-                //    entity.Metadata = metadata;
-                //}
-
-                //if(metadata.Icon==null)
-                //{
-                //    var image = item.Image;
-                //    if (image == null)
-                //    {
-                //        image = this.ResolveImage(item);
-                //    }
-                //    metadata.Icon = GetIcon(image);
-                //}
-
-                //this.MediaFileService.Add(item.Entity, App.Current.Name);
                 _worker.State = null;
                 RemoveItem(item);
             }
@@ -214,55 +222,27 @@ namespace FCSPlayout.MediaFileImporter
             }
         }
 
-        internal BitmapSource ResolveImage(BindableMediaFileItem item)
-        {
-            return this.ImageResolver.Resolve(item.FilePath, item.Duration.TotalMilliseconds / 2.0);
-        }
+        //internal BitmapSource ResolveImage(BindableMediaFileItem item)
+        //{
+        //    return this.ImageResolver.Resolve(item.FilePath, item.Duration.TotalMilliseconds / 2.0);
+        //}
 
-        internal static byte[] GetIcon(BitmapSource image)
-        {
-            if (image != null)
-            {
-                using (var ms = new System.IO.MemoryStream())
-                {
-                    var jpegEncoder = new JpegBitmapEncoder();
-                    jpegEncoder.Frames.Add(BitmapFrame.Create(image));
-                    jpegEncoder.Save(ms);
-                    return ms.ToArray();
-                }
-            }
+        //internal static byte[] GetIcon(BitmapSource image)
+        //{
+        //    if (image != null)
+        //    {
+        //        using (var ms = new System.IO.MemoryStream())
+        //        {
+        //            var jpegEncoder = new JpegBitmapEncoder();
+        //            jpegEncoder.Frames.Add(BitmapFrame.Create(image));
+        //            jpegEncoder.Save(ms);
+        //            return ms.ToArray();
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
         #endregion
-
-        
-
-        public IMediaFileImageResolver ImageResolver
-        {
-            get;private set;
-        }
-        public IUserService UserService { get; private set; }
-
-        public BindableMediaFileItem CurrentUploadItem
-        {
-            get
-            {
-                return _currentUploadItem;
-            }
-
-            set
-            {
-                _currentUploadItem = value;
-
-                _saveMediaItemsCommand.RaiseCanExecuteChanged();
-                _saveXmlCommand.RaiseCanExecuteChanged();
-                _deleteMediaItemCommand.RaiseCanExecuteChanged();
-                _clearCommand.RaiseCanExecuteChanged();
-            }
-        }
-
-        public IMediaFileService MediaFileService { get; private set; }
 
         #region Commands
         public ICommand PreviewCommand
@@ -318,7 +298,7 @@ namespace FCSPlayout.MediaFileImporter
             }
         }
 
-        public MediaFileDurationGetter MediaFileDurationGetter { get; private set; }
+        
 
 
         #endregion Commands
@@ -337,19 +317,20 @@ namespace FCSPlayout.MediaFileImporter
                 });
         }
 
-        private void AddMediaItems(string[] fileNames)
+        private async void AddMediaItems(string[] fileNames)
         {
             for (int j = 0; j < fileNames.Length; j++)
             {
                 var fileName = fileNames[j];
-                _mediaItemCollection.Add(new BindableMediaFileItem(fileName, this.UserService.CurrentUser.Id, GetDuration(fileName)));
+                _mediaItemCollection.Add(await this.MediaFileItemManager.CreateAsync(fileName));
+                //_mediaItemCollection.Add(new BindableMediaFileItem(fileName, this.UserService.CurrentUser.Id, GetDuration(fileName)));
             }
         }
 
-        private TimeSpan GetDuration(string filePath)
-        {
-            return this.MediaFileDurationGetter.GetDuration(filePath);
-        }
+        //private TimeSpan GetDuration(string filePath)
+        //{
+        //    return this.MediaFileDurationGetter.GetDuration(filePath);
+        //}
 
         private bool CanDeleteMediaItem()
         {

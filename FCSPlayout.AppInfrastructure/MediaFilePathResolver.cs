@@ -4,21 +4,6 @@ namespace FCSPlayout.AppInfrastructure
 {
     public class MediaFilePathResolver: IMediaFilePathResolver
     {
-        //private static IMediaFilePathResolver _current=new MediaFilePathResolver(MediaFileStorage.Primary);
-
-        //public static IMediaFilePathResolver Current
-        //{
-        //    get
-        //    {
-        //        return _current;
-        //    }
-
-        //    set
-        //    {
-        //        _current = value;
-        //    }
-        //}
-
         public MediaFilePathResolver(MediaFileStorage currentStorage)
         {
             this.CurrentStorage = currentStorage;

@@ -18,7 +18,7 @@ namespace FCSPlayout.Domain
             _isDirty = false;
             _playItem = playItem;
             _startTime = _playItem.StartTime;
-            _calculatedPlayDuration = _playItem.CalculatedPlayDuration;
+            _calculatedPlayDuration = _playItem.PlaybillItem.PlayRange.Duration; //  _playItem.CalculatedPlayDuration;
         }
 
         public DateTime StartTime
@@ -99,6 +99,7 @@ namespace FCSPlayout.Domain
             {
                 _playItem.StartTime = this.StartTime;
                 _playItem.CalculatedPlayDuration = this.CalculatedPlayDuration;
+                _isDirty = false;
             }
             return _playItem;
         }

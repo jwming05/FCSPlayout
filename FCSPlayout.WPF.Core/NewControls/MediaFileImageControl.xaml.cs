@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using System;
+using System.Windows.Media;
 
 namespace FCSPlayout.WPF.Core
 {
@@ -78,7 +79,7 @@ namespace FCSPlayout.WPF.Core
             }
         }
 
-        BitmapSource IMediaFileImageRequester.Image
+        ImageSource IMediaFileImageRequester.Image
         {
             get
             {

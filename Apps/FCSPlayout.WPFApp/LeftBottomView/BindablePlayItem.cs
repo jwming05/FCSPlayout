@@ -4,14 +4,15 @@ using FCSPlayout.WPF.Core;
 using Prism.Mvvm;
 using System;
 using System.Threading;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace FCSPlayout.WPFApp
 {
     public class BindablePlayItem : BindableBase, IImageItem, IItemWrapper<IPlayItem>,IPlayableItemWithCG //, IPlayItem, IPlayItemAdapter
     {
-        private static BitmapSource _errorImage;
-        private static BitmapSource ErrorImage
+        private static ImageSource _errorImage;
+        private static ImageSource ErrorImage
         {
             get
             {
@@ -24,7 +25,7 @@ namespace FCSPlayout.WPFApp
         }
 
         private IPlayItem _playItem;
-        private BitmapSource _image;
+        private ImageSource _image;
         private string _resolvedFilePath;
         //private IPlayItemEditorFactory _itemEditorFactory;
 
@@ -208,7 +209,7 @@ namespace FCSPlayout.WPFApp
 
         public string FilePath { get { return _resolvedFilePath; } }
 
-        public BitmapSource Image
+        public ImageSource Image
         {
             get { return _image; }
             set

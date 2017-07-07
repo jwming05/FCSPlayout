@@ -11,21 +11,6 @@ namespace FCSPlayout.AppInfrastructure
     public class MediaFileImageResolver:IMediaFileImageResolver
     {
         private SynchronizationContext _syncContext = SynchronizationContext.Current;
-        //private static Lazy<MediaFileImageResolver> _instance=new Lazy<MediaFileImageResolver>(()=>new MediaFileImageResolver(),
-        //    LazyThreadSafetyMode.ExecutionAndPublication);
-
-        
-        //internal static MediaFileImageResolver Instance
-        //{
-        //    get
-        //    {
-        //        return _instance.Value;
-        //    }
-        //}
-
-        //private MediaFileImageResolver()
-        //{
-        //}
 
         public void ResolveAsync(IMediaFileImageRequester requester)
         {
@@ -73,7 +58,7 @@ namespace FCSPlayout.AppInfrastructure
             {
                 BitmapSource bmpSource = Imaging.CreateBitmapSourceFromHBitmap(ptr, IntPtr.Zero,
                     Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
+                
                 NativeMethods.DeleteObject(ptr);
                 return bmpSource;
             }

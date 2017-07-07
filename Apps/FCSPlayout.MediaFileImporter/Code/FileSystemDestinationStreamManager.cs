@@ -9,28 +9,12 @@ namespace FCSPlayout.MediaFileImporter
     {
         private IMediaFilePathResolver _mediaFilePathResolver;
 
-        //private static readonly FileSystemDestinationStreamManager _instance = new FileSystemDestinationStreamManager();
-
-        //public static FileSystemDestinationStreamManager Instance
-        //{
-        //    get
-        //    {
-        //        return _instance;
-        //    }
-        //}
-
-        //private FileSystemDestinationStreamManager()
-        //{
-        //}
-
         public FileSystemDestinationStreamManager(IMediaFilePathResolver mediaFilePathResolver)
         {
             _mediaFilePathResolver = mediaFilePathResolver;
         }
         public Stream Create(string destFileName, MediaFileStorage fileStorage)
         {
-            //return new FileStream(MediaFilePathResolver.Current.Resolve(destFileName, fileStorage),
-            //    FileMode.CreateNew, FileAccess.Write, FileShare.None);
 
             return new FileStream(ResolvePath(destFileName, fileStorage),
                 FileMode.CreateNew, FileAccess.Write, FileShare.None);

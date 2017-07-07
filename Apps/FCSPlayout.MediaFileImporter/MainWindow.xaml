@@ -84,17 +84,17 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <GroupBox Padding="5">
-                <ContentControl Margin="5" prism:RegionManager.RegionName="previewRegion"/>
+                <ContentControl Margin="5" prism:RegionManager.RegionName="{x:Static local:RegionNames.PreviewRegion}"/>
             </GroupBox>
             
             <TabControl Grid.Row="1">
                 <TabItem Header="待入库" Foreground="#9D9D9D">
-                    <ContentControl prism:RegionManager.RegionName="mediaItemListRegion"/>
+                    <ContentControl prism:RegionManager.RegionName="{x:Static local:RegionNames.MediaFileRegion}"/>
                 </TabItem>
             </TabControl>
         </Grid>
 
         <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" Width="1" Background="#303030" HorizontalAlignment="Center"/>
-        <ContentControl Grid.Column="2" prism:RegionManager.RegionName="mediaItemList2Region" />
+        <ContentControl Grid.Column="2" prism:RegionManager.RegionName="{x:Static local:RegionNames.MediaItemRegion}" />
     </Grid>
 </Window>

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace FCSPlayout.WPFApp
@@ -15,7 +16,7 @@ namespace FCSPlayout.WPFApp
     public class BindableFileMediaItem:BindableBase, IPlayableItem, IImageItem
     {
         //private static MediaFileStorage _mediaFileStorage = MediaFileStorage.Primary;
-        private BitmapSource _image;
+        private ImageSource _image;
         private PlayRange _playRange;
 
         public event EventHandler PreviewClosing;
@@ -214,7 +215,7 @@ namespace FCSPlayout.WPFApp
             }
         }
 
-        public BitmapSource Image
+        public ImageSource Image
         {
             get
             {

@@ -141,6 +141,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AutoPlayItemBehavior.cs" />
     <Compile Include="Code\InteractionRequests.cs" />
     <Compile Include="MediaItemModule\MediaItemView.xaml.cs">
       <DependentUpon>MediaItemView.xaml</DependentUpon>
@@ -196,6 +197,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PlaybillService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

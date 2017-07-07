@@ -106,8 +106,21 @@ namespace FCSPlayout.Domain
             var segment = this.FirstSegment;
             while (segment != null)
             {
-                builders.Add(segment.CreateBuilder(maxStopTime));
-                segment = segment.Next;
+                if(segment.Next!=null && segment.ShouldMerge())
+                {
+                    // 定时播消失（删除，改为顺播或定时插播）
+
+                    segment.MergeFrom(segment.Next);
+                    builders.Add(segment.CreateBuilder(maxStopTime));
+
+                    segment = segment.Next.Next;
+                }
+                else
+                {
+                    builders.Add(segment.CreateBuilder(maxStopTime));
+                    segment = segment.Next;
+                }
+                
             }
             return builders;
         }
@@ -135,6 +148,18 @@ namespace FCSPlayout.Domain
                     this.FirstSegment.Previous = null;
                 }
             }            
+        }
+
+        internal void InsertSegment(PlaylistSegment prevSegment, PlaylistSegment newSegment)
+        {
+            var oldNext = prevSegment.Next;
+            prevSegment.Next = newSegment;
+            newSegment.Next = oldNext;
+
+            if (this.LastSegment == prevSegment)
+            {
+                this.LastSegment = newSegment;
+            }
         }
     }
 

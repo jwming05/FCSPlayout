@@ -16,8 +16,8 @@ namespace FCSPlayout.MediaFileImporter
         public App()
             :base(ApplicationNames.FileImporter)
         {
-
         }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             this.Initialize();
@@ -31,8 +31,6 @@ namespace FCSPlayout.MediaFileImporter
         {
             MLLicenseLib.MLLicenseManager.Instance.Timer();
             CheckMedialooks();
-
-            //MediaFileDurationGetter.Current = new MLMediaFileDurationGetter();
         }
 
         protected override void OnExit(ExitEventArgs e)

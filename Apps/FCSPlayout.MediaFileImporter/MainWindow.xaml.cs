@@ -35,17 +35,6 @@ namespace FCSPlayout.MediaFileImporter
         private void OnTimer_Tick(object sender, EventArgs e)
         {   
         }
-
-        //private void btnSearch_Click(object sender, RoutedEventArgs e)
-        //{
-        //    this.pagingControl.RaiseRequestPagingItems(0);
-        //    PlaybillEditor.datagridHepler.SetShowRowIndexProperty(mediaItemListView2.dgMediaItem, true);
-        //}
-
-        //private void pagingControl_RequestPagingItems(object sender, RequestPagingItemsEventArgs e)
-        //{
-        //    e.Result = this.mediaItemListView2.LoadMediaItems(e.PagingInfo);
-        //}
     }
 }
 

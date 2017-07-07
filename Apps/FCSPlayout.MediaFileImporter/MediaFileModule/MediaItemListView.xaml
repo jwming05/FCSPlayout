@@ -61,7 +61,15 @@
                 <DataGridTemplateColumn Header="缩略图" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <core:MediaFileImageControl MediaFileItem="{Binding}" 
+                            <Image Source="{Binding Image}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                                        <i:InvokeCommandAction Command="{Binding DataContext.PreviewCommand,RelativeSource={RelativeSource AncestorType=core:ViewBase,Mode=FindAncestor}}"
+                                                               CommandParameter="{Binding}"></i:InvokeCommandAction>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Image>
+                            <!--<core:MediaFileImageControl MediaFileItem="{Binding}" 
                                                         MediaFileImageResolver="{Binding DataContext.ImageResolver,RelativeSource={RelativeSource AncestorType=core:ViewBase,Mode=FindAncestor}}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseDoubleClick">
@@ -69,7 +77,7 @@
                                                                CommandParameter="{Binding}"></i:InvokeCommandAction>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
-                            </core:MediaFileImageControl>
+                            </core:MediaFileImageControl>-->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

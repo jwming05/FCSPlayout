@@ -22,15 +22,17 @@ namespace FCSPlayout.MediaFileImporter
         
         private IPlayableItem _currentPreviewItem;
         private int _pageSize = 30;
+        private MediaFileItemManager _mediaFileItemManager;
 
-        public DbMediaItemListViewModel(IEventAggregator eventAggregator, IMediaFilePathResolver filePathResolver, 
-            IMediaFileImageResolver imageResolver,IMediaFileService mediaFileService)
+        public DbMediaItemListViewModel(IEventAggregator eventAggregator, /*IMediaFilePathResolver filePathResolver,*/ 
+            IMediaFileImageResolver imageResolver,IMediaFileService mediaFileService, MediaFileItemManager mediaFileItemManager)
         {
             this.EventAggregator = eventAggregator;
-            this.FilePathResolver = filePathResolver;
+            //this.FilePathResolver = filePathResolver;
             this.ImageResolver = imageResolver;
             this.MediaFileService = mediaFileService;
             _mediaItemCollection = new ObservableCollection<BindableMediaFileItem>();
+            _mediaFileItemManager = mediaFileItemManager;
 
             _deleteMediaItemCommand = new DelegateCommand(DeleteMediaItem, CanDeleteMediaItem);
             _editMediaItemCommand = new DelegateCommand<object>(EditMediaItem, CanEditMediaItem);
@@ -70,8 +72,6 @@ namespace FCSPlayout.MediaFileImporter
             get;private set;
         }
 
-        
-
         public int PageSize
         {
             get { return _pageSize; }
@@ -83,14 +83,14 @@ namespace FCSPlayout.MediaFileImporter
         }
 
         private IEventAggregator EventAggregator { get; set; }
-        public IMediaFilePathResolver FilePathResolver { get; private set; }
+        //public IMediaFilePathResolver FilePathResolver { get; private set; }
         public IMediaFileImageResolver ImageResolver { get; private set; }
         public IMediaFileService MediaFileService { get; private set; }
 
-        private string ResolvePath(string fileName)
-        {
-            return this.FilePathResolver.Resolve(fileName);
-        }
+        //private string ResolvePath(string fileName)
+        //{
+        //    return this.FilePathResolver.Resolve(fileName);
+        //}
 
         #region Command Methods
         private bool CanDeleteMediaItem()
@@ -130,7 +130,7 @@ namespace FCSPlayout.MediaFileImporter
             }
         }
 
-        private void SearchMediaItems(RequestPagingItemsEventArgs e)
+        private async void SearchMediaItems(RequestPagingItemsEventArgs e)
         {
             if (_currentPreviewItem != null)
             {
@@ -140,11 +140,12 @@ namespace FCSPlayout.MediaFileImporter
 
             _mediaItemCollection.Clear();
 
-            var result = this.MediaFileService.GetMediaFiles(this.SearchOptions, e.PagingInfo);
-
+            //var result = this.MediaFileService.GetMediaFiles(this.SearchOptions, e.PagingInfo);
+            var result = await this.MediaFileService.GetMediaFilesAsync(this.SearchOptions, e.PagingInfo);
             foreach (var item in result.Items)
             {
-                _mediaItemCollection.Add(new BindableMediaFileItem(item, this.ResolvePath(item.FileName)));
+                _mediaItemCollection.Add(_mediaFileItemManager.Create(item));
+                //_mediaItemCollection.Add(new BindableMediaFileItem(item, this.ResolvePath(item.FileName)));
             }
 
             e.Result = result;

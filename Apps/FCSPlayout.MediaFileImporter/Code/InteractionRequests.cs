@@ -5,9 +5,12 @@ namespace FCSPlayout.MediaFileImporter
 {
     public class InteractionRequests
     {
-        private readonly InteractionRequest<OpenFileDialogConfirmation>  _openFileInteractionRequest = new InteractionRequest<OpenFileDialogConfirmation>();
-        private readonly InteractionRequest<Notification> _displayMessageInteractionRequest=new InteractionRequest<Notification>();
-        private readonly InteractionRequest<SaveFileDialogConfirmation> _saveFileInteractionRequest = new InteractionRequest<SaveFileDialogConfirmation>();
+        private readonly InteractionRequest<OpenFileDialogConfirmation>  _openFileInteractionRequest = 
+            new InteractionRequest<OpenFileDialogConfirmation>();
+        private readonly InteractionRequest<Notification> _displayMessageInteractionRequest=
+            new InteractionRequest<Notification>();
+        private readonly InteractionRequest<SaveFileDialogConfirmation> _saveFileInteractionRequest = 
+            new InteractionRequest<SaveFileDialogConfirmation>();
 
         public InteractionRequests()
         {

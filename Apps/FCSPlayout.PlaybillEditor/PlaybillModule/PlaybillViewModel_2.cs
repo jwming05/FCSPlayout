@@ -193,6 +193,8 @@ namespace FCSPlayout.PlaybillEditor
         }
         #endregion Commands
 
+        private PlaybillService _playbillService=new PlaybillService();
+
         #region Command Methods
         private void Preview(IPlayableItem playableItem)
         {
@@ -205,7 +207,7 @@ namespace FCSPlayout.PlaybillEditor
 
         private bool CanDeletePlayItem()
         {
-            return this.SelectedPlayItem != null; // && this.Playlist.CanDelete(this.SelectedPlayItem.PlayItem);
+            return this.SelectedPlayItem != null && _playbillService.CanDelete(this.SelectedPlayItem.PlayItem);
         }
 
         private void DeletePlayItem()
@@ -219,16 +221,21 @@ namespace FCSPlayout.PlaybillEditor
                     {
                         if (c.Confirmed)
                         {
+                            _playbillService.Delete(playItem);
                             DeletePlayItem(playItem);
                         }
                     });
             }
         }
 
+        
+        
+
+        
         private bool CanEditDuration()
         {
-            return this.SelectedPlayItem != null && !this.SelectedPlayItem.PlayItem.IsAutoPadding() && 
-                (this.SelectedPlayItem.Source is IChannelMediaSource);
+            return this.SelectedPlayItem != null && 
+                _playItemBehavior.CanEdit(this.SelectedPlayItem.PlayItem,EditOption.Duration);
         }
 
         private void EditDuration()
@@ -251,8 +258,7 @@ namespace FCSPlayout.PlaybillEditor
 
         private bool CanChangeStartTime()
         {
-            return this.SelectedPlayItem != null && 
-                (this.SelectedPlayItem.ScheduleMode==PlayScheduleMode.Timing || this.SelectedPlayItem.ScheduleMode == PlayScheduleMode.TimingBreak);
+            return this.SelectedPlayItem != null && _playItemBehavior.CanEdit(this.SelectedPlayItem.PlayItem, EditOption.StartTime);
         }
 
         private void ChangeStartTime()
@@ -297,8 +303,8 @@ namespace FCSPlayout.PlaybillEditor
 
         private bool CanChangeSource()
         {
-            return this.SelectedPlayItem != null && this.SelectedMediaItem != null 
-                && this.SelectedMediaItem.Value.Duration>=this.SelectedPlayItem.PlayDuration;
+            return this.SelectedPlayItem != null && this.SelectedMediaItem != null && 
+                _playItemBehavior.CanEdit(this.SelectedPlayItem.PlayItem, EditOption.SourceOnly, this.SelectedMediaItem.Value.PlayRange);
         }
 
         private void ChangeSource()
@@ -308,7 +314,9 @@ namespace FCSPlayout.PlaybillEditor
                 var builder = CreateBuilder();
                 try
                 {
-                    builder.ChangeSource(this.SelectedPlayItem.PlayItem, this.SelectedMediaItem.Value.Source, null);
+                    var newRange = new PlayRange(this._selectedMediaItem.Value.PlayRange.StartPosition, 
+                        this.SelectedPlayItem.PlayItem.CalculatedPlayDuration);
+                    builder.ChangeSource(this.SelectedPlayItem.PlayItem, this.SelectedMediaItem.Value.Source, newRange);
                     Rebuild(builder);
                 }
                 catch (Exception ex)
@@ -321,31 +329,33 @@ namespace FCSPlayout.PlaybillEditor
 
         private bool CanChangeToAutoMode()
         {
-            return this.SelectedPlayItem != null && this.SelectedPlayItem.ScheduleMode != PlayScheduleMode.Auto;
+            return this.SelectedPlayItem != null && 
+                _playItemBehavior.CanEdit(this.SelectedPlayItem.PlayItem, EditOption.ScheduleMode, PlayScheduleMode.Auto);
+            //this.SelectedPlayItem.ScheduleMode != PlayScheduleMode.Auto;
         }
 
         private void ChangeToAutoMode()
         {
             if (CanChangeToAutoMode())
             {
-                using (var editor = this.Edit())
+                var builder = CreateBuilder();
+                try
                 {
-                    try
-                    {
-                        editor.ChangeSchedule(this.SelectedPlayItem.PlayItem, PlayScheduleMode.Auto, null);
-                    }
-                    catch (Exception ex)
-                    {
-                        editor.Rollback();
-                        OnError(ex);
-                    }
+                    builder.ChangeToAuto(this.SelectedPlayItem.PlayItem);
+                    Rebuild(builder);
+                }
+                catch (Exception ex)
+                {
+                    //editor.Rollback();
+                    OnError(ex);
                 }
             }
         }
 
         private bool CanChangeToBreakMode()
         {
-            return this.SelectedPlayItem != null && !this.SelectedPlayItem.PlayItem.IsAutoPadding() && this.SelectedPlayItem.ScheduleMode!=PlayScheduleMode.TimingBreak;
+            return this.SelectedPlayItem != null &&
+                _playItemBehavior.CanEdit(this.SelectedPlayItem.PlayItem, EditOption.ScheduleMode, PlayScheduleMode.TimingBreak);
         }
 
         private void ChangeToBreakMode()
@@ -357,15 +367,18 @@ namespace FCSPlayout.PlaybillEditor
                     {
                         if (c.Confirmed)
                         {
-                            using (var editor = this.Edit())
+                            var builder = CreateBuilder();
+                            //using (var editor = this.Edit())
                             {
                                 try
                                 {
-                                    editor.ChangeSchedule(this.SelectedPlayItem.PlayItem, PlayScheduleMode.TimingBreak, c.Time);
+                                    builder.ChangeToTimingBreak(this.SelectedPlayItem.PlayItem);
+                                    Rebuild(builder);
+                                    //editor.ChangeSchedule(this.SelectedPlayItem.PlayItem, PlayScheduleMode.TimingBreak, c.Time);
                                 }
                                 catch (Exception ex)
                                 {
-                                    editor.Rollback();
+                                    //editor.Rollback();
                                     OnError(ex);
                                 }
                             }
@@ -376,27 +389,32 @@ namespace FCSPlayout.PlaybillEditor
 
         private bool CanChangeToTimingMode()
         {
-            return this.SelectedPlayItem != null && !this.SelectedPlayItem.PlayItem.IsAutoPadding() && this.SelectedPlayItem.ScheduleMode != PlayScheduleMode.Timing;
+            return this.SelectedPlayItem != null &&
+                _playItemBehavior.CanEdit(this.SelectedPlayItem.PlayItem, EditOption.ScheduleMode, PlayScheduleMode.Timing);
         }
 
         private void ChangeToTimingMode()
         {
             if (CanChangeToTimingMode())
             {
-                this.EditDateTimeInteractionRequest.Raise(new EditDateTimeConfirmation { Time = this.SelectedPlayItem.StartTime, Title = "更改为定时播" },
+                this.EditDateTimeInteractionRequest.Raise(new EditDateTimeConfirmation
+                { Time = this.SelectedPlayItem.StartTime, Title = "更改为定时播" },
                     c =>
                     {
                         if (c.Confirmed)
                         {
-                            using (var editor = this.Edit())
+                            var editor = CreateBuilder();
+                            //using (var editor = this.Edit())
                             {
                                 try
                                 {
-                                    editor.ChangeSchedule(this.SelectedPlayItem.PlayItem, PlayScheduleMode.Timing, c.Time);
+                                    editor.ChangeToTiming(this.SelectedPlayItem.PlayItem);
+                                    Rebuild(editor);
+                                    //editor.ChangeSchedule(this.SelectedPlayItem.PlayItem, PlayScheduleMode.Timing, c.Time);
                                 }
                                 catch (Exception ex)
                                 {
-                                    editor.Rollback();
+                                    //editor.Rollback();
                                     OnError(ex);
                                 }
                             }
@@ -407,22 +425,25 @@ namespace FCSPlayout.PlaybillEditor
 
         private bool CanMoveDown()
         {
-            return this.SelectedPlayItem != null && !this.SelectedPlayItem.PlayItem.IsAutoPadding() && this.SelectedPlayItem.ScheduleMode==PlayScheduleMode.Auto;
+            return this.SelectedPlayItem != null && _playItemBehavior.CanEdit(this.SelectedPlayItem.PlayItem, EditOption.Move);
+                //!this.SelectedPlayItem.PlayItem.IsAutoPadding() && this.SelectedPlayItem.ScheduleMode==PlayScheduleMode.Auto;
         }
 
         private void MoveDown()
         {
             if (CanMoveDown())
             {
-                using (var editor = this.Edit())
+                var builder = CreateBuilder();
+                //using (var editor = this.Edit())
                 {
                     try
                     {
-                        editor.MoveDown(this.SelectedPlayItem.PlayItem);
+                        builder.MoveDown(this.SelectedPlayItem.PlayItem);
+                        Rebuild(builder);
                     }
                     catch (Exception ex)
                     {
-                        editor.Rollback();
+                        //editor.Rollback();
                         OnError(ex);
                     }
                 }
@@ -431,23 +452,26 @@ namespace FCSPlayout.PlaybillEditor
 
         private bool CanMoveUp()
         {
-            return this.SelectedPlayItem != null && !this.SelectedPlayItem.PlayItem.IsAutoPadding() && this.SelectedPlayItem.ScheduleMode == PlayScheduleMode.Auto;
+            return this.SelectedPlayItem != null && _playItemBehavior.CanEdit(this.SelectedPlayItem.PlayItem, EditOption.Move);
+            //!this.SelectedPlayItem.PlayItem.IsAutoPadding() && this.SelectedPlayItem.ScheduleMode == PlayScheduleMode.Auto;
         }
 
         private void MoveUp()
         {
             if (CanMoveUp())
             {
-                using (var editor = this.Edit())
+                var builder = CreateBuilder();
+                //using (var editor = this.Edit())
                 {
                     
                     try
                     {
-                        editor.MoveUp(this.SelectedPlayItem.PlayItem);
+                        builder.MoveUp(this.SelectedPlayItem.PlayItem);
+                        Rebuild(builder);
                     }
                     catch (Exception ex)
                     {
-                        editor.Rollback();
+                        //editor.Rollback();
                         OnError(ex);
                     }
                 }
@@ -459,7 +483,8 @@ namespace FCSPlayout.PlaybillEditor
 
         private bool CanEditCGItems()
         {
-            return this.SelectedPlayItem != null && !this.SelectedPlayItem.PlayItem.IsAutoPadding() && (this.SelectedPlayItem.Source is IFileMediaSource);
+            return this.SelectedPlayItem != null && 
+                !this.SelectedPlayItem.PlayItem.IsAutoPadding() && (this.SelectedPlayItem.Source is IFileMediaSource);
         }
 
         private void EditCGItems()
@@ -643,6 +668,8 @@ namespace FCSPlayout.PlaybillEditor
         }
         #endregion Command Methods
 
+        private PlayItemBehavior _playItemBehavior = new PlayItemBehavior();
+
         private NewPlaylistEditor Edit()
         {
             return new NewPlaylistEditor(_listAdapter, OnCommitted);
@@ -804,6 +831,7 @@ namespace FCSPlayout.PlaybillEditor
         private void ChangeDuration(IPlayItem playItem, TimeSpan newDuration)
         {
             var builder = CreateBuilder();
+            
             try
             {
                 builder.ChangePlayRange(playItem, new PlayRange(TimeSpan.Zero, newDuration));
@@ -901,6 +929,11 @@ namespace FCSPlayout.PlaybillEditor
             RaiseDisplayMessageInteractionRequest("错误", ex.Message);
         }
 
+        public PlayItemCollection PlayItemCollection
+        {
+            get { return _playItemCollection; }
+        }
+
         class PlayItemEditor : FCSPlayout.AppInfrastructure.IPlayableItemEditor
         {
             private Action<Exception> _onError;
@@ -945,6 +978,42 @@ namespace FCSPlayout.PlaybillEditor
                     _onError = null;
                 }
             }
+        }
+    }
+
+    enum EditOption
+    {
+        Duration,
+        StartTime,
+        SourceAndPlayRange,
+        SourceOnly,
+        ScheduleMode,
+        Move,
+    }
+
+    class PlayItemBehavior
+    {
+        public bool CanEdit(IPlayItem playItem, EditOption option, object context = null)
+        {
+            switch (option)
+            {
+                case EditOption.Duration:
+                    return !playItem.IsAutoPadding() && (playItem.MediaSource is IChannelMediaSource);
+                case EditOption.StartTime:
+                    return playItem.ScheduleMode == PlayScheduleMode.Timing || playItem.ScheduleMode == PlayScheduleMode.TimingBreak;
+                case EditOption.SourceAndPlayRange:
+                    return true;
+                case EditOption.SourceOnly:
+                    PlayRange newRange = (PlayRange)context;
+                    return newRange.Duration >= playItem.CalculatedPlayDuration;
+                case EditOption.ScheduleMode:
+                    PlayScheduleMode newMode = (PlayScheduleMode)context;
+                    return (newMode != playItem.ScheduleMode) && (newMode == PlayScheduleMode.Auto || !playItem.IsAutoPadding());
+                case EditOption.Move:
+                    return !playItem.IsAutoPadding() && playItem.ScheduleMode == PlayScheduleMode.Auto;
+            }
+
+            return false;
         }
     }
 }

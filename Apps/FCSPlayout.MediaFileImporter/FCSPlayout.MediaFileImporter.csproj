@@ -150,10 +150,15 @@
     <Compile Include="Code\IUploadProgressFeedback.cs" />
     <Compile Include="Code\FileSystemDestinationStreamManager.cs" />
     <Compile Include="Code\InteractionRequests.cs" />
-    <Compile Include="DbMediaItemListView.xaml.cs">
+    <Compile Include="MediaFileItemManager.cs" />
+    <Compile Include="MediaItemModule\DbMediaItemListView.xaml.cs">
       <DependentUpon>DbMediaItemListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DbMediaItemListViewModel.cs" />
+    <Compile Include="MediaItemModule\DbMediaItemListViewModel.cs" />
+    <Compile Include="Modules\MediaItemModule.cs" />
+    <Compile Include="Modules\MediaFileModule.cs" />
+    <Compile Include="Modules\PreviewModule.cs" />
+    <Compile Include="RegionNames.cs" />
     <Compile Include="XmlRepository.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -168,21 +173,21 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="DbMediaItemListView.xaml">
+    <Page Include="MediaItemModule\DbMediaItemListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MediaItemListView.xaml">
+    <Page Include="MediaFileModule\MediaItemListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Code\MediaFileImportService.cs" />
-    <Compile Include="MediaItemListView.xaml.cs">
+    <Compile Include="MediaFileModule\MediaItemListView.xaml.cs">
       <DependentUpon>MediaItemListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MediaItemListViewModel.cs" />
+    <Compile Include="MediaFileModule\MediaItemListViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -261,7 +266,9 @@
     <Resource Include="Image\stepFw.png" />
     <Resource Include="Image\stop.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="PreviewModule\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

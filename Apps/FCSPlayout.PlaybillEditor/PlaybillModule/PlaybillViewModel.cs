@@ -90,10 +90,7 @@ namespace FCSPlayout.PlaybillEditor
             }
         }
 
-        public PlayItemCollection PlayItemCollection
-        {
-            get { return _playItemCollection; }
-        }
+        
 
         public ICommand EditCGItemsCommand
         {

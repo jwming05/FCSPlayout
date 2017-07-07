@@ -76,6 +76,7 @@
     <Compile Include="Concrete\New\NewPlaylistBuilder.cs" />
     <Compile Include="Concrete\New\PlaylistSegmentCollection.cs" />
     <Compile Include="Concrete\New\ScheduleItem.cs" />
+    <Compile Include="Concrete\PlayItemBehavior.cs" />
     <Compile Include="Exceptions\InvalidPlayRangeException.cs" />
     <Compile Include="Abstract\IChannelSwitcher.cs" />
     <Compile Include="Common\IDateTimeService.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Abstract\IPlaylistEditor2.cs" />
     <Compile Include="Abstract\IPlayControlService.cs" />
     <Compile Include="Abstract\IPlayItemEditor.cs" />
+    <Compile Include="IAppSettings.cs" />
     <Compile Include="IItemWrapper.cs" />
     <Compile Include="IUser.cs" />
     <Compile Include="IUserService.cs" />

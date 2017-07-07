@@ -183,6 +183,7 @@
       <DependentUpon>FilePicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="IImageItem.cs" />
+    <Compile Include="IImageSourceDecoder.cs" />
     <Compile Include="IPlayScheduleInfoHost.cs" />
     <Compile Include="LoadPlaybillConfirmation.cs" />
     <Compile Include="LoadPlaybillView.xaml.cs">

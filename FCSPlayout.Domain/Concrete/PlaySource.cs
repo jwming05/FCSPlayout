@@ -89,7 +89,7 @@ namespace FCSPlayout.Domain
 
         public IPlaySource Clone()
         {
-            var result = new PlaySource(this.MediaSource/*.Clone()*/, this.PlayRange);
+            var result = new PlaySource(this.MediaSource, this.PlayRange);
             if (this.CGItems != null)
             {
                 result.CGItems = this.CGItems.Clone();
@@ -100,7 +100,7 @@ namespace FCSPlayout.Domain
 
         public IPlaySource Clone(PlayRange newRange)
         {
-            var result = new PlaySource(this.MediaSource/*.Clone()*/, newRange);
+            var result = new PlaySource(this.MediaSource, newRange);
             if (this.CGItems != null)
             {
                 result.CGItems = this.CGItems.Clone();
