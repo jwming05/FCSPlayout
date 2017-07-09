@@ -13,19 +13,26 @@ namespace FCSPlayout.Domain
         private PlaylistSegment _next;
         //private List<IPlayItem> _newTimingBreakItems;
         private SortedList<DateTime, IPlayItem> _newTimingBreakItems;
-        private PlaylistSegment _innerSegment;
+        private DateTime? _startTime;
 
-        internal PlaylistSegment(List<IPlayItem> items)
+        internal PlaylistSegment(List<IPlayItem> items):this(items[0].StartTime)
         {
-            this._playItems = new List<IPlayItem>(items);
-            this.StartTime= _playItems[0].StartTime;
+            _playItems.AddRange(items);
         }
 
-        internal PlaylistSegment(IPlayItem item)
+        internal PlaylistSegment(IPlayItem item):this(item.StartTime, item)
+        {
+        }
+
+        internal PlaylistSegment(DateTime startTime, IPlayItem item) : this(item.StartTime)
+        {
+            _playItems.Add(item);
+        }
+
+        internal PlaylistSegment(DateTime startTime)
         {
             _playItems = new List<IPlayItem>();
-            _playItems.Add(item);
-            this.StartTime = _playItems[0].StartTime;
+            this.StartTime = startTime;
         }
 
         internal bool IsDirty { get; set; }
@@ -33,7 +40,12 @@ namespace FCSPlayout.Domain
 
         //public DateTime StartTime { get { return _playItems[0].StartTime; } }
 
-        public DateTime? StartTime { get; private set; }
+        public DateTime StartTime
+        {
+            get { return _startTime.Value; }
+            private set { _startTime = value; }
+        }
+
         private DateTime? StopTime
         {
             get
@@ -52,7 +64,7 @@ namespace FCSPlayout.Domain
             if (playItem.ScheduleMode == PlayScheduleMode.Timing)
             {
                 // 只能添加到末尾。
-                if (playItem.StartTime < this.StartTime.Value)
+                if (playItem.StartTime < this.StartTime)
                 {
                     throw new InvalidOperationException("新加的定时播必须在现有定时播后面。");
                 }
@@ -62,9 +74,14 @@ namespace FCSPlayout.Domain
                     throw new InvalidOperationException("新加的定时播与现有定时播或定时插播之间有时间冲突。");
                 }
 
+                if (this.Next != null && playItem.CalculatedStopTime > this.Next.StartTime)
+                {
+                    throw new InvalidOperationException("新加的定时播与现有定时播或定时插播之间有时间冲突。");
+                }
+                
+
                 List<IPlayItem> newSegmentItems = new List<IPlayItem>();
                 newSegmentItems.Add(playItem);
-
                 for(int i = _playItems.Count; i >= 0; i--)
                 {
                     var temp = _playItems[i];
@@ -80,9 +97,42 @@ namespace FCSPlayout.Domain
                     }
                 }
 
-                _innerSegment = new PlaylistSegment(newSegmentItems) { IsDirty = true };
+                var nextSegment = new PlaylistSegment(newSegmentItems) { IsDirty = true };
+                nextSegment.Next = this.Next;
+                this.Next = nextSegment;
                 this.IsDirty = true;
+                return;
             }
+
+            if (playItem.ScheduleMode == PlayScheduleMode.TimingBreak)
+            {
+                //if (playItem.StartTime < this.StartTime)
+                //{
+                //    throw new InvalidOperationException("新加的定时播必须在现有定时播后面。");
+                //}
+
+                if (this.HasTimingConflict(playItem.StartTime, playItem.CalculatedStopTime))
+                {
+                    throw new InvalidOperationException("新加的定时插播与现有定时播或定时插播之间有时间冲突。");
+                }
+
+                if (this.Next != null && playItem.CalculatedStopTime > this.Next.StartTime)
+                {
+                    throw new InvalidOperationException("新加的定时插播与现有定时播或定时插播之间有时间冲突。");
+                }
+            }
+
+            _playItems.Add(playItem);
+            this.IsDirty = true;
+        }
+
+        internal void InsertAuto(IPlayItem playItem, IPlayItem prevItem)
+        {
+            int index = _playItems.IndexOf(prevItem);
+            if (index < 0) throw new InvalidOperationException();
+
+            _playItems.Insert(index + 1, playItem);
+            this.IsDirty = true;
         }
 
         public PlaylistSegment Next
@@ -135,7 +185,7 @@ namespace FCSPlayout.Domain
         {
             var data = new PlaylistSegmentBuildData();
 
-            data.StartTime = this.StartTime.Value; // this.StartTime;
+            data.StartTime = this.StartTime; // this.StartTime;
             data.StopTime = this.StopTime ?? stopTime;
 
             for (int i = 0; i < _playItems.Count; i++)
@@ -172,21 +222,21 @@ namespace FCSPlayout.Domain
 
         internal bool Remove(IPlayItem playItem)
         {
-            if (playItem.ScheduleMode == PlayScheduleMode.Timing)
-            {
-                if (playItem.StartTime == this.StartTime)
-                {
-                    if (this.Previous == null)
-                    {
-                        // Note: 为了简单起见直接这样处理。
-                        throw new InvalidOperationException("不能删除第一个定时播");
-                    }
-                }
-            }
-
             if (_playItems.Remove(playItem))
             {
                 this.IsDirty = true;
+                if (playItem.ScheduleMode == PlayScheduleMode.Timing && this.Previous!=null)
+                {
+                    var previous = this.Previous;
+
+                    previous._playItems.AddRange(_playItems);
+
+                    _startTime = null;
+                    previous.Next = this.Next;
+                    previous.IsDirty = true;
+                }
+
+
                 return true;
             }
             return false;
@@ -304,33 +354,10 @@ namespace FCSPlayout.Domain
 
         internal bool Contains(IPlayItem playItem)
         {
-            if (this.StartTime > playItem.StartTime) return false;
-
-            if (_playItems.Contains(playItem))
-            {
-                return true;
-            }
-
-            //if (_newTimingBreakItems != null && _newTimingBreakItems.Contains(playItem))
-            //{
-            //    return true;
-            //}
-
-            return false;
+            return (this.StartTime <= playItem.StartTime) && _playItems.Contains(playItem);
         }
 
-        internal void InsertAuto(IPlayItem playItem, IPlayItem prevItem)
-        {
-            int index = _playItems.Count - 1;
-            if (prevItem != null)
-            {
-                index = _playItems.IndexOf(prevItem);
-                if (index < 0) throw new InvalidOperationException();
-            }
-
-            _playItems.Insert(index + 1, playItem);
-            this.IsDirty = true;
-        }
+        
 
         internal void ChangeTimingToAuto(IPlayItem playItem)
         {
@@ -380,11 +407,17 @@ namespace FCSPlayout.Domain
                 throw new InvalidOperationException();
             }
 
+            var newStopTime = newStartTime.Add(_playItems[0].PlaybillItem.PlayRange.Duration);
+
             var prevSegment = this.Previous;
             if (newStartTime < this.StartTime)
             {
                 if (prevSegment != null)
                 {
+                    if (prevSegment.HasTimingConflict(newStartTime, newStopTime))
+                    {
+                        throw new InvalidOperationException("定时播或定时插播之间有时间冲突。");
+                    }
                     for(int i = prevSegment._playItems.Count - 1; i >= 0; i--)
                     {
                         var item = prevSegment._playItems[i];
@@ -392,7 +425,8 @@ namespace FCSPlayout.Domain
                         {
                             if (item.StartTime >= newStartTime)
                             {
-                                AddNewTimingBreakItem(item);
+                                this._playItems.Insert(1, item);
+                                //AddNewTimingBreakItem(item);
                                 prevSegment._playItems.Remove(item);
                             }
                             else
@@ -405,6 +439,11 @@ namespace FCSPlayout.Domain
             }
             else //newStartTime > this.StartTime
             {
+                if (this.HasTimingConflict(newStartTime, newStopTime,_playItems[0]))
+                {
+                    throw new InvalidOperationException("定时播或定时插播之间有时间冲突。");
+                }
+
                 for (int i = this._playItems.Count - 1; i >= 0; i--)
                 {
                     var item = this._playItems[i];
@@ -417,7 +456,8 @@ namespace FCSPlayout.Domain
                                 throw new InvalidOperationException();
                             }
 
-                            prevSegment.AddNewTimingBreakItem(item);
+                            prevSegment._playItems.Add(item);
+                            //prevSegment.AddNewTimingBreakItem(item);
                             this._playItems.Remove(item);
                         }
                     }

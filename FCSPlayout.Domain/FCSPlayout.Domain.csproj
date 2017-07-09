@@ -64,6 +64,7 @@
     <Compile Include="AutoPaddingMediaSource.cs" />
     <Compile Include="AutoPlayItemEditor.cs" />
     <Compile Include="Common\DefaultDateTimeService.cs" />
+    <Compile Include="Concrete\New\IPlaylistBuildOption.cs" />
     <Compile Include="Concrete\New\IPlaylistSegmentBuilder.cs" />
     <Compile Include="Concrete\New\PlayItemAddContext.cs" />
     <Compile Include="Concrete\New\PlaylistSegment.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Concrete\New\NewPlaylistBuilder.cs" />
     <Compile Include="Concrete\New\PlaylistSegmentCollection.cs" />
     <Compile Include="Concrete\New\ScheduleItem.cs" />
+    <Compile Include="Concrete\New\TimeRange.cs" />
     <Compile Include="Concrete\PlayItemBehavior.cs" />
     <Compile Include="Exceptions\InvalidPlayRangeException.cs" />
     <Compile Include="Abstract\IChannelSwitcher.cs" />

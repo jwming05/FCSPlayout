@@ -5,8 +5,10 @@ namespace FCSPlayout.Domain
 {
     internal partial class PlaylistSegmentCollection
     {
-        public PlaylistSegmentCollection(IList<IPlayItem> playItems)
+        private IPlaylistBuildOption _buildOption;
+        public PlaylistSegmentCollection(IList<IPlayItem> playItems, IPlaylistBuildOption buildOption)
         {
+            _buildOption = buildOption;
             List<IPlayItem> items = new List<IPlayItem>();
 
             for(int i = 0; i < playItems.Count; i++)
@@ -60,6 +62,16 @@ namespace FCSPlayout.Domain
             return new PlaylistSegment(playItem) { IsDirty = true };
         }
 
+        public PlaylistSegment CreateSegment(DateTime startTime)
+        {
+            return new PlaylistSegment(startTime) { IsDirty = true };
+        }
+
+        public PlaylistSegment CreateSegment(DateTime startTime, IPlayItem playItem)
+        {
+            return new PlaylistSegment(startTime, playItem) { IsDirty = true };
+        }
+
         internal void AddLast(PlaylistSegment segment)
         {
             if (IsEmpty)
@@ -70,6 +82,19 @@ namespace FCSPlayout.Domain
             {
                 this.LastSegment.Next = segment;
                 this.LastSegment = segment;
+            }
+        }
+
+        internal void AddFirst(PlaylistSegment segment)
+        {
+            if (IsEmpty)
+            {
+                this.FirstSegment = this.LastSegment = segment;
+            }
+            else
+            {
+                segment.Next = this.FirstSegment;
+                this.FirstSegment = segment;
             }
         }
 

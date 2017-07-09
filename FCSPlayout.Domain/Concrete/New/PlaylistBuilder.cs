@@ -7,77 +7,39 @@ using System.Threading.Tasks;
 
 namespace FCSPlayout.Domain
 {
-    public struct TimeRange
+
+    public partial class PlaylistBuilder
     {
-        public DateTime Start { get; set; }
-        public DateTime Stop { get; set; }
-    }
-
-    public interface IPlaylistBuildOption
-    {
-        /// <summary>
-        /// 指示第一个播放项是否必须是定时播。
-        /// </summary>
-        bool FirstItemMustBeTiming { get; }
-
-        //DateTime MinStartTime { get; }
-        //DateTime MaxStopTime { get; }
-
-        TimeRange PlayTimeRange { get; }
-        
-    }
-
-    public class PlaylistBuilder
-    {
-        private PlaylistSegmentCollection _segments;
-        private IPlaylistBuildOption _buildOption;
-
-        public PlaylistBuilder(IList<IPlayItem> playItems)
-        {
-            _segments = new PlaylistSegmentCollection(playItems);
-        }
-
-        // 添加一个定时播。
         public void AddTimingItem(IPlayItem playItem)
         {
+            //LogAction();
             Debug.Assert(playItem.PlaybillItem.ScheduleMode == PlayScheduleMode.Timing);
 
             ValidateTimeRange(playItem);
 
-            //_buildOption.ValidateStartTime(playItem.StartTime);
-
             if (_segments.IsEmpty)
             {
-                // TODO: 验证第一个定时播的开始时间是否有效。       
-                
+                if (_buildOption.RequireFirstTimingItem && playItem.StartTime != _buildOption.PlayTimeRange.StartTime)
+                {
+                    throw new ArgumentException($"第一个定时播开始时间必须是{_buildOption.PlayTimeRange.StartTime}");
+                }
+
+                if (playItem.StartTime != _buildOption.PlayTimeRange.StartTime)
+                {
+                    TimeSpan duration = _buildOption.PlayTimeRange.StartTime.Subtract(playItem.StartTime);
+                    if (!ValidatePlayDuration(duration))
+                    {
+                        throw new InvalidOperationException("操作无效，该操作将产生播放时长小于最小播放时长的自动垫片");
+                    }
+                    _segments.AddLast(_segments.CreateSegment(_buildOption.PlayTimeRange.StartTime));
+                }
 
                 var segment = _segments.CreateSegment(playItem);
                 _segments.AddLast(segment);
             }
             else
             {
-                var lastSegment = _segments.LastSegment;
-
-                lastSegment.Add(playItem);
-
-                // 只能添加到末尾。
-                //if (playItem.StartTime < lastSegment.StartTime)
-                //{
-                //    throw new InvalidOperationException("新加的定时播必须在现有定时播后面。");
-                //}
-
-                //if (lastSegment.HasTimingConflict(playItem.StartTime, playItem.CalculatedStopTime))
-                //{
-                //    throw new InvalidOperationException("新加的定时播与现有定时播或定时插播之间有时间冲突。");
-                //}
-            }
-        }
-
-        private void ValidateTimeRange(IPlayItem playItem)
-        {
-            if(playItem.StartTime<_buildOption.PlayTimeRange.Start || playItem.CalculatedStopTime > _buildOption.PlayTimeRange.Stop)
-            {
-                throw new ArgumentException($"定时时间范围无效，开始时间不能小于{_buildOption.PlayTimeRange.Start}，结束时间不能大于{_buildOption.PlayTimeRange.Stop}。");
+                _segments.LastSegment.Add(playItem);
             }
         }
 
@@ -85,104 +47,96 @@ namespace FCSPlayout.Domain
         {
             Debug.Assert(playItem.PlaybillItem.ScheduleMode == PlayScheduleMode.TimingBreak);
 
+            ValidateTimeRange(playItem);
+
             if (_segments.IsEmpty)
             {
-                if (_buildOption.FirstItemMustBeTiming)
+                if (_buildOption.RequireFirstTimingItem)
                 {
                     throw new InvalidOperationException("第一个播放项必须是定时播。");
                 }
 
-                var newSegment = _segments.CreateSegment(playItem);
+                var newSegment = _segments.CreateSegment(_buildOption.PlayTimeRange.StartTime, playItem);
                 _segments.AddLast(newSegment);
             }
             else
             {
+                var segment = _segments.FindLastSegment((s) => s.StartTime <= playItem.StartTime);
+                if (segment == null)
+                {
+                    throw new ArgumentException();
+                }
 
+                segment.Add(playItem);
             }
 
-            var segment = _segments.FindLastSegment((s) => s.StartTime <= playItem.StartTime);
-            if (segment == null)
-            {
-                throw new InvalidOperationException();
-            }
 
-            if (segment.HasTimingConflict(playItem.StartTime, playItem.CalculatedStopTime))
-            {
-                throw new InvalidOperationException();
-            }
-
-            if (segment.Next != null &&
-                segment.Next.HasTimingConflict(playItem.StartTime, playItem.CalculatedStopTime))
-            {
-                throw new InvalidOperationException();
-            }
-
-            segment.AddTimingBreakItem(playItem);
         }
 
         public void AddAutoItem(IPlayItem playItem, IPlayItem prevItem)
         {
             Debug.Assert(playItem.PlaybillItem.ScheduleMode == PlayScheduleMode.Auto);
 
-            PlaylistSegment segment = null;
-            if (prevItem != null)
+            if (_segments.IsEmpty)
             {
-                segment = _segments.FindLastSegment((s) => s.Contains(prevItem));
+                if (_buildOption.RequireFirstTimingItem)
+                {
+                    throw new InvalidOperationException("第一个播放项必须是定时播。");
+                }
+
+                var newSegment = _segments.CreateSegment(_buildOption.PlayTimeRange.StartTime, playItem);
+                _segments.AddLast(newSegment);
             }
             else
             {
-                segment = _segments.FindLastSegment((s) => true);
-            }
+                PlaylistSegment segment = prevItem != null ? 
+                    _segments.FindLastSegment((s) => s.Contains(prevItem)) : _segments.LastSegment;
 
-            if (segment == null)
-            {
-                throw new InvalidOperationException();
-            }
+                if (segment == null)
+                {
+                    throw new ArgumentException();
+                }
 
+                if (prevItem == null)
+                {
+                    segment.Add(playItem);
+                }
+                else
+                {
+                    segment.InsertAuto(playItem, prevItem);
+                }
+                
+            }
             
-            segment.InsertAuto(playItem, prevItem);
         }
 
         public void RemoveItem(IPlayItem playItem)
         {
-            // TODO: 验证操作合法性。
-
             var segment = _segments.FindLastSegment(s => s.Contains(playItem));
             if (segment == null)
             {
-                throw new InvalidOperationException();
+                throw new ArgumentException();
             }
 
             if (playItem.ScheduleMode == PlayScheduleMode.Timing)
             {
-                if (segment.Previous == null)
+                if (segment.Previous == null && _buildOption.RequireFirstTimingItem)
                 {
-                    throw new InvalidOperationException();
-                }
-                else
-                {
-                    if (segment.Remove(playItem))
-                    {
-                        segment.Previous.MergeFrom(segment);
-                        _segments.Remove(segment);
-                        return;
-                    }
+                    throw new InvalidOperationException("不能删除第一个定时播");
                 }
             }
-            else
+
+            if (!segment.Remove(playItem))
             {
-                if (!segment.Remove(playItem))
-                {
-                    throw new InvalidOperationException();
-                }
+                throw new InvalidOperationException();
             }
         }
-        
-        public void ChangeStartTime(IPlayItem playItem,DateTime newStartTime)
+
+        public void ChangeStartTime(IPlayItem playItem, DateTime newStartTime)
         {
             // TODO: 检查操作合法性。
             if (newStartTime == playItem.StartTime) return;
-            
+
 
             if (playItem.ScheduleMode == PlayScheduleMode.Timing)
             {
@@ -200,21 +154,6 @@ namespace FCSPlayout.Domain
             }
         }
 
-        public void ChangePlayRange(IPlayItem playItem, PlayRange newRange)
-        {
-            // TODO:操作有效性验证。
-
-            playItem.PlaybillItem.PlaySource.MediaSource.ValidatePlayRange(newRange);
-
-            var segment = _segments.FindLastSegment(s => s.Contains(playItem));
-            if (segment == null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            segment.ChangePlayRange(playItem, newRange);
-        }
-
         private void ChangeTimingStartTime(IPlayItem playItem, DateTime newStartTime)
         {
             var segment = _segments.FindLastSegment((s) => s.Contains(playItem));
@@ -223,7 +162,28 @@ namespace FCSPlayout.Domain
                 throw new ArgumentException();
             }
 
+            if(segment.Previous==null && _buildOption.RequireFirstTimingItem)
+            {
+                throw new InvalidOperationException("不能修改第一个定时播开始时间");
+            }
             var newStopTime = newStartTime.Add(playItem.PlaybillItem.PlayRange.Duration);
+            ValidateTimeRange(newStartTime, newStopTime);
+
+            if (segment.Previous == null)
+            {
+                Debug.Assert(newStartTime > playItem.StartTime);
+                Debug.Assert(_buildOption.PlayTimeRange.StartTime == playItem.StartTime);
+
+                TimeSpan duration = newStartTime.Subtract(playItem.StartTime);
+
+                if (!ValidatePlayDuration(duration))
+                {
+                    throw new InvalidOperationException("操作无效，该操作将产生播放时长小于最小播放时长的自动垫片");
+                }
+                _segments.AddFirst(_segments.CreateSegment(_buildOption.PlayTimeRange.StartTime));
+            }
+
+            segment.ChangeStartTime(newStartTime);
 
             // 编辑第一个定时播的开始时间。
 
@@ -237,7 +197,7 @@ namespace FCSPlayout.Domain
                 }
                 else
                 {
-                    
+
                     if (newStartTime < segment.Previous.StartTime)
                     {
                         throw new ArgumentException();
@@ -277,6 +237,67 @@ namespace FCSPlayout.Domain
 
             segment.ChangeStartTime(newStartTime);
         }
+    }
+
+
+
+    public partial class PlaylistBuilder
+    {
+        private PlaylistSegmentCollection _segments;
+        private IPlaylistBuildOption _buildOption;
+
+        public PlaylistBuilder(IList<IPlayItem> playItems, IPlaylistBuildOption buildOption)
+        {
+            _buildOption = buildOption;
+            _segments = new PlaylistSegmentCollection(playItems, buildOption);
+        }
+
+        // 添加一个定时播。
+        
+
+        private bool ValidatePlayDuration(TimeSpan duration)
+        {
+            return duration >= _buildOption.MinPlayDuration;
+        }
+
+        private void ValidateTimeRange(IPlayItem playItem)
+        {
+            if(playItem.StartTime<_buildOption.PlayTimeRange.StartTime || playItem.CalculatedStopTime > _buildOption.PlayTimeRange.StopTime)
+            {
+                throw new ArgumentException($"定时时间范围无效，开始时间不能小于{_buildOption.PlayTimeRange.StartTime}，结束时间不能大于{_buildOption.PlayTimeRange.StopTime}。");
+            }
+        }
+
+        private void ValidateTimeRange(DateTime startTime,DateTime stopTime)
+        {
+            if (startTime < _buildOption.PlayTimeRange.StartTime || stopTime > _buildOption.PlayTimeRange.StopTime)
+            {
+                throw new ArgumentException($"定时时间范围无效，开始时间不能小于{_buildOption.PlayTimeRange.StartTime}，结束时间不能大于{_buildOption.PlayTimeRange.StopTime}。");
+            }
+        }
+
+
+
+
+
+
+
+        public void ChangePlayRange(IPlayItem playItem, PlayRange newRange)
+        {
+            // TODO:操作有效性验证。
+
+            playItem.PlaybillItem.PlaySource.MediaSource.ValidatePlayRange(newRange);
+
+            var segment = _segments.FindLastSegment(s => s.Contains(playItem));
+            if (segment == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            segment.ChangePlayRange(playItem, newRange);
+        }
+
+        
 
         // 验证播放列表中第一个定时播的开始时间。
         private void ValidatePlaylistStartTime(DateTime startTime)
